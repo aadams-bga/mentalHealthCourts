@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Investigation: Split Alluvial</title>
+    <!-- Dependencies -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <style>
+        body { margin: 0; font-family: -apple-system, sans-serif; background: #fff; color: #333; }
+        .scrolly-container { position: relative; width: 100%; }
+        
+        .sticky-wrapper {
+            position: -webkit-sticky;
+            position: sticky; 
+            top: 0; 
+            height: 100vh;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; /* Mobile: Centered */
+            z-index: 1;
+        }
+
+        #viz-svg { 
+            width: 95%; 
+            max-width: 450px; 
+            max-height: 80vh; 
+            display: block;
+        }
+
+        /* Alluvial Path Styles */
+        .sankey-link { fill: none; stroke: #000; stroke-opacity: 0; pointer-events: none; }
+        .sankey-node rect { fill: #333; shape-rendering: crispEdges; }
+        .sankey-node text { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; fill: #333; }
+        .rejected-node rect { fill: #bbb !important; }
+        .idoc-node rect { fill: #e63946 !important; }
+
+        /* Scroll track & Narrative */
+        .scroll-track { height: 400vh; position: relative; z-index: 2; }
+        
+        .narrative {
+            position: absolute; top: 0; 
+            left: 50%; transform: translateX(-50%); /* Mobile: Centered */
+            width: 100%; max-width: 320px; 
+            pointer-events: none;
+        }
+
+        .step-card {
+            margin-top: 85vh; background: white; padding: 24px;
+            border: 1px solid #ddd; border-radius: 8px; margin-bottom: 70vh;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            pointer-events: all;
+        }
+
+        /* Desktop Layout Override */
+        @media (min-width: 1024px) {
+            .sticky-wrapper {
+                justify-content: flex-end; /* Move graph to the right */
+                padding-right: -45%; /* Centers graph roughly in the right third */
+            }
+            .narrative {
+                left: -45%; /* Move narrative to the left third */
+                transform: none;
+                max-width: 350px;
+            }
+            .step-card {
+                margin-top: 0vh; /* More space for desktop scroll */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="scrolly-container">
+    <div class="sticky-wrapper">
+        <svg id="viz-svg"></svg>
+    </div>
+
+    <div class="scroll-track">
+        <div class="narrative">
+            <div class="step-card">
+                <h3>The Applications</h3>
+                <p>Using data from Kane County, we are able to track 224 individuals </p>
+            </div>
+            <div class="step-card">
+                <h3>The Initial Filter</h3>
+                <p>Only 49 were accepted. The remaining 181 were rejected immediately, terminating their path in the program.</p>
+            </div>
+            <div class="step-card">
+                <h3>The Final Outcomes</h3>
+                <p>Of those accepted, the majority graduated, while others were committed to IDOC or discharged.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const chartData = {
+        nodes: [
+            { name: "Applications", step: 0 },
+            { name: "Accepted", step: 1 }, { name: "Rejected", step: 1 },
+            { name: "Graduated", step: 2 }, { name: "Discharged", step: 2 }, { name: "IDOC", step: 2 }
+        ],
+        links: [
+            { source: 0, target: 1, value: 49, step: 1 },
+            { source: 0, target: 2, value: 181, step: 1 },
+            { source: 1, target: 3, value: 29, step: 2 },
+            { source: 1, target: 4, value: 10, step: 2 },
+            { source: 1, target: 5, value: 10, step: 2 }
+        ]
+    };
+
+    const width = 400, height = 600;
+    const svg = d3.select("#viz-svg").attr("viewBox", `0 0 ${width} ${height}`);
+    
+    const sankey = d3.sankey()
+        .nodeWidth(12).nodePadding(50).nodeAlign(d3.sankeyLeft)
+        .extent([[40, 40], [height - 40, width - 40]]);
+
+    const { nodes, links } = sankey({
+        nodes: chartData.nodes.map(d => Object.assign({}, d)),
+        links: chartData.links.map(d => Object.assign({}, d))
+    });
+
+    const linkG = svg.append("g")
+        .selectAll("path").data(links).join("path")
+        .attr("class", d => `sankey-link link-step-${d.step}`)
+        .attr("d", d => {
+            const x0 = d.source.x1, x1 = d.target.x0;
+            const y0 = d.y0, y1 = d.y1;
+            return `M${y0},${x0}C${y0},${(x0+x1)/2} ${y1},${(x0+x1)/2} ${y1},${x1}`;
+        })
+        .attr("stroke-width", d => Math.max(1, d.width))
+        .style("stroke-dasharray", function() { return this.getTotalLength(); })
+        .style("stroke-dashoffset", function() { return this.getTotalLength(); });
+
+    const nodeG = svg.append("g")
+        .selectAll("g").data(nodes).join("g")
+        .attr("class", d => {
+            let cls = `sankey-node node-step-${d.step}`;
+            if (d.name === 'IDOC') cls += ' idoc-node';
+            if (d.name === 'Rejected') cls += ' rejected-node';
+            return cls;
+        })
+        .style("opacity", 0);
+
+    nodeG.append("rect")
+        .attr("x", d => d.y0).attr("y", d => d.x0)
+        .attr("height", d => d.x1 - d.x0).attr("width", d => d.y1 - d.y0);
+
+    nodeG.append("text")
+        .attr("x", d => (d.y0 + d.y1) / 2).attr("y", d => d.x0 - 8)
+        .attr("text-anchor", "middle").text(d => d.name);
+
+    gsap.registerPlugin(ScrollTrigger);
+    const tl = gsap.timeline({
+        scrollTrigger: {
+            trigger: ".scroll-track", start: "top top", end: "bottom bottom", scrub: 1
+        }
+    });
+
+    tl.to(".node-step-0", { opacity: 1, duration: 1 });
+    tl.to(".link-step-1", { strokeDashoffset: 0, strokeOpacity: 0.08, duration: 3, ease: "none" });
+    tl.to(".node-step-1", { opacity: 1, duration: 1 }, "-=0.5");
+    tl.to(".link-step-2", { strokeDashoffset: 0, strokeOpacity: 0.08, duration: 3, ease: "none" });
+    tl.to(".node-step-2", { opacity: 1, duration: 1 }, "-=0.5");
+
+})();
+</script>
+
+</body>
+</html>
