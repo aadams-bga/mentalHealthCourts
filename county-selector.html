@@ -15,12 +15,8 @@
     .lookup-header p { margin: 5px 0 0; color: #666; font-size: 1rem; }
 
     .select-wrapper { margin-bottom: 30px; position: relative; }
+    .custom-combobox { position: relative; width: 100%; }
     
-    /* Custom Searchable Dropdown Styles */
-    .custom-combobox {
-        position: relative;
-        width: 100%;
-    }
     #county-input {
         width: 100%;
         padding: 12px 40px 12px 12px;
@@ -29,75 +25,26 @@
         border-radius: 4px;
         background-color: #fcfcfc;
         box-sizing: border-box;
-        cursor: text;
     }
-    #county-input:focus {
-        outline: none;
-        border-color: #FAC346;
-    }
-    .chevron {
-        position: absolute;
-        right: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 10px;
-        color: #999;
-        pointer-events: none;
-    }
+    #county-input:focus { outline: none; border-color: #FAC346; }
+    .chevron { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-size: 10px; color: #999; pointer-events: none; }
+    
     #county-list {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border: 1px solid #ddd;
-        border-top: none;
-        max-height: 250px;
-        overflow-y: auto;
-        z-index: 1000;
-        margin: 0;
-        padding: 0;
-        list-style: none;
+        position: absolute; top: 100%; left: 0; right: 0;
+        background: white; border: 1px solid #ddd; border-top: none;
+        max-height: 250px; overflow-y: auto; z-index: 1000;
+        margin: 0; padding: 0; list-style: none;
         box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
-    #county-list li {
-        padding: 10px 15px;
-        font-size: 0.9em;
-        cursor: pointer;
-        border-bottom: 1px solid #f5f5f5;
-    }
-    #county-list li:hover {
-        background-color: #fff9e6;
-    }
+    #county-list li { padding: 10px 15px; font-size: 0.9em; cursor: pointer; border-bottom: 1px solid #f5f5f5; }
+    #county-list li:hover, #county-list li.highlighted { background-color: #fff9e6; }
+    #county-list li.highlighted { border-left: 4px solid #FAC346; }
     .hidden { display: none !important; }
 
-    .results-box {
-        padding: 30px;
-        background: #fff;
-        border-left: 6px solid #eee;
-        min-height: 180px;
-        transition: all 0.3s ease;
-    }
-    .results-box.active {
-        border-left-color: #FAC346;
-    }
-    .county-name-label {
-        font-size: 1em;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        color: #333;
-        font-weight: 900;
-        margin-bottom: 15px;
-        display: inline-block;
-        background: #FAC346;
-        padding: 2px 8px;
-    }
-    .finding-text p {
-        font-size: 1em;
-        line-height: 1.5;
-        color: #333;
-        margin: 0 0 1.2rem 0;
-    }
+    .results-box { padding: 30px; background: #fff; border-left: 6px solid #eee; min-height: 180px; transition: all 0.3s ease; }
+    .results-box.active { border-left-color: #FAC346; }
+    .county-name-label { font-size: 1em; text-transform: uppercase; letter-spacing: 2px; color: #333; font-weight: 900; margin-bottom: 15px; display: inline-block; background: #FAC346; padding: 2px 8px; }
+    .finding-text p { font-size: 1em; line-height: 1.5; color: #333; margin: 0 0 1.2rem 0; }
     .finding-text p:last-child { margin-bottom: 0; }
 </style>
 
@@ -141,27 +88,29 @@
                 "“We keep track of demographic data, but unfortunately do not have a way to track recidivism, outside of the cases they may pick up within our County,” Douglas said. ",
                 "The county has a “very part time” program evaluator and accepts county residents with a pending felony in the county. About 35% of cases have their charges dismissed. “It is very case and State’s Attorney dependent,” Douglas said.",
                 "The court is largely funded by Adult Redeploy Illinois, Douglas said. “The cost to run specifically one of our courts would be difficult to compute, due to the overlap in staff and other resources,” he said.",
-                "The court is a hybrid with veterans court, according to the Administrative Office of the Illinois Courts."
-            ]
+                "The court is a hybrid with veterans court, according to the Administrative Office of the Illinois Courts.",
+            ],
         };
 
-        const validCounties = ["Adams", "Alexander", "Bond", "Boone", "Brown", "Bureau", "Calhoun", "Carroll", "Cass", "Champaign", "Christian", "Clark", "Clay", "Clinton", "Coles", "Cook", "Crawford", "Cumberland", "DeKalb", "De Witt", "Douglas", "DuPage", "Edgar", "Edwards", "Effingham", "Fayette", "Ford", "Franklin", "Fulton", "Gallatin", "Greene", "Grundy", "Hamilton", "Hancock", "Hardin", "Henderson", "Henry", "Iroquois", "Jackson", "Jasper", "Jefferson", "Jersey", "Jo Daviess", "Johnson", "Kane", "Kankakee", "Kendall", "Knox", "La Salle", "Lake", "Lawrence", "Lee", "Livingston", "Logan", "Macon", "Macoupin", "Madison", "Marion", "Marshall", "Mason", "Massac", "McDonough", "McHenry", "McLean", "Menard", "Mercer", "Monroe", "Montgomery", "Morgan", "Moultrie", "Ogle", "Peoria", "Perry", "Piatt", "Pike", "Pope", "Pulaski", "Putnam", "Randolph", "Richland", "Rock Island", "Saint Clair", "Saline", "Sangamon", "Schuyler", "Scott", "Shelby", "Stark", "Stephenson", "Tazewell", "Union", "Vermilion", "Wabash", "Warren", "Washington", "Wayne", "White", "Whiteside", "Will", "Williamson", "Winnebago", "Woodford"];
+        const counties = ["Adams", "Alexander", "Bond", "Boone", "Brown", "Bureau", "Calhoun", "Carroll", "Cass", "Champaign", "Christian", "Clark", "Clay", "Clinton", "Coles", "Cook", "Crawford", "Cumberland", "DeKalb", "De Witt", "Douglas", "DuPage", "Edgar", "Edwards", "Effingham", "Fayette", "Ford", "Franklin", "Fulton", "Gallatin", "Greene", "Grundy", "Hamilton", "Hancock", "Hardin", "Henderson", "Henry", "Iroquois", "Jackson", "Jasper", "Jefferson", "Jersey", "Jo Daviess", "Johnson", "Kane", "Kankakee", "Kendall", "Knox", "La Salle", "Lake", "Lawrence", "Lee", "Livingston", "Logan", "Macon", "Macoupin", "Madison", "Marion", "Marshall", "Mason", "Massac", "McDonough", "McHenry", "McLean", "Menard", "Mercer", "Monroe", "Montgomery", "Morgan", "Moultrie", "Ogle", "Peoria", "Perry", "Piatt", "Pike", "Pope", "Pulaski", "Putnam", "Randolph", "Richland", "Rock Island", "Saint Clair", "Saline", "Sangamon", "Schuyler", "Scott", "Shelby", "Stark", "Stephenson", "Tazewell", "Union", "Vermilion", "Wabash", "Warren", "Washington", "Wayne", "White", "Whiteside", "Will", "Williamson", "Winnebago", "Woodford"];
 
         const input = document.getElementById('county-input');
         const list = document.getElementById('county-list');
         const resultsArea = document.getElementById('results-area');
+        let highlightedIndex = -1;
+        let currentFiltered = [];
 
-        // Populate list
         function populateList(filter = '') {
             list.innerHTML = '';
-            const filtered = validCounties.filter(c => c.toLowerCase().includes(filter.toLowerCase()));
+            currentFiltered = counties.filter(c => c.toLowerCase().includes(filter.toLowerCase()));
+            highlightedIndex = -1;
             
-            if (filtered.length === 0) {
+            if (currentFiltered.length === 0) {
                 list.classList.add('hidden');
                 return;
             }
 
-            filtered.forEach(county => {
+            currentFiltered.forEach((county, index) => {
                 const li = document.createElement('li');
                 li.textContent = county;
                 li.addEventListener('click', () => selectCounty(county));
@@ -171,9 +120,10 @@
         }
 
         function selectCounty(county) {
-            input.value = county;
+            input.value = ''; // THE FIX: Clear input immediately
             list.classList.add('hidden');
             showResults(county);
+            input.blur();
         }
 
         function showResults(selected) {
@@ -185,14 +135,34 @@
             resultsArea.innerHTML = html;
         }
 
-        input.addEventListener('input', (e) => populateList(e.target.value));
-        input.addEventListener('focus', () => populateList(input.value));
-        
-        // Hide list when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.custom-combobox')) {
-                list.classList.add('hidden');
+        // Keyboard Navigation
+        input.addEventListener('keydown', (e) => {
+            const items = list.querySelectorAll('li');
+            if (list.classList.contains('hidden')) return;
+
+            if (e.key === 'ArrowDown') {
+                highlightedIndex = (highlightedIndex + 1) % items.length;
+                updateHighlight(items);
+                e.preventDefault();
+            } else if (e.key === 'ArrowUp') {
+                highlightedIndex = (highlightedIndex - 1 + items.length) % items.length;
+                updateHighlight(items);
+                e.preventDefault();
+            } else if (e.key === 'Enter' && highlightedIndex > -1) {
+                selectCounty(currentFiltered[highlightedIndex]);
+                e.preventDefault();
             }
         });
+
+        function updateHighlight(items) {
+            items.forEach((item, idx) => {
+                item.classList.toggle('highlighted', idx === highlightedIndex);
+                if (idx === highlightedIndex) item.scrollIntoView({ block: 'nearest' });
+            });
+        }
+
+        input.addEventListener('input', (e) => populateList(e.target.value));
+        input.addEventListener('focus', () => populateList(input.value));
+        document.addEventListener('click', (e) => { if (!e.target.closest('.custom-combobox')) list.classList.add('hidden'); });
     })();
 </script>

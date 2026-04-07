@@ -60,8 +60,8 @@
         }
 
         @media (min-width: 1024px) {
-            .sticky-wrapper { justify-content: flex-end; padding-right: 8%; }
-            .narrative { left: -30%; transform: none; max-width: 350px; }
+            .sticky-wrapper { justify-content: flex-end; padding-right: 5%; }
+            .narrative { left: -30%; transform: none; max-width: 450px; }
         }
     </style>
 </head>
@@ -123,7 +123,7 @@
         links: [{ source: 0, target: 1, value: 65 }, { source: 0, target: 2, value: 190 }, { source: 1, target: 3, value: 30 }, { source: 1, target: 4, value: 18 }]
     };
 
-    const = 400, height = 750; 
+    const width = 400, height = 750; 
     const svg = d3.select("#viz-svg").attr("viewBox", `0 0 ${width} ${height}`);
     
     const sankey = d3.sankey()
