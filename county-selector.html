@@ -14,21 +14,62 @@
     .lookup-header h2 { margin: 0; font-size: 1.2rem; color: #333; }
     .lookup-header p { margin: 5px 0 0; color: #666; font-size: 1rem; }
 
-    .select-wrapper { margin-bottom: 30px; }
-    #county-dropdown {
+    .select-wrapper { margin-bottom: 30px; position: relative; }
+    
+    /* Custom Searchable Dropdown Styles */
+    .custom-combobox {
+        position: relative;
         width: 100%;
-        padding: 12px;
-        font-size: 0.8em; /* Requested size */
-        border: 0px solid #eee;
+    }
+    #county-input {
+        width: 100%;
+        padding: 12px 40px 12px 12px;
+        font-size: 0.8em;
+        border: 1px solid #ddd;
         border-radius: 4px;
         background-color: #fcfcfc;
-        cursor: pointer;
-        transition: border-color 0.2s;
+        box-sizing: border-box;
+        cursor: text;
     }
-    #county-dropdown:focus {
+    #county-input:focus {
         outline: none;
         border-color: #FAC346;
     }
+    .chevron {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        color: #999;
+        pointer-events: none;
+    }
+    #county-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #ddd;
+        border-top: none;
+        max-height: 250px;
+        overflow-y: auto;
+        z-index: 1000;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    #county-list li {
+        padding: 10px 15px;
+        font-size: 0.9em;
+        cursor: pointer;
+        border-bottom: 1px solid #f5f5f5;
+    }
+    #county-list li:hover {
+        background-color: #fff9e6;
+    }
+    .hidden { display: none !important; }
 
     .results-box {
         padding: 30px;
@@ -38,37 +79,26 @@
         transition: all 0.3s ease;
     }
     .results-box.active {
-        border-left-color: #FAC346; /* Requested highlight */
+        border-left-color: #FAC346;
     }
     .county-name-label {
-        font-size: 1em; /* Requested size */
+        font-size: 1em;
         text-transform: uppercase;
         letter-spacing: 2px;
         color: #333;
         font-weight: 900;
         margin-bottom: 15px;
-        display: block;
-        background: #FAC346;
         display: inline-block;
+        background: #FAC346;
         padding: 2px 8px;
     }
     .finding-text p {
-        font-size: 1em; /* Requested size */
+        font-size: 1em;
         line-height: 1.5;
         color: #333;
         margin: 0 0 1.2rem 0;
     }
     .finding-text p:last-child { margin-bottom: 0; }
-    
-    .empty-state {
-        color: #aaa;
-        font-size: 1em;
-        font-style: italic;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 0px;
-    }
 </style>
 
 <!-- HTML Block -->
@@ -79,14 +109,15 @@
     </div>
 
     <div class="select-wrapper">
-        <select id="county-dropdown">
-            <option value="" disabled selected>Choose a county...</option>
-            <option>Adams</option><option>Alexander</option><option>Bond</option><option>Boone</option><option>Brown</option><option>Bureau</option><option>Calhoun</option><option>Carroll</option><option>Cass</option><option>Champaign</option><option>Christian</option><option>Clark</option><option>Clay</option><option>Clinton</option><option>Coles</option><option>Cook</option><option>Crawford</option><option>Cumberland</option><option>DeKalb</option><option>De Witt</option><option>Douglas</option><option>DuPage</option><option>Edgar</option><option>Edwards</option><option>Effingham</option><option>Fayette</option><option>Ford</option><option>Franklin</option><option>Fulton</option><option>Gallatin</option><option>Greene</option><option>Grundy</option><option>Hamilton</option><option>Hancock</option><option>Hardin</option><option>Henderson</option><option>Henry</option><option>Iroquois</option><option>Jackson</option><option>Jasper</option><option>Jefferson</option><option>Jersey</option><option>Jo Daviess</option><option>Johnson</option><option>Kane</option><option>Kankakee</option><option>Kendall</option><option>Knox</option><option>La Salle</option><option>Lake</option><option>Lawrence</option><option>Lee</option><option>Livingston</option><option>Logan</option><option>Macon</option><option>Macoupin</option><option>Madison</option><option>Marion</option><option>Marshall</option><option>Mason</option><option>Massac</option><option>McDonough</option><option>McHenry</option><option>McLean</option><option>Menard</option><option>Mercer</option><option>Monroe</option><option>Montgomery</option><option>Morgan</option><option>Moultrie</option><option>Ogle</option><option>Peoria</option><option>Perry</option><option>Piatt</option><option>Pike</option><option>Pope</option><option>Pulaski</option><option>Putnam</option><option>Randolph</option><option>Richland</option><option>Rock Island</option><option>Saint Clair</option><option>Saline</option><option>Sangamon</option><option>Schuyler</option><option>Scott</option><option>Shelby</option><option>Stark</option><option>Stephenson</option><option>Tazewell</option><option>Union</option><option>Vermilion</option><option>Wabash</option><option>Warren</option><option>Washington</option><option>Wayne</option><option>White</option><option>Whiteside</option><option>Will</option><option>Williamson</option><option>Winnebago</option><option>Woodford</option>
-        </select>
+        <div class="custom-combobox">
+            <input type="text" id="county-input" placeholder="Type or choose a county..." autocomplete="off">
+            <div class="chevron">▼</div>
+            <ul id="county-list" class="hidden"></ul>
+        </div>
     </div>
 
     <div class="results-box" id="results-area">
-        <div class="empty-state"></div>
+        <div class="empty-state" style="color: #aaa; font-style: italic; display: flex; align-items: center; justify-content: center; height: 40px;">Select a county above</div>
     </div>
 </div>
 
@@ -94,44 +125,74 @@
 <script>
     (function() {
         const countyData = {
-            "Adams": [
-                'Adams County’s mental health court launched in 2018, according to Anthony Foster, director of probation and court services. The court relies on periodic recertification by the Administrative Office of Illinois Courts and was certified in 2018, 2021, and 2024. “Adams County Mental Health Court is post-conviction so charges are not dismissed upon completion,” Foster said.',
-            ],
-            "Champaign": [
-                "Champaign County operated a mental health court for a couple years, ending in 2013, according to Lori Hansen, the county’s court administrator."
-            ],
-            "Christian": [
-                "Christian County’s mental health court launched in 2013 and has admitted 58 participants, according to Jaime Warren, Trial Court Administrator for the Fourth Judicial Circuit. Warren declined to provide additional information. The court is a hybrid with veterans court, according to the Administrative Office of the Illinois Courts."
-            ],
-            "Clay": [
-                "Clay County previously operated a mental health court but ended it in 2022 due to low numbers of participants, according to Jaime Warren, Trial Court Administrator for the Fourth Judicial Circuit."
-            ],
+            "Adams": ["Adams County’s mental health court launched in 2018, according to Anthony Foster, director of probation and court services. The court relies on periodic recertification by the Administrative Office of Illinois Courts and was certified in 2018, 2021, and 2024. “Adams County Mental Health Court is post-conviction so charges are not dismissed upon completion,” Foster said."],
+            "Champaign": ["Champaign County operated a mental health court for a couple years, ending in 2013, according to Lori Hansen, the county’s court administrator."],
+            "Christian": ["Christian County’s mental health court launched in 2013 and has admitted 58 participants, according to Jaime Warren, Trial Court Administrator for the Fourth Judicial Circuit. Warren declined to provide additional information. The court is a hybrid with veterans court, according to the Administrative Office of the Illinois Courts."],
+            "Clay": ["Clay County previously operated a mental health court but ended it in 2022 due to low numbers of participants, according to Jaime Warren, Trial Court Administrator for the Fourth Judicial Circuit."],
             "Cook": [
                 "The county’s first mental health court was established in 2004 in Chicago, according to Kelly Gallivan-Ilarraza, director of Problem-Solving Courts. Over the years, the Office of the Chief Judge established a mental health court in each of the municipal district courts, “to ensure access to justice to individuals throughout Cook County,” the court said.",
                 "Since then, 1,744 people have been admitted to Circuit Court of Cook County mental health courts, the court said. Of 1,573 people who have exited the program, 784 graduated, 91 were neutrally discharged, and 698 were unsuccessful.",
                 "The courts use a combination of state and county funds for mandatory team member salaries, in addition to community partnerships for treatment, Gallivan-Ilarraza said. “The teams are staffed through In-kind dedicated services from all stakeholder partners including judges; assistant state’s attorney, public defender, probation officers; and administrative support from a PSC Coordinator, employed by the Office of the Chief Judge.”",
                 "Case managers are contracted through NAMI Chicago, funded by the Office of the Chief Judge.” The courts also partner with the Friends of Recovery United, a local 501C-3, to provide incentives such as gift cards, along with transportation, housing and education resources. An Adult Redeploy Illinois grant for $299,975 is funding the county’s mental health courts this fiscal year.",
-                "“I do not have a figure or estimate for the dollar amount per person to operate,” Gallivan-Ilarraza said.",
+                "“I do not have a figure or estimate for the dollar amount per person to operate,” Gallivan-Ilarraza said."
             ],
+            "DeKalb": [
+                "DeKalb County’s mental health court launched in 2017 and has served 113 people, according to Mike Douglas, director of the county’s treatment courts. Of those, 71 graduated and 42 did not graduate. Of the people who were unsuccessful, all were sentenced to incarceration with the exception of four who were removed for a medical discharge.",
+                "“We keep track of demographic data, but unfortunately do not have a way to track recidivism, outside of the cases they may pick up within our County,” Douglas said. ",
+                "The county has a “very part time” program evaluator and accepts county residents with a pending felony in the county. About 35% of cases have their charges dismissed. “It is very case and State’s Attorney dependent,” Douglas said.",
+                "The court is largely funded by Adult Redeploy Illinois, Douglas said. “The cost to run specifically one of our courts would be difficult to compute, due to the overlap in staff and other resources,” he said.",
+                "The court is a hybrid with veterans court, according to the Administrative Office of the Illinois Courts."
+            ]
         };
 
-        const dropdown = document.getElementById('county-dropdown');
+        const validCounties = ["Adams", "Alexander", "Bond", "Boone", "Brown", "Bureau", "Calhoun", "Carroll", "Cass", "Champaign", "Christian", "Clark", "Clay", "Clinton", "Coles", "Cook", "Crawford", "Cumberland", "DeKalb", "De Witt", "Douglas", "DuPage", "Edgar", "Edwards", "Effingham", "Fayette", "Ford", "Franklin", "Fulton", "Gallatin", "Greene", "Grundy", "Hamilton", "Hancock", "Hardin", "Henderson", "Henry", "Iroquois", "Jackson", "Jasper", "Jefferson", "Jersey", "Jo Daviess", "Johnson", "Kane", "Kankakee", "Kendall", "Knox", "La Salle", "Lake", "Lawrence", "Lee", "Livingston", "Logan", "Macon", "Macoupin", "Madison", "Marion", "Marshall", "Mason", "Massac", "McDonough", "McHenry", "McLean", "Menard", "Mercer", "Monroe", "Montgomery", "Morgan", "Moultrie", "Ogle", "Peoria", "Perry", "Piatt", "Pike", "Pope", "Pulaski", "Putnam", "Randolph", "Richland", "Rock Island", "Saint Clair", "Saline", "Sangamon", "Schuyler", "Scott", "Shelby", "Stark", "Stephenson", "Tazewell", "Union", "Vermilion", "Wabash", "Warren", "Washington", "Wayne", "White", "Whiteside", "Will", "Williamson", "Winnebago", "Woodford"];
+
+        const input = document.getElementById('county-input');
+        const list = document.getElementById('county-list');
         const resultsArea = document.getElementById('results-area');
 
-        dropdown.addEventListener('change', function() {
-            const selected = this.value;
-            const paragraphs = countyData[selected] || ["This county is one of the 77 in Illinois without a mental health court. Twenty judicial circuits include at least one mental health court, and five do not, leaving more than 2 million Illinoisans without access to a mental health court in their county."];
+        // Populate list
+        function populateList(filter = '') {
+            list.innerHTML = '';
+            const filtered = validCounties.filter(c => c.toLowerCase().includes(filter.toLowerCase()));
             
-            resultsArea.classList.add('active');
-            
-            let html = `<span class="county-name-label">${selected} County</span>`;
-            html += `<div class="finding-text">`;
-            paragraphs.forEach(p => {
-                html += `<p>${p}</p>`;
+            if (filtered.length === 0) {
+                list.classList.add('hidden');
+                return;
+            }
+
+            filtered.forEach(county => {
+                const li = document.createElement('li');
+                li.textContent = county;
+                li.addEventListener('click', () => selectCounty(county));
+                list.appendChild(li);
             });
+            list.classList.remove('hidden');
+        }
+
+        function selectCounty(county) {
+            input.value = county;
+            list.classList.add('hidden');
+            showResults(county);
+        }
+
+        function showResults(selected) {
+            const paragraphs = countyData[selected] || ["This county is one of the 77 in Illinois without a mental health court. Twenty judicial circuits include at least one mental health court, and five do not, leaving more than 2 million Illinoisans without access to a mental health court in their county."];
+            resultsArea.classList.add('active');
+            let html = `<span class="county-name-label">${selected} County</span><div class="finding-text">`;
+            paragraphs.forEach(p => { html += `<p>${p}</p>`; });
             html += `</div>`;
-            
             resultsArea.innerHTML = html;
+        }
+
+        input.addEventListener('input', (e) => populateList(e.target.value));
+        input.addEventListener('focus', () => populateList(input.value));
+        
+        // Hide list when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.custom-combobox')) {
+                list.classList.add('hidden');
+            }
         });
     })();
 </script>
