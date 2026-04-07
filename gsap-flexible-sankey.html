@@ -66,20 +66,20 @@
     <div class="scroll-track">
         <div class="narrative">
             <div class="step-card">
-                <h3>Cook County Baseline</h3>
-                <p>We tracked 230 applications submitted to the state program in Cook County over a 12-month period.</p>
+                <h3>Tracking success</h3>
+                <p>Using data from <a href="http://courtservices.countyofkane.org/Documents/Annual%20Report%202024.pdf">Kane County</a>, we were able to track the outcomes of 224 cases that went through the 16th Circuit Treatment Alternative Court.</p>
             </div>
             <div class="step-card">
-                <h3>Initial Screening</h3>
-                <p>181 applications were rejected immediately, highlighting a major bottleneck in the vetting process.</p>
+                <h3>Few are accepted</h3>
+                <p>Of the applications, 81% were rejected, highlighting the relatively limited circumstances where a mental health court is used. </p>
             </div>
             <div class="step-card">
-                <h3>Final Verdicts</h3>
-                <p>Of the 49 accepted, 10 were ultimately committed to IDOC facilities, while others graduated or were discharged.</p>
+                <h3>It doesn't always work</h3>
+                <p>Of those accepted, 59% successfully completed the program. Half of those who failed the program were sent to a facility run by the state prison system.</p>
             </div>
-            <div class="step-card" style="border-color: #e63946; border-width: 2px;">
-                <h3>Comparison: DuPage</h3>
-                <p>In DuPage County, the volume was higher (400) but the acceptance rate was significantly more permissive.</p>
+            <div class="step-card" style="">
+                <h3>Other examples</h3>
+                <p>In Tazewell County, 38% of people who have gone through mental health court have graduated, but the overall structure of the program remained the same.</p>
             </div>
             <div class="step-card">
                 <h3>Systemic Patterns</h3>
@@ -92,15 +92,15 @@
 <script>
 (function() {
     const dataA = {
-        county: "Cook County",
-        nodes: [{ name: "Applications" }, { name: "Accepted" }, { name: "Rejected" }, { name: "Graduated" }, { name: "Discharged" }, { name: "IDOC" }],
-        links: [{ source: 0, target: 1, value: 49 }, { source: 0, target: 2, value: 181 }, { source: 1, target: 3, value: 29 }, { source: 1, target: 4, value: 10 }, { source: 1, target: 5, value: 10 }]
+        county: "Kane County",
+        nodes: [{ name: "Applications" }, { name: "Accepted" }, { name: "Rejected" }, { name: "Successful" }, { name: "Failed" }],
+        links: [{ source: 0, target: 1, value: 49 }, { source: 0, target: 2, value: 181 }, { source: 1, target: 3, value: 29 }, { source: 1, target: 4, value: 20 }]
     };
 
     const dataB = {
-        county: "DuPage County",
+        county: "Tazewell County",
         nodes: dataA.nodes.map(n => ({...n})),
-        links: [{ source: 0, target: 1, value: 250 }, { source: 0, target: 2, value: 150 }, { source: 1, target: 3, value: 150 }, { source: 1, target: 4, value: 50 }, { source: 1, target: 5, value: 50 }]
+        links: [{ source: 0, target: 1, value: 82 }, { source: 0, target: 2, value: 293 }, { source: 1, target: 3, value: 31 }, { source: 1, target: 4, value: 51 }]
     };
 
     const width = 400, height = 750; 
