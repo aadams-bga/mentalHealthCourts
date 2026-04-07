@@ -7,115 +7,109 @@
     <!-- Dependencies -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fff; color: #333; }
-        
-        .timeline-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+        /* Scoped to prevent bleeding into other page elements */
+        #mhc-timeline-tool {
+            margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fff; color: #333;
+            display: flex; flex-direction: column; height: 100vh; overflow: hidden;
         }
 
         /* Layout Grid */
         @media (min-width: 1024px) {
-            .timeline-container { flex-direction: row; }
-            .sidebar { width: 33%; padding: 40px; position: sticky; top: 0; height: 100vh; box-sizing: border-box; border-right: 1px solid #eee; overflow-y: auto; }
-            .map-area { width: 67%; height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; }
+            #mhc-timeline-tool.timeline-container { flex-direction: row; }
+            #mhc-timeline-tool .sidebar { width: 33%; padding: 40px; position: sticky; top: 0; height: 100vh; box-sizing: border-box; border-right: 1px solid #eee; overflow-y: auto; }
+            #mhc-timeline-tool .map-area { width: 67%; height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; }
         }
 
-        .sidebar { padding: 20px; background: #fff; z-index: 10; }
-        .map-area { padding: 20px; flex-grow: 1; display: flex; align-items: center; justify-content: center; background: #fff; overflow: hidden; }
+        /* Mobile Layout */
+        @media (max-width: 1023px) {
+            #mhc-timeline-tool .sidebar { height: auto; max-height: 40vh; padding: 15px; border-bottom: 1px solid #eee; overflow-y: auto; }
+            #mhc-timeline-tool .map-area { height: 60vh; padding: 0; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+            #mhc-timeline-tool h2 { font-size: 1.1rem !important; margin-bottom: 5px !important; }
+            #mhc-timeline-tool p { font-size: 9.5pt !important; margin-bottom: 8px !important; }
+            #mhc-timeline-tool #play-btn { font-size: 14pt !important; min-width: 40px !important; }
+            #mhc-timeline-tool .active-year-display { font-size: 22pt !important; min-width: 80px !important; }
+        }
 
-        /* Typography */
-        h2 { font-size: 1.8rem; margin-bottom: 15px; line-height: 1.2; }
-        p { font-size: 12pt; line-height: 1.6; color: #555; }
-        .active-year-display { font-size: 48pt; font-weight: 900; color: #FAC346; margin: 20px 0; letter-spacing: -2px; }
+        #mhc-timeline-tool .sidebar { background: #fff; z-index: 10; }
+        #mhc-timeline-tool .map-area { background: #fff; }
 
-        /* Controls */
-        .controls { margin-top: 30px; display: flex; flex-direction: column; gap: 20px; }
+        #mhc-timeline-tool h2 { font-size: 1.8rem; margin-bottom: 15px; line-height: 1.2; font-weight: 700; color: #333; }
+        #mhc-timeline-tool p { font-size: 12pt; line-height: 1.6; color: #555; }
         
-        #play-btn {
-            background: #333; color: white; border: none; padding: 12px 24px;
-            border-radius: 4px; cursor: pointer; font-size: 12pt; font-weight: bold;
-            transition: background 0.2s; width: 100%; max-width: 120px;
-        }
-        #play-btn:hover { background: #000; }
+        #mhc-timeline-tool .controls { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+        #mhc-timeline-tool .play-row { display: flex; align-items: center; gap: 15px; width: 100%; height: 50px; }
         
-        /* Minimalist Slider (Dot on Line) */
-        .slider-row { width: 100%; padding-top: 20px; }
-        #year-slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 4px;
-            background: #eee;
-            border-radius: 2px;
-            outline: none;
-            cursor: pointer;
+        #mhc-timeline-tool .active-year-display { 
+            font-size: 32pt; font-weight: 900; color: #333; letter-spacing: -1px; line-height: 1; min-width: 110px;
         }
-        #year-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            background: #FAC346;
-            border-radius: 50%;
-            border: 2px solid #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+
+        #mhc-timeline-tool #play-btn {
+            background: transparent !important; color: #333 !important; border: none !important; 
+            cursor: pointer; font-size: 18pt; width: 40px; height: 40px; 
+            display: flex; align-items: center; justify-content: center;
+            transition: color 0.2s; padding: 0 !important; margin: 0 !important;
+            box-shadow: none !important;
         }
-        #year-slider::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            background: #FAC346;
-            border-radius: 50%;
-            border: 2px solid #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        #mhc-timeline-tool #play-btn:hover { color: #FAC346 !important; }
+        
+        #mhc-timeline-tool .slider-row { width: 100%; flex-grow: 1; display: flex; align-items: center; height: 100%; }
+        
+        /* SELF-CONTAINED SLIDER LOGIC */
+        #mhc-timeline-tool #year-slider {
+            -webkit-appearance: none; width: 100%; height: 20px; background: transparent; outline: none; cursor: pointer; margin: 0;
+        }
+        /* Track (The Line) */
+        #mhc-timeline-tool #year-slider::-webkit-slider-runnable-track {
+            width: 100%; height: 1px; background: #333; border: none;
+        }
+        #mhc-timeline-tool #year-slider::-moz-range-track {
+            width: 100%; height: 1px; background: #333; border: none;
+        }
+        /* Thumb (The Dot) */
+        #mhc-timeline-tool #year-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #FAC346; 
+            border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            margin-top: -7.5px; /* Centers dot on 1px track: (TrackH/2)-(ThumbH/2) = 0.5-8 = -7.5 */
+        }
+        #mhc-timeline-tool #year-slider::-moz-range-thumb {
+            height: 16px; width: 16px; border-radius: 50%; background: #FAC346; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
 
         /* Map Styling */
-        #il-map { width: 100%; max-width: 500px; height: auto; display: block; pointer-events: all; }
-        path {
-            fill: #444; 
-            stroke: #555; 
-            stroke-width: 40;
+        #mhc-timeline-tool #il-map { width: 100%; height: 100%; max-width: 550px; display: block; pointer-events: all; }
+        #mhc-timeline-tool path {
+            fill: #444; stroke: #555; stroke-width: 40;
             transition: fill 0.4s ease, stroke 0.4s ease;
-            cursor: pointer;
-            pointer-events: all;
+            cursor: pointer; pointer-events: all;
         }
-        path:hover { stroke: #FAC346; stroke-width: 150; }
-        path.established { fill: #FAC346 !important; stroke: #d4a017 !important; }
+        #mhc-timeline-tool path:hover { stroke: #FAC346; stroke-width: 150; }
+        #mhc-timeline-tool path.established { fill: #FAC346 !important; stroke: #d4a017 !important; }
 
         /* Tooltip */
-        #map-tooltip {
-            position: fixed;
-            background: #fff;
-            border: 2px solid #333;
-            padding: 15px;
-            pointer-events: none;
-            display: none;
-            z-index: 9999;
-            max-width: 280px;
-            font-size: 12pt;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        #mhc-timeline-tool #map-tooltip {
+            position: fixed; background: #fff; border: 2px solid #333; padding: 15px;
+            pointer-events: none; display: none; z-index: 9999; max-width: 280px;
+            font-size: 11pt; line-height: 1.4; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
-        #map-tooltip b { display: block; font-size: 14pt; margin-bottom: 6px; color: #000; text-transform: uppercase; }
+        #mhc-timeline-tool #map-tooltip b { display: block; font-size: 13pt; margin-bottom: 4px; color: #000; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-<div class="timeline-container">
+<div id="mhc-timeline-tool" class="timeline-container">
     <div class="sidebar">
         <h2>More than 30 mental health courts have opened since 2004</h2>
         <p>Watch how these specialized courts expanded across Illinois since 2000.</p>
         
-        <div class="active-year-display" id="year-label">2000</div>
-
         <div class="controls">
-            <div>
-                <button id="play-btn">PLAY</button>
+            <div class="play-row">
+                <div class="active-year-display" id="year-label">2000</div>
+                <button id="play-btn">▶</button>
+                <div class="slider-row">
+                    <input type="range" id="year-slider" min="2000" max="2024" value="2000" step="1">
+                </div>
             </div>
-            <div class="slider-row">
-                <input type="range" id="year-slider" min="2000" max="2024" value="2000">
-            </div>
-            <p style="font-size: 10pt; color: #999;">Hover over highlighted counties for details.</p>
+            <p style="font-size: 9pt; color: #999; margin: 0;">Tap Amber counties for investigation details.</p>
         </div>
     </div>
 
@@ -231,48 +225,40 @@
 
 <script>
 (function() {
-    // DATA
     const courtData = {
-        "Christian": { year : 2013, note: "The <b>Christian County Mental Health Court (hybrid with Veterans Court)</b> started in 2013 and has been certified by the Illinois Supreme Court twice since then. It is part of the 4th judicial circuit. The court receives state support through Adult Redeploy Illinois. <a href=\"https://www.kendallcountyil.gov/offices/judiciary/problem-solving-courts/mental-health-court#:~:text=All%20participants%20must%20receive%20approval,Family%20Counseling%20Service:%20Danielle%20Anderson\">Find out more.<a>" },"Kendall": { year : 2021, note: "The <b>Kendall County Mental Health Court (hybrid with Veterans Court)</b> started in 2021 and has been certified by the Illinois Supreme Court twice since then. It is part of the 23rd judicial circuit. " },"Clay": { year : "-2022", note: "The <b>Clay County Mental Health Court</b> shut down in 2022. Court officials refused to provide information about when it began operating. It is part of the 4th judicial circuit." },"Jasper": { year : "-2022", note: "The <b>Jasper County Mental Health Court</b> shut down in 2022. Court officials refused to provide information about when it began operating. It is part of the 4th judicial circuit." },"Champaign": { year : "2011-2013", note: "The <b>Champaign County Mental Health Court</b> started in 2011 and closed in 2013. It was part of the 6th judicial circuit." },"Lee": { year : "2008-2016", note: "The <b>Lee County Mental Health Court</b> started in 2008 and closed in 2016. It was part of the 15th judicial circuit." },"Madison": { year : 2006, note: "The <b>Madison County Mental Health Court</b> started in 2006 and has been certified by the Illinois Supreme Court three times since then. It is part of the 3rd judicial circuit. The court receives state support through Adult Redeploy Illinois. <a href=\"https://effinghamcountyil.gov/probation/adult-services/\">Find out more.<a>" },"Effingham": { year : 2013, note: "The <b>Effingham County Mental Health Court</b> started in 2013 and has been certified by the Illinois Supreme Court twice since then. It is part of the 4th judicial circuit. The court receives state support through Adult Redeploy Illinois. <a href=\"https://effinghamcountyil.gov/probation/adult-services/\">Find out more.<a>" },"Winnebago": { year : 2011, note: "The <b>Winnebago County Mental Health Court</b> started in 2011 and has been certified by the Illinois Supreme Court twice since then. It is part of the 17th judicial circuit. The court receives state support through Adult Redeploy Illinois." },"Peoria": { year : 2008, note: "The <b>Peoria County Mental Health Court</b> started in 2008 and has been certified by the Illinois Supreme Court three times since then. It is part of the 10th judicial circuit. The court receives state support through Adult Redeploy Illinois. <a href=\"https://www.peoriacounty.gov/461/Mental-Health-Court\">Find out more.<a>" },"Tazewell": { year : 2007, note: "The <b>Tazewell County Mental Health Court</b> started in 2007 and has been certified by the Illinois Supreme Court three times since then. It is part of the 10th judicial circuit. The court receives state support through Adult Redeploy Illinois." },"Will": { year : 2010, note: "The <b>Will County Mental Health Court</b> started in 2010 and has been certified by the Illinois Supreme Court three times since then. It is part of the 12th judicial circuit. The court receives state support through Adult Redeploy Illinois. <a href=\"https://www.willcountycircuitcourt.com/court-services/specialty-courts/mental-health-court\">Find out more.<a>" },"Kane": { year : 2006, note: "The <b>Kane County Mental Health Court</b> started in 2006 and has been certified by the Illinois Supreme Court three times since then. It is part of the 16th judicial circuit. The court receives state support through Adult Redeploy Illinois. <a href=\"https://www.illinois16thjudicialcircuit.org/Pages/MentalHealthCourt.aspx\">Find out more.<a>" },"Lake": { year : 2007, note: "The <b>Lake County Mental Health Court</b> started in 2007 and has been certified by the Illinois Supreme Court three times since then. It is part of the 19th judicial circuit. The court receives state support through Adult Redeploy Illinois. <a href=\"https://www.lakecountyil.gov/2114/Mental-Health-Court\">Find out more.<a>" },"Cook": { year : 2004, note: "The <b>Cook County Mental Health Court</b> started in 2004 and has been certified by the Illinois Supreme Court three times since then. It is part of the Cook County judicial circuit. The court receives state support through Adult Redeploy Illinois. <a href=\"https://www.cookcountycourt.org/ABOUT-THE-COURT/Office-of-the-Chief-Judge/Problem-Solving-Courts/Mental-Health-Court\">Find out more.<a>" },"DuPage": { year : 2011, note: "The <b>DuPage County Mental Health Court (hybrid with Veterans Court)</b> started in 2011 and has been certified by the Illinois Supreme Court twice since then. It is part of the 18th judicial circuit. The court receives state support through Adult Redeploy Illinois. <a href=\"https://www.dupagecounty.gov/government/circuit_court/specialty_courts/index.php\">Find out more.<a>" },"McLean": { year : 2007, note: "The <b>McLean County Mental Health Court</b> started in 2007 and has been certified by the Illinois Supreme Court twice since then. It is part of the 11th judicial circuit. The court receives state support through Adult Redeploy Illinois. <a href=\"https://www.mcleancountyil.gov/101/Mental-Health-Court\">Find out more.<a>" },"Adams": { year : 2018, note: "The <b>Adams County Mental Health Court</b> started in 2018 and has been certified by the Illinois Supreme Court twice since then. It is part of the 8th judicial circuit. The court receives state support through Adult Redeploy Illinois." },"Saint_Clair": { year : 2006, note: "The <b>St. Clair County Mental Health Court</b> started in 2006 and has been certified by the Illinois Supreme Court twice since then. It is part of the 20th judicial circuit. The court receives state support through Adult Redeploy Illinois. <a href=\"https://www.scproprobation.org/mental-health-court/\">Find out more.<a>" },"Sangamon": { year : 2013, note: "The <b>Sangamon County Mental Health Court</b> started in 2013 and has been certified by the Illinois Supreme Court twice since then. It is part of the 7th judicial circuit. The court receives state support through Adult Redeploy Illinois. <a href=\"https://sangamoncountycircuitclerk.org/Courts/MentalHealthCourt.aspx\">Find out more.<a>" }
+        "Christian": { year : 2013, note: "The <b>Christian County Mental Health Court (hybrid with Veterans Court)</b> started in 2013 and has been certified twice. It is part of the 4th judicial circuit." },"Kendall": { year : 2021, note: "The <b>Kendall County Mental Health Court</b> started in 2021 and has been certified by the Illinois Supreme Court twice." },"Clay": { year : "-2022", note: "The <b>Clay County Mental Health Court</b> shut down in 2022. It was part of the 4th judicial circuit." },"Jasper": { year : "-2022", note: "The <b>Jasper County Mental Health Court</b> shut down in 2022. It was part of the 4th judicial circuit." },"Champaign": { year : "2011-2013", note: "The <b>Champaign County Mental Health Court</b> started in 2011 and closed in 2013." },"Lee": { year : "2008-2016", note: "The <b>Lee County Mental Health Court</b> started in 2008 and closed in 2016." },"Madison": { year : 2006, note: "The <b>Madison County Mental Health Court</b> started in 2006. It receives state support through Adult Redeploy Illinois." },"Effingham": { year : 2013, note: "The <b>Effingham County Mental Health Court</b> started in 2013 and has been certified twice." },"Winnebago": { year : 2011, note: "The <b>Winnebago County Mental Health Court</b> started in 2011 and has been certified twice." },"Peoria": { year : 2008, note: "The <b>Peoria County Mental Health Court</b> started in 2008. Certified three times since then." },"Tazewell": { year : 2007, note: "The <b>Tazewell County Mental Health Court</b> started in 2007." },"Will": { year : 2010, note: "The <b>Will County Mental Health Court</b> started in 2010." },"Kane": { year : 2006, note: "The <b>Kane County Mental Health Court</b> started in 2006. Part of the 16th circuit." },"Lake": { year : 2007, note: "The <b>Lake County Mental Health Court</b> started in 2007." },"Cook": { year : 2004, note: "The <b>Cook County Mental Health Court</b> started in 2004. First in the state." },"DuPage": { year : 2011, note: "The <b>DuPage County Mental Health Court</b> started in 2011." },"McLean": { year : 2007, note: "The <b>McLean County Mental Health Court</b> started in 2007." },"Adams": { year : 2018, note: "The <b>Adams County Mental Health Court</b> started in 2018." },"Saint_Clair": { year : 2006, note: "The <b>St. Clair County Mental Health Court</b> started in 2006." },"Sangamon": { year : 2013, note: "The <b>Sangamon County Mental Health Court</b> started in 2013." }
     };
 
-    const slider = document.getElementById('year-slider');
-    const yearLabel = document.getElementById('year-label');
-    const playBtn = document.getElementById('play-btn');
-    const tooltip = document.getElementById('map-tooltip');
+    const root = document.getElementById('mhc-timeline-tool');
+    const slider = root.querySelector('#year-slider');
+    const yearLabel = root.querySelector('#year-label');
+    const playBtn = root.querySelector('#play-btn');
+    const tooltip = root.querySelector('#map-tooltip');
     let isPlaying = false;
     let timer;
 
     function updateMap(year) {
         yearLabel.textContent = year;
-        const paths = document.querySelectorAll('#counties-group path');
+        const paths = root.querySelectorAll('#counties-group path');
         paths.forEach(p => {
             const id = p.getAttribute('id');
             const data = courtData[id];
             if (data) { 
-                const startYearStr = String(data.year).split("-")[0].replace(/[^-0-9]/g,"");
-                const startYear = Math.abs(parseInt(startYearStr));
-                if (!isNaN(startYear) && startYear <= year) {
-                    p.classList.add('established');
-                } else {
-                    p.classList.remove('established');
-                }
-            } else {
-                p.classList.remove('established');
-            }
+                const startYear = Math.abs(parseInt(String(data.year).split("-")[0]));
+                if (!isNaN(startYear) && startYear <= year) { p.classList.add('established'); }
+                else { p.classList.remove('established'); }
+            } else { p.classList.remove('established'); }
         });
     }
 
     function setupInteractions() {
-        const paths = document.querySelectorAll('#counties-group path');
+        const paths = root.querySelectorAll('#counties-group path');
         paths.forEach(p => {
             p.addEventListener('mouseover', function(e) {
                 const id = this.getAttribute('id');
                 const data = courtData[id];
                 if (!data) return;
-                
-                const startYearStr = String(data.year).split("-")[0].replace(/[^-0-9]/g,"");
-                const startYear = Math.abs(parseInt(startYearStr));
+                const startYear = Math.abs(parseInt(String(data.year).split("-")[0]));
                 if (isNaN(startYear) || startYear > parseInt(slider.value)) return;
 
                 tooltip.style.display = 'block';
@@ -280,55 +266,53 @@
             });
 
             p.addEventListener('mousemove', function(e) {
-                // Edge detection: Flip tooltip if it would go off-screen
-                const tooltipWidth = tooltip.offsetWidth;
+                const rect = tooltip.getBoundingClientRect();
+                const tooltipWidth = rect.width || 240;
+                const tooltipHeight = rect.height || 120;
                 const screenWidth = window.innerWidth;
-                let x = e.clientX + 20;
-                if (x + tooltipWidth > screenWidth) {
-                    x = e.clientX - tooltipWidth - 20;
+                const screenHeight = window.innerHeight;
+
+                let x = e.clientX + 15;
+                let y = e.clientY + 15;
+
+                if (window.innerWidth < 1024) {
+                    tooltip.style.left = '10px'; tooltip.style.right = '10px'; tooltip.style.bottom = '10px';
+                    tooltip.style.top = 'auto'; tooltip.style.width = 'auto'; tooltip.style.maxWidth = 'none';
+                } else {
+                    if (x + tooltipWidth > screenWidth) x = e.clientX - tooltipWidth - 15;
+                    if (y + tooltipHeight > screenHeight) y = e.clientY - tooltipHeight - 15;
+                    tooltip.style.left = x + 'px';
+                    tooltip.style.top = y + 'px';
                 }
-                
-                tooltip.style.left = x + 'px';
-                tooltip.style.top = (e.clientY + 20) + 'px';
             });
 
-            p.addEventListener('mouseout', function() {
-                tooltip.style.display = 'none';
-            });
+            p.addEventListener('mouseout', function() { tooltip.style.display = 'none'; });
         });
     }
 
     function togglePlay() {
         isPlaying = !isPlaying;
-        playBtn.textContent = isPlaying ? "PAUSE" : "PLAY";
+        playBtn.textContent = isPlaying ? "❙ ❙" : "▶";
         if (isPlaying) {
             if (parseInt(slider.value) >= 2024) slider.value = 2000;
             timer = setInterval(() => {
                 let val = parseInt(slider.value) + 1;
                 slider.value = val;
                 updateMap(val);
-                if (val >= 2024) { 
-                    isPlaying = false;
-                    playBtn.textContent = "PLAY";
-                    clearInterval(timer); 
-                }
+                if (val >= 2024) { isPlaying = false; playBtn.textContent = "▶"; clearInterval(timer); }
             }, 400);
         } else { clearInterval(timer); }
     }
 
     slider.addEventListener('input', (e) => {
-        if (isPlaying) {
-            isPlaying = false;
-            playBtn.textContent = "PLAY";
-            clearInterval(timer);
-        }
+        if (isPlaying) { isPlaying = false; playBtn.textContent = "▶"; clearInterval(timer); }
         updateMap(e.target.value);
     });
 
     playBtn.addEventListener('click', togglePlay);
 
     const checkReady = setInterval(() => {
-        const paths = document.querySelectorAll('#counties-group path');
+        const paths = root.querySelectorAll('#counties-group path');
         if (paths.length > 0) {
             updateMap(2000);
             setupInteractions();
