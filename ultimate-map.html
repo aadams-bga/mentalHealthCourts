@@ -1,122 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Illinois Investigation: Timeline Map</title>
-    <!-- Dependencies -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <style>
-        /* Scoped to prevent bleeding into other page elements */
-        #mhc-timeline-tool {
-            margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fff; color: #333;
-            display: flex; flex-direction: column; height: 100vh; overflow: hidden;
-        }
-
-        /* Layout Grid */
-        @media (min-width: 1024px) {
-            #mhc-timeline-tool.timeline-container { flex-direction: row; }
-            #mhc-timeline-tool .sidebar { width: 33%; padding: 40px; position: sticky; top: 0; height: 100vh; box-sizing: border-box; border-right: 1px solid #eee; overflow-y: auto; }
-            #mhc-timeline-tool .map-area { width: 67%; height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; }
-        }
-
-        /* Mobile Layout */
-        @media (max-width: 1023px) {
-            #mhc-timeline-tool .sidebar { height: auto; max-height: 40vh; padding: 15px; border-bottom: 1px solid #eee; overflow-y: auto; }
-            #mhc-timeline-tool .map-area { height: 60vh; padding: 0; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-            #mhc-timeline-tool h2 { font-size: 1.1rem !important; margin-bottom: 5px !important; }
-            #mhc-timeline-tool p { font-size: 9.5pt !important; margin-bottom: 8px !important; }
-            #mhc-timeline-tool #play-btn { font-size: 14pt !important; min-width: 40px !important; }
-            #mhc-timeline-tool .active-year-display { font-size: 22pt !important; min-width: 80px !important; }
-        }
-
-        #mhc-timeline-tool .sidebar { background: #fff; z-index: 10; }
-        #mhc-timeline-tool .map-area { background: #fff; }
-
-        #mhc-timeline-tool h2 { font-size: 1.8rem; margin-bottom: 15px; line-height: 1.2; font-weight: 700; color: #333; }
-        #mhc-timeline-tool p { font-size: 12pt; line-height: 1.6; color: #555; }
+<!-- CSS Block -->
+<style>
+    #mhc-ultimate-v2 {
+        --amber: #FAC346;
+        --dark-bg: #222;
+        --ghost-gray: #444;
+        --text-main: #333;
+        --text-dim: #666;
         
-        #mhc-timeline-tool .controls { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
-        #mhc-timeline-tool .play-row { display: flex; align-items: center; gap: 15px; width: 100%; height: 50px; }
-        
-        #mhc-timeline-tool .active-year-display { 
-            font-size: 32pt; font-weight: 900; color: #333; letter-spacing: -1px; line-height: 1; min-width: 110px;
-        }
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+        background: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
 
-        #mhc-timeline-tool #play-btn {
-            background: transparent !important; color: #333 !important; border: none !important; 
-            cursor: pointer; font-size: 18pt; width: 40px; height: 40px; 
-            display: flex; align-items: center; justify-content: center;
-            transition: color 0.2s; padding: 0 !important; margin: 0 !important;
-            box-shadow: none !important;
-        }
-        #mhc-timeline-tool #play-btn:hover { color: #FAC346 !important; }
-        
-        #mhc-timeline-tool .slider-row { width: 100%; flex-grow: 1; display: flex; align-items: center; height: 100%; }
-        
-        /* SELF-CONTAINED SLIDER LOGIC */
-        #mhc-timeline-tool #year-slider {
-            -webkit-appearance: none; width: 100%; height: 20px; background: transparent; outline: none; cursor: pointer; margin: 0;
-        }
-        /* Track (The Line) */
-        #mhc-timeline-tool #year-slider::-webkit-slider-runnable-track {
-            width: 100%; height: 1px; background: #333; border: none;
-        }
-        #mhc-timeline-tool #year-slider::-moz-range-track {
-            width: 100%; height: 1px; background: #333; border: none;
-        }
-        /* Thumb (The Dot) */
-        #mhc-timeline-tool #year-slider::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #FAC346; 
-            border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-            margin-top: -7.5px; /* Centers dot on 1px track: (TrackH/2)-(ThumbH/2) = 0.5-8 = -7.5 */
-        }
-        #mhc-timeline-tool #year-slider::-moz-range-thumb {
-            height: 16px; width: 16px; border-radius: 50%; background: #FAC346; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
+    #mhc-ultimate-v2 .main-header {
+        width: 100%;
+        padding: 15px 30px 0px 30px;
+        box-sizing: border-box;
+        background: #fff;
+        z-index: 20;
+    }
 
-        /* Map Styling */
-        #mhc-timeline-tool #il-map { width: 100%; height: 100%; max-width: 550px; display: block; pointer-events: all; }
-        #mhc-timeline-tool path {
-            fill: #444; stroke: #555; stroke-width: 40;
-            transition: fill 0.4s ease, stroke 0.4s ease;
-            cursor: pointer; pointer-events: all;
+    /* Desktop Grid: Perfect Top Alignment */
+    @media (min-width: 1024px) {
+        #mhc-ultimate-v2 .content-wrapper { display: flex; flex-direction: row; flex-grow: 1; overflow: hidden; }
+        #mhc-ultimate-v2 .sidebar { 
+            width: 40%; 
+            padding: 0 30px 30px 30px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: flex-start;
         }
-        #mhc-timeline-tool path:hover { stroke: #FAC346; stroke-width: 150; }
-        #mhc-timeline-tool path.established { fill: #FAC346 !important; stroke: #d4a017 !important; }
-
-        /* Tooltip */
-        #mhc-timeline-tool #map-tooltip {
-            position: fixed; background: #fff; border: 2px solid #333; padding: 15px;
-            pointer-events: none; display: none; z-index: 9999; max-width: 280px;
-            font-size: 11pt; line-height: 1.4; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        #mhc-ultimate-v2 .map-area { 
+            width: 60%; 
+            position: relative; 
+            display: flex; 
+            align-items: flex-start; /* ALIGN TO TOP */
+            justify-content: center; 
+            padding: 0 20px 20px 20px; 
         }
-        #mhc-timeline-tool #map-tooltip b { display: block; font-size: 13pt; margin-bottom: 4px; color: #000; text-transform: uppercase; }
-    </style>
-</head>
-<body>
+        #mhc-ultimate-v2 .active-year { font-size: 56pt; margin-bottom: 5px; }
+    }
 
-<div id="mhc-timeline-tool" class="timeline-container">
-    <div class="sidebar">
-        <h2>More than 30 mental health courts have opened since 2004</h2>
-        <p>Watch how these specialized courts expanded across Illinois since 2000.</p>
+    /* Mobile: Centered App-like */
+    @media (max-width: 1023px) {
+        #mhc-ultimate-v2 .main-header { padding: 10px 15px 0 15px; text-align: center; }
+        #mhc-ultimate-v2 .content-wrapper { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
+        #mhc-ultimate-v2 .sidebar { height: 35vh; padding: 10px 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        #mhc-ultimate-v2 .map-area { height: 65vh; position: relative; display: flex; align-items: center; justify-content: center; }
+        #mhc-ultimate-v2 h2 { font-size: 1.2rem !important; margin: 0 !important; }
+        #mhc-ultimate-v2 .description { font-size: 9pt !important; margin: 5px 0 !important; max-width: 300px; }
+        #mhc-ultimate-v2 .active-year { font-size: 24pt !important; min-width: 80px !important; }
         
-        <div class="controls">
-            <div class="play-row">
-                <div class="active-year-display" id="year-label">2000</div>
-                <button id="play-btn">▶</button>
-                <div class="slider-row">
-                    <input type="range" id="year-slider" min="2000" max="2024" value="2000" step="1">
-                </div>
-            </div>
-            <p style="font-size: 9pt; color: #999; margin: 0;">Tap Amber counties for investigation details.</p>
-        </div>
+        #mhc-ultimate-v2 #map-tooltip {
+            position: absolute !important;
+            top: 0 !important; left: 0 !important; right: 0 !important; bottom: auto !important;
+            width: 100% !important; max-width: none !important;
+            border: none !important; border-bottom: 3px solid var(--amber) !important;
+            border-radius: 0 !important; box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+            background: rgba(255,255,255,0.98) !important;
+            text-align: center; padding: 10px !important;
+        }
+    }
+
+    /* Typography */
+    #mhc-ultimate-v2 h2 { font-size: 1.8rem; font-weight: 800; color: var(--text-main); line-height: 1.1; }
+    #mhc-ultimate-v2 .description { font-size: 11pt; line-height: 1.5; color: var(--text-dim); }
+
+    /* Controls */
+    #mhc-ultimate-v2 .controls { width: 100%; }
+    #mhc-ultimate-v2 .controls-row { display: flex; align-items: center; width: 100%; gap: 15px; justify-content: center; }
+    #mhc-ultimate-v2 .active-year { font-weight: 900; color: var(--text-main); letter-spacing: -2px; line-height: 1; }
+
+    #mhc-ultimate-v2 #play-btn {
+        background: transparent !important; border: none !important; color: var(--text-main) !important;
+        cursor: pointer; font-size: 20pt; width: 40px; height: 40px;
+        display: flex; align-items: center; justify-content: center;
+        transition: color 0.2s; padding: 0 !important; margin: 0 !important;
+    }
+    #mhc-ultimate-v2 #play-btn:hover { color: var(--amber) !important; }
+
+    #mhc-ultimate-v2 .slider-container { flex-grow: 1; display: flex; align-items: center; max-width: 350px; }
+    #mhc-ultimate-v2 #year-slider { -webkit-appearance: none; width: 100%; height: 20px; background: transparent; outline: none; cursor: pointer; margin: 0; }
+    #mhc-ultimate-v2 #year-slider::-webkit-slider-runnable-track { width: 100%; height: 1px; background: #333; }
+    #mhc-ultimate-v2 #year-slider::-webkit-slider-thumb {
+        -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; background: var(--amber); border: none; margin-top: -6.5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* Map Styling */
+    #mhc-ultimate-v2 #il-map-svg { width: 100%; height: 100%; max-width: 600px; display: block; }
+    #mhc-ultimate-v2 path { fill: var(--ghost-gray); stroke: none; transition: fill 0.5s ease; cursor: pointer; }
+    #mhc-ultimate-v2 path.is-established { fill: var(--amber); }
+    #mhc-ultimate-v2 path:hover { opacity: 0.8; }
+
+    /* Tooltip */
+    #mhc-ultimate-v2 #map-tooltip {
+        position: fixed; background: #fff; border: none; border-left: 4px solid var(--amber); 
+        padding: 12px 16px; pointer-events: none; display: none; z-index: 9999; 
+        max-width: 260px; font-size: 11pt; line-height: 1.4; 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 2px;
+    }
+    #mhc-ultimate-v2 #map-tooltip b { display: block; font-size: 13pt; margin-bottom: 4px; color: #000; text-transform: uppercase; letter-spacing: 0.5px; }
+</style>
+
+<!-- HTML Block -->
+<div id="mhc-ultimate-v2">
+    <div class="main-header">
+        <h2>Mapping the Expansion</h2>
     </div>
+    
+    <div class="content-wrapper">
+        <div class="sidebar">
+            <p class="description">Watch how specialized mental health courts grew from a single pilot program in Chicago to a state-wide network over two decades.</p>
+            
+            <div class="controls">
+                <div class="active-year" id="year-label">2000</div>
+                <div class="controls-row">
+                    <button id="play-btn">▶</button>
+                    <div class="slider-container">
+                        <input type="range" id="year-slider" min="2000" max="2024" value="2000" step="1">
+                    </div>
+                </div>
+                <p style="font-size: 8pt; color: #999; margin-top: 10px;">Tap Amber areas for details.</p>
+            </div>
+        </div>
 
-    <div class="map-area">
-        <div id="map-tooltip"></div>
-        <svg id="il-map" viewBox="-18279,-26465 34534,61566" preserveAspectRatio="xMidYMid meet">
-            <g id="counties-group"><path id="Adams" d="M -13145,-771 l -28,971 -28,957 -10,232 -16,95 -17,655 -12,956 -28,972 -964,-23 -1015,-28 -995,-29 -868,-23 2,-14 0,-81 4,-35 7,-40 17,-49 9,-47 0,-55 -10,-51 -18,-45 -28,-56 -40,-47 -79,-93 -60,-62 -57,-40 -48,-35 -74,-56 -70,-37 -46,-29 -35,-31 -39,-62 -30,-73 -32,-75 -28,-82 -8,-51 -9,-50 8,-71 7,-55 12,-55 33,-64 39,-46 3,-4 38,-38 27,-34 29,-29 26,-36 26,-45 5,-35 0,-40 -10,-51 -20,-50 -34,-61 -82,-102 -11,-12 -59,-83 -34,-75 -26,-66 -35,-70 -44,-61 -29,-72 -22,-96 -23,-76 -28,-76 -68,-104 -51,-85 -17,-33 -9,-23 -4,-38 1,-45 9,-37 5,-56 7,-47 1,-46 -3,-55 -11,-47 -24,-72 -29,-120 -17,-117 -11,-101 -29,-105 -14,-123 -13,-86 3,-65 1,-46 -3,-60 6,-38 13,-52 8,-49 0,-52 -8,-45 -12,-59 -5,-53 5,-43 19,-47 6,-50 17,-35 12,-34 3,-30 -1,-31 124,6 974,39 1010,38 968,34 1000,38 z" />
+        <div class="map-area">
+            <div id="map-tooltip"></div>
+            <svg id="il-map-svg" viewBox="-18279,-26465 34534,61566" preserveAspectRatio="xMidYMid meet">
+                <g id="ultimate-counties-group"><path id="Adams" d="M -13145,-771 l -28,971 -28,957 -10,232 -16,95 -17,655 -12,956 -28,972 -964,-23 -1015,-28 -995,-29 -868,-23 2,-14 0,-81 4,-35 7,-40 17,-49 9,-47 0,-55 -10,-51 -18,-45 -28,-56 -40,-47 -79,-93 -60,-62 -57,-40 -48,-35 -74,-56 -70,-37 -46,-29 -35,-31 -39,-62 -30,-73 -32,-75 -28,-82 -8,-51 -9,-50 8,-71 7,-55 12,-55 33,-64 39,-46 3,-4 38,-38 27,-34 29,-29 26,-36 26,-45 5,-35 0,-40 -10,-51 -20,-50 -34,-61 -82,-102 -11,-12 -59,-83 -34,-75 -26,-66 -35,-70 -44,-61 -29,-72 -22,-96 -23,-76 -28,-76 -68,-104 -51,-85 -17,-33 -9,-23 -4,-38 1,-45 9,-37 5,-56 7,-47 1,-46 -3,-55 -11,-47 -24,-72 -29,-120 -17,-117 -11,-101 -29,-105 -14,-123 -13,-86 3,-65 1,-46 -3,-60 6,-38 13,-52 8,-49 0,-52 -8,-45 -12,-59 -5,-53 5,-43 19,-47 6,-50 17,-35 12,-34 3,-30 -1,-31 124,6 974,39 1010,38 968,34 1000,38 z" />
 <path id="Alexander" d="M 1055,31055 l 25,25 41,5 21,10 56,-20 21,5 20,10 31,5 21,15 15,10 36,41 56,40 6,35 10,20 15,25 0,66 -5,50 10,76 -10,45 0,45 -21,61 -21,30 -46,-5 -31,15 -25,-10 -26,15 -51,80 -26,10 -26,-15 -15,5 -21,50 -36,25 -10,41 -26,35 0,30 -10,30 0,61 -31,55 -5,40 -5,25 0,56 -26,15 -16,30 -25,-5 -26,15 -20,15 -11,55 36,35 5,61 10,20 11,5 0,10 -6,55 11,21 -5,15 0,20 5,10 20,10 26,10 5,10 0,30 5,20 0,16 -10,10 -11,10 -5,15 -20,15 -31,10 -26,30 -10,20 10,15 16,5 5,30 -16,16 -5,25 26,30 -6,35 -25,20 -5,25 10,25 31,-5 25,-15 11,21 -1,55 0,40 -5,30 -15,36 -41,40 -31,80 -16,56 0,35 21,50 20,25 31,26 -5,20 0,15 -21,25 26,25 36,45 41,0 20,21 16,30 20,-5 31,0 0,10 5,30 15,5 21,0 10,10 10,15 16,20 20,11 31,0 26,-10 15,0 21,5 15,10 21,10 56,10 41,10 26,5 15,0 21,-15 15,-5 21,-5 15,15 10,35 46,46 57,65 25,30 10,31 21,5 10,-10 47,35 -57,101 -16,60 -8,31 -15,109 5,115 2,11 8,26 87,186 140,156 84,65 100,74 -73,28 -95,39 -61,32 -47,24 -63,17 -70,3 -37,-6 -41,-22 -39,-41 -21,-62 -11,-75 0,-86 -10,-81 -11,-60 0,-6 -9,-30 -17,-40 -3,-6 -17,-23 -38,-39 -22,-12 -44,-30 -33,-16 -62,-35 -56,-40 -51,-61 -40,-113 -37,-98 -31,-41 -498,-10 -25,20 -7,39 3,61 17,33 32,39 30,26 40,32 55,27 35,20 56,30 36,9 25,16 35,26 37,40 37,43 19,41 9,56 2,46 -10,44 -11,31 -22,33 -45,48 -41,45 -31,30 -37,14 -45,-4 -31,-5 -25,-10 -36,-40 -29,-32 -38,-39 -36,-45 -35,-36 -40,-36 -60,-43 -81,-42 -66,-35 -55,-35 -86,-33 -85,-53 -61,-40 -56,-45 -34,-25 -38,-41 -15,-52 10,-54 16,-65 26,-60 28,-60 8,-40 5,-41 1,-49 -1,-47 -10,-40 -12,-33 -33,-48 -39,-57 -24,-38 -36,-46 -28,-34 -30,-37 -25,-21 -35,-18 -45,-35 -37,-36 -48,-47 -39,-62 -34,-56 -38,-77 -24,-66 -37,-80 -41,-70 -48,-70 -28,-67 -36,-65 -16,-70 -25,-86 -31,-100 -20,-76 0,-40 5,-35 17,-50 17,-40 17,-44 16,-42 5,-51 -6,-48 -14,-27 -25,-16 -6,-4 -56,4 -16,1 -51,2 -42,8 -45,-1 -52,-10 -36,-15 -44,-45 -49,-67 -24,-41 -31,-53 -21,-51 -5,-50 0,-50 19,-64 18,-62 15,-70 15,-58 12,-50 50,-58 31,-41 31,-30 32,-37 45,-43 35,-30 27,-14 887,0 981,1 z" />
 <path id="Bond" d="M 984,12293 l 4,307 -36,302 4,629 9,941 5,539 4,447 -179,0 -836,4 -975,-1 -985,-17 -24,-986 -15,-483 -313,-1 -9,-689 -4,-700 344,1 112,0 6,-307 z" />
 <path id="Boone" d="M 3521,-26275 l 1355,21 15,0 542,-19 15,893 15,974 -6,969 4,948 -962,15 -972,14 -9,-954 -4,-973 6,-974 z" />
@@ -219,107 +236,96 @@
 <path id="Winnebago" d="M -299,-26318 l 10,0 307,1 378,5 395,4 296,2 662,8 882,12 550,7 340,4 -1,914 -6,974 4,973 9,954 -962,14 -956,19 -10,-605 -895,19 -972,19 -9,-939 6,-989 1,-414 -5,-126 -9,-419 z" />
 <path id="Woodford" d="M 3666,-8833 l 5,459 4,524 15,952 -487,4 24,987 -512,10 10,398 -482,25 0,141 -267,9 0,167 -1143,33 -10,-236 -497,9 -24,-1133 1,-353 -497,10 -953,8 -405,-5 -35,-116 -5,-76 -36,-156 15,-131 11,-76 10,-45 21,-45 56,-86 144,-216 5,-20 26,-56 82,-201 62,-76 36,-50 46,-50 26,-56 25,-70 36,-96 21,-75 20,-86 41,-60 62,-86 671,1 441,-4 533,-25 983,-29 226,-4 71,0 384,5 262,0 z" />
 </g>
-        </svg>
+            </svg>
+        </div>
     </div>
-</div>
 
-<script>
-(function() {
-    const courtData = {
-        "Christian": { year : 2013, note: "The <b>Christian County Mental Health Court (hybrid with Veterans Court)</b> started in 2013 and has been certified twice. It is part of the 4th judicial circuit." },"Kendall": { year : 2021, note: "The <b>Kendall County Mental Health Court</b> started in 2021 and has been certified by the Illinois Supreme Court twice." },"Clay": { year : "-2022", note: "The <b>Clay County Mental Health Court</b> shut down in 2022. It was part of the 4th judicial circuit." },"Jasper": { year : "-2022", note: "The <b>Jasper County Mental Health Court</b> shut down in 2022. It was part of the 4th judicial circuit." },"Champaign": { year : "2011-2013", note: "The <b>Champaign County Mental Health Court</b> started in 2011 and closed in 2013." },"Lee": { year : "2008-2016", note: "The <b>Lee County Mental Health Court</b> started in 2008 and closed in 2016." },"Madison": { year : 2006, note: "The <b>Madison County Mental Health Court</b> started in 2006. It receives state support through Adult Redeploy Illinois." },"Effingham": { year : 2013, note: "The <b>Effingham County Mental Health Court</b> started in 2013 and has been certified twice." },"Winnebago": { year : 2011, note: "The <b>Winnebago County Mental Health Court</b> started in 2011 and has been certified twice." },"Peoria": { year : 2008, note: "The <b>Peoria County Mental Health Court</b> started in 2008. Certified three times since then." },"Tazewell": { year : 2007, note: "The <b>Tazewell County Mental Health Court</b> started in 2007." },"Will": { year : 2010, note: "The <b>Will County Mental Health Court</b> started in 2010." },"Kane": { year : 2006, note: "The <b>Kane County Mental Health Court</b> started in 2006. Part of the 16th circuit." },"Lake": { year : 2007, note: "The <b>Lake County Mental Health Court</b> started in 2007." },"Cook": { year : 2004, note: "The <b>Cook County Mental Health Court</b> started in 2004. First in the state." },"DuPage": { year : 2011, note: "The <b>DuPage County Mental Health Court</b> started in 2011." },"McLean": { year : 2007, note: "The <b>McLean County Mental Health Court</b> started in 2007." },"Adams": { year : 2018, note: "The <b>Adams County Mental Health Court</b> started in 2018." },"Saint_Clair": { year : 2006, note: "The <b>St. Clair County Mental Health Court</b> started in 2006." },"Sangamon": { year : 2013, note: "The <b>Sangamon County Mental Health Court</b> started in 2013." }
-    };
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+    (function() {
+        const courtData = {
+            "Cook": { year: 2004, note: "First pilot program established in Chicago." },
+            "Kane": { year: 2006, note: "First major expansion into the 16th circuit." },
+            "Tazewell": { year: 2007, note: "Launched with federal grant support." },
+            "Lake": { year: 2007, note: "Suburban expansion continues." },
+            "Peoria": { year: 2008, note: "Established as a regional hub." },
+            "Will": { year: 2010, note: "High-volume circuit court launch." },
+            "Winnebago": { year: 2011, note: "Focus on dual-diagnosis cases." },
+            "DuPage": { year: 2011, note: "Hybrid model including veterans services." },
+            "Madison": { year: 2006, note: "Early adoption in southern Illinois." },
+            "Saint_Clair": { year: 2006, note: "Part of the 20th judicial circuit expansion." },
+            "Sangamon": { year: 2013, note: "Capital region program launch." },
+            "Adams": { year: 2018, note: "Western region addition." },
+            "Christian": { year: 2013, note: "Certified hybrid court established." },
+            "Kendall": { year: 2021, note: "Recent 23rd circuit expansion." }
+        };
 
-    const root = document.getElementById('mhc-timeline-tool');
-    const slider = root.querySelector('#year-slider');
-    const yearLabel = root.querySelector('#year-label');
-    const playBtn = root.querySelector('#play-btn');
-    const tooltip = root.querySelector('#map-tooltip');
-    let isPlaying = false;
-    let timer;
+        const root = document.getElementById('mhc-ultimate-v2');
+        const slider = root.querySelector('#year-slider');
+        const label = root.querySelector('#year-label');
+        const playBtn = root.querySelector('#play-btn');
+        const tooltip = root.querySelector('#map-tooltip');
+        let isPlaying = false;
+        let timer;
 
-    function updateMap(year) {
-        yearLabel.textContent = year;
-        const paths = root.querySelectorAll('#counties-group path');
-        paths.forEach(p => {
-            const id = p.getAttribute('id');
-            const data = courtData[id];
-            if (data) { 
-                const startYear = Math.abs(parseInt(String(data.year).split("-")[0]));
-                if (!isNaN(startYear) && startYear <= year) { p.classList.add('established'); }
-                else { p.classList.remove('established'); }
-            } else { p.classList.remove('established'); }
-        });
-    }
-
-    function setupInteractions() {
-        const paths = root.querySelectorAll('#counties-group path');
-        paths.forEach(p => {
-            p.addEventListener('mouseover', function(e) {
-                const id = this.getAttribute('id');
-                const data = courtData[id];
-                if (!data) return;
-                const startYear = Math.abs(parseInt(String(data.year).split("-")[0]));
-                if (isNaN(startYear) || startYear > parseInt(slider.value)) return;
-
-                tooltip.style.display = 'block';
-                tooltip.innerHTML = `<b>${id.replace(/_/g, ' ')} County</b>Established: ${data.year}<br>${data.note}`;
+        function update(year) {
+            label.textContent = year;
+            root.querySelectorAll('path').forEach(p => {
+                const data = courtData[p.id];
+                if (data && data.year <= year) p.classList.add('is-established');
+                else p.classList.remove('is-established');
             });
-
-            p.addEventListener('mousemove', function(e) {
-                const rect = tooltip.getBoundingClientRect();
-                const tooltipWidth = rect.width || 240;
-                const tooltipHeight = rect.height || 120;
-                const screenWidth = window.innerWidth;
-                const screenHeight = window.innerHeight;
-
-                let x = e.clientX + 15;
-                let y = e.clientY + 15;
-
-                if (window.innerWidth < 1024) {
-                    tooltip.style.left = '10px'; tooltip.style.right = '10px'; tooltip.style.bottom = '10px';
-                    tooltip.style.top = 'auto'; tooltip.style.width = 'auto'; tooltip.style.maxWidth = 'none';
-                } else {
-                    if (x + tooltipWidth > screenWidth) x = e.clientX - tooltipWidth - 15;
-                    if (y + tooltipHeight > screenHeight) y = e.clientY - tooltipHeight - 15;
-                    tooltip.style.left = x + 'px';
-                    tooltip.style.top = y + 'px';
-                }
-            });
-
-            p.addEventListener('mouseout', function() { tooltip.style.display = 'none'; });
-        });
-    }
-
-    function togglePlay() {
-        isPlaying = !isPlaying;
-        playBtn.textContent = isPlaying ? "❙ ❙" : "▶";
-        if (isPlaying) {
-            if (parseInt(slider.value) >= 2024) slider.value = 2000;
-            timer = setInterval(() => {
-                let val = parseInt(slider.value) + 1;
-                slider.value = val;
-                updateMap(val);
-                if (val >= 2024) { isPlaying = false; playBtn.textContent = "▶"; clearInterval(timer); }
-            }, 400);
-        } else { clearInterval(timer); }
-    }
-
-    slider.addEventListener('input', (e) => {
-        if (isPlaying) { isPlaying = false; playBtn.textContent = "▶"; clearInterval(timer); }
-        updateMap(e.target.value);
-    });
-
-    playBtn.addEventListener('click', togglePlay);
-
-    const checkReady = setInterval(() => {
-        const paths = root.querySelectorAll('#counties-group path');
-        if (paths.length > 0) {
-            updateMap(2000);
-            setupInteractions();
-            clearInterval(checkReady);
         }
-    }, 100);
-})();
-</script>
-</body>
-</html>
+
+        function setup() {
+            root.querySelectorAll('path').forEach(p => {
+                p.addEventListener('mouseover', function(e) {
+                    const data = courtData[this.id];
+                    if (!data || data.year > slider.value) return;
+                    tooltip.style.display = 'block';
+                    tooltip.innerHTML = `<b>${this.id.replace(/_/g, ' ')} County</b>Established: ${data.year}<br>${data.note}`;
+                });
+
+                p.addEventListener('mousemove', function(e) {
+                    const rect = tooltip.getBoundingClientRect();
+                    const winW = window.innerWidth;
+                    const winH = window.innerHeight;
+                    let x = e.clientX + 20;
+                    let y = e.clientY + 20;
+
+                    if (winW >= 1024) { 
+                        if (x + rect.width > winW) x = e.clientX - rect.width - 20;
+                        if (y + rect.height > winH) y = e.clientY - rect.height - 20;
+                        tooltip.style.left = x + 'px'; tooltip.style.top = y + 'px';
+                    }
+                });
+
+                p.addEventListener('mouseout', () => tooltip.style.display = 'none');
+            });
+        }
+
+        playBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            playBtn.textContent = isPlaying ? "❙ ❙" : "▶";
+            if (isPlaying) {
+                if (parseInt(slider.value) >= 2024) slider.value = 2000;
+                timer = setInterval(() => {
+                    let v = parseInt(slider.value) + 1;
+                    slider.value = v;
+                    update(v);
+                    if (v >= 2024) { isPlaying = false; playBtn.textContent = "▶"; clearInterval(timer); }
+                }, 400);
+            } else clearInterval(timer);
+        });
+
+        slider.addEventListener('input', (e) => {
+            if (isPlaying) { isPlaying = false; playBtn.textContent = "▶"; clearInterval(timer); }
+            update(e.target.value);
+        });
+
+        const readyCheck = setInterval(() => {
+            if (root.querySelector('path')) { update(2000); setup(); clearInterval(readyCheck); }
+        }, 100);
+    })();
+    </script>
+</div>
