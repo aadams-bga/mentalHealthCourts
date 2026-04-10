@@ -12,6 +12,7 @@
             --text-dim: #666;
         }
         
+        /* LOWERED GRAPHIC LEVEL */
         #mhc-sankey-section .s-sticky-box {
             position: relative;
             width: 100%;
@@ -19,7 +20,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 10; 
+            z-index: 5; 
             background: #fff;
             border: none !important;
         }
@@ -43,8 +44,17 @@
             visibility: visible !important;
         }
 
-        #mhc-sankey-section .s-track { height: 700vh; position: relative; z-index: 5; }
-        #mhc-sankey-section .s-narrative { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 90%; max-width: 350px; pointer-events: none; }
+        /* RAISED NARRATIVE LEVEL */
+        #mhc-sankey-section .s-track { height: 700vh; position: relative; z-index: 100; }
+        
+        #mhc-sankey-section .s-narrative { 
+            position: absolute; 
+            top: 0; left: 50%; 
+            transform: translateX(-50%); 
+            width: 90%; 
+            max-width: 350px; 
+            pointer-events: none; 
+        }
         
         #mhc-sankey-section .s-card { 
             background: white !important; 
@@ -55,7 +65,6 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             pointer-events: all; 
             position: relative;
-            z-index: 20; 
         }
         #mhc-sankey-section .s-card h3 { font-size: 1.8rem; font-weight: 800; color: var(--text-main); line-height: 1.1; margin: 0 0 15px 0; }
         #mhc-sankey-section .s-card p { font-size: 11pt; line-height: 1.5; color: var(--text-dim); margin: 0; }

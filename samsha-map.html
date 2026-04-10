@@ -197,11 +197,14 @@
                     const rect = tooltip.getBoundingClientRect();
                     const winW = window.innerWidth;
                     const winH = window.innerHeight;
+                    const buffer = 20;
                     if (winW >= 1024) {
-                        let x = e.clientX + 20; let y = e.clientY + 20;
-                        if (x + rect.width > winW) x = e.clientX - rect.width - 20;
-                        if (y + rect.height > winH) y = e.clientY - rect.height - 20;
-                        tooltip.style.left = x + 'px'; tooltip.style.top = y + 'px';
+                        let x = e.clientX + 25; 
+                        let y = e.clientY + 25;
+                        if (x + rect.width > winW - buffer) x = e.clientX - rect.width - 25;
+                        if (y + rect.height > winH - buffer) y = e.clientY - rect.height - 25;
+                        tooltip.style.left = Math.max(buffer, x) + 'px'; 
+                        tooltip.style.top = Math.max(buffer, y) + 'px';
                     }
                 });
                 p.addEventListener('mouseout', () => tooltip.style.display = 'none');

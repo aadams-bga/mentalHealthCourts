@@ -10,7 +10,7 @@
         --text-dim: #666;
         display: flex;
         flex-direction: column;
-        min-height: 100vh; /* Changed from height: 100vh */
+        min-height: 100vh;
         background: #fff;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         max-width: 1400px;
@@ -26,30 +26,20 @@
     }
 
     @media (min-width: 1024px) {
-        #mhc-ultimate-v2 { height: 100vh; overflow: hidden; } /* Lock only on desktop */
+        #mhc-ultimate-v2 { height: 100vh; overflow: hidden; }
         #mhc-ultimate-v2 .content-wrapper { display: flex; flex-direction: row; flex-grow: 1; overflow: hidden; }
         #mhc-ultimate-v2 .sidebar { width: 40%; padding: 10px 30px 30px 30px; display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto; }
         #mhc-ultimate-v2 .map-area { width: 60%; position: relative; display: flex; align-items: flex-start; justify-content: center; padding: 0 20px 20px 20px; }
         #mhc-ultimate-v2 .active-year { font-size: 56pt; margin-bottom: 5px; }
     }
 
-    /* Mobile Refinements */
     @media (max-width: 1023px) {
         #mhc-ultimate-v2 .main-header { padding: 15px 15px 0 15px; text-align: center; }
         #mhc-ultimate-v2 .sidebar { padding: 15px; text-align: center; border-bottom: 1px solid #eee; }
-        #mhc-ultimate-v2 .map-area { 
-            min-height: 450px; /* Ensures map always appears */
-            height: 60vh; 
-            position: relative; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            background: #fafafa;
-        }
+        #mhc-ultimate-v2 .map-area { min-height: 450px; height: 60vh; position: relative; display: flex; align-items: center; justify-content: center; background: #fafafa; }
         #mhc-ultimate-v2 h2 { font-size: 1.25rem !important; margin: 0 !important; }
         #mhc-ultimate-v2 .description { font-size: 10pt !important; margin: 10px auto !important; max-width: 400px; }
         #mhc-ultimate-v2 .active-year { font-size: 28pt !important; min-width: 90px !important; }
-        
         #mhc-ultimate-v2 #map-tooltip {
             position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important;
             width: 100% !important; max-width: none !important; border: none !important; border-bottom: 3px solid var(--amber) !important;
@@ -60,17 +50,21 @@
 
     #mhc-ultimate-v2 h2 { font-size: 1.8rem; font-weight: 800; color: var(--text-main); line-height: 1.1; }
     #mhc-ultimate-v2 .description { font-size: 11pt; line-height: 1.5; color: var(--text-dim); }
-    #mhc-ultimate-v2 .controls-row { display: flex; align-items: center; width: 100%; gap: 15px; justify-content: center; margin-top: 10px; }
+    
+    /* STACKED CONTROLS FIX */
+    #mhc-ultimate-v2 .controls { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 15px; }
+    #mhc-ultimate-v2 .controls-top-row { display: flex; align-items: center; gap: 20px; }
     #mhc-ultimate-v2 .active-year { font-weight: 900; color: var(--text-main); letter-spacing: -2px; line-height: 1; }
 
     #mhc-ultimate-v2 #play-btn {
-        background: transparent !important; border: none !important; color: var(--text-main) !important;
-        cursor: pointer; font-size: 20pt; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-        transition: color 0.2s; padding: 0 !important; margin: 0 !important;
+        background: transparent !important; border: 1px solid #333 !important; color: var(--text-main) !important;
+        border-radius: 50%; cursor: pointer; font-size: 14pt; width: 44px; height: 44px; 
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.2s; padding: 0 !important; margin: 0 !important;
     }
-    #mhc-ultimate-v2 #play-btn:hover { color: var(--amber) !important; }
+    #mhc-ultimate-v2 #play-btn:hover { color: var(--amber) !important; border-color: var(--amber) !important; }
 
-    #mhc-ultimate-v2 .slider-container { flex-grow: 1; display: flex; align-items: center; max-width: 350px; }
+    #mhc-ultimate-v2 .slider-container { width: 100%; max-width: 400px; display: flex; align-items: center; }
     #mhc-ultimate-v2 #year-slider { -webkit-appearance: none; width: 100%; height: 20px; background: transparent; outline: none; cursor: pointer; margin: 0; }
     #mhc-ultimate-v2 #year-slider::-webkit-slider-runnable-track { width: 100%; height: 1px; background: #333; }
     #mhc-ultimate-v2 #year-slider::-webkit-slider-thumb {
@@ -78,14 +72,14 @@
     }
 
     #mhc-ultimate-v2 #il-map-svg { width: 100%; height: 100%; max-width: 600px; display: block; }
-    #mhc-ultimate-v2 path { fill: var(--ghost-gray); stroke: none; transition: fill 0.5s ease; cursor: pointer; }
+    #mhc-ultimate-v2 path { fill: var(--ghost-gray); stroke: none; transition: fill 0.4s ease; cursor: pointer; }
     #mhc-ultimate-v2 path.is-active { fill: var(--amber); }
     #mhc-ultimate-v2 path.is-closed { fill: var(--closed-ghost); }
     #mhc-ultimate-v2 path:hover { opacity: 0.8; }
 
     #mhc-ultimate-v2 #map-tooltip {
         position: fixed; background: #fff; border: none; border-left: 4px solid var(--amber); 
-        padding: 12px 16px; pointer-events: none; display: none; z-index: 9999; 
+        padding: 12px 16px; pointer-events: none; display: none; z-index: 99999; 
         max-width: 260px; font-size: 11pt; line-height: 1.4; 
         box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 2px;
     }
@@ -103,14 +97,14 @@
             <p class="description">Watch how specialized mental health courts grew from a single pilot program in Chicago to a state-wide network over two decades.</p>
             
             <div class="controls">
-                <div class="controls-row">
-                    <div class="active-year" id="year-label">2000</div>
+                <div class="controls-top-row">
                     <button id="play-btn">▶</button>
-                    <div class="slider-container">
-                        <input type="range" id="year-slider" min="2000" max="2024" value="2000" step="1">
-                    </div>
+                    <div class="active-year" id="year-label">2000</div>
                 </div>
-                <p style="font-size: 8pt; color: #999; margin-top: 10px;">Tap Amber areas for details.</p>
+                <div class="slider-container">
+                    <input type="range" id="year-slider" min="2000" max="2024" value="2000" step="1">
+                </div>
+                <p style="font-size: 8pt; color: #999; margin-top: 5px;">Tap Amber areas for details.</p>
             </div>
         </div>
 
@@ -260,7 +254,7 @@
             });
         }
 
-        function setup() {
+        function setupTooltip() {
             root.querySelectorAll('path').forEach(p => {
                 p.addEventListener('mouseover', function(e) {
                     const data = courtData[this.id];
@@ -268,7 +262,6 @@
                     const startYear = getStartYear(data);
                     const currentYear = parseInt(slider.value);
                     if (startYear > currentYear) return;
-                    const isClosed = data.closed && (currentYear >= parseInt(data.closed));
                     tooltip.style.display = 'block';
                     tooltip.innerHTML = `<b>${this.id.replace(/_/g, ' ')} County</b>Opened: ${data.year}${data.closed ? '<br>Closed: '+data.closed : ''}`;
                 });
@@ -276,11 +269,13 @@
                     const rect = tooltip.getBoundingClientRect();
                     const winW = window.innerWidth;
                     const winH = window.innerHeight;
+                    const buffer = 20;
                     if (winW >= 1024) { 
-                        let x = e.clientX + 20; let y = e.clientY + 20;
-                        if (x + rect.width > winW) x = e.clientX - rect.width - 20;
-                        if (y + rect.height > winH) y = e.clientY - rect.height - 20;
-                        tooltip.style.left = x + 'px'; tooltip.style.top = y + 'px';
+                        let x = e.clientX + 25; let y = e.clientY + 25;
+                        if (x + rect.width > winW - buffer) x = e.clientX - rect.width - 25;
+                        if (y + rect.height > winH - buffer) y = e.clientY - rect.height - 25;
+                        tooltip.style.left = Math.max(buffer, x) + 'px'; 
+                        tooltip.style.top = Math.max(buffer, y) + 'px';
                     }
                 });
                 p.addEventListener('mouseout', () => tooltip.style.display = 'none');
@@ -305,8 +300,13 @@
             update(parseInt(e.target.value));
         });
 
-        const readyCheck = setInterval(() => {
-            if (root.querySelector('path')) { update(2000); setup(); clearInterval(readyCheck); }
+        // Initialize
+        const checkReady = setInterval(() => {
+            if (root.querySelector('path')) {
+                update(2000);
+                setupTooltip();
+                clearInterval(checkReady);
+            }
         }, 100);
     })();
     </script>
