@@ -1,123 +1,76 @@
 <!DOCTYPE html>
-<!-- CSS Block -->
-<style>
-    #mhc-ultimate-v2 {
-        --amber: #FAC346;
-        --closed-ghost: #D6C499;
-        --dark-bg: #222;
-        --ghost-gray: #444;
-        --text-main: #333;
-        --text-dim: #666;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh; /* Changed from height: 100vh */
-        background: #fff;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        max-width: 1400px;
-        margin: 0 auto;
-    }
-
-    #mhc-ultimate-v2 .main-header {
-        width: 100%;
-        padding: 15px 30px 0px 30px;
-        box-sizing: border-box;
-        background: #fff;
-        z-index: 20;
-    }
-
-    @media (min-width: 1024px) {
-        #mhc-ultimate-v2 { height: 100vh; overflow: hidden; } /* Lock only on desktop */
-        #mhc-ultimate-v2 .content-wrapper { display: flex; flex-direction: row; flex-grow: 1; overflow: hidden; }
-        #mhc-ultimate-v2 .sidebar { width: 40%; padding: 10px 30px 30px 30px; display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto; }
-        #mhc-ultimate-v2 .map-area { width: 60%; position: relative; display: flex; align-items: flex-start; justify-content: center; padding: 0 20px 20px 20px; }
-        #mhc-ultimate-v2 .active-year { font-size: 56pt; margin-bottom: 5px; }
-    }
-
-    /* Mobile Refinements */
-    @media (max-width: 1023px) {
-        #mhc-ultimate-v2 .main-header { padding: 15px 15px 0 15px; text-align: center; }
-        #mhc-ultimate-v2 .sidebar { padding: 15px; text-align: center; border-bottom: 1px solid #eee; }
-        #mhc-ultimate-v2 .map-area { 
-            min-height: 450px; /* Ensures map always appears */
-            height: 60vh; 
-            position: relative; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            background: #fafafa;
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Needs Map</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        #mhc-samsha-map {
+            --blue-mid: #9ecae1;
+            --blue-dark: #084594;
+            --court-gray: #dddddd;
+            --text-main: #333;
+            --text-dim: #666;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        #mhc-ultimate-v2 h2 { font-size: 1.25rem !important; margin: 0 !important; }
-        #mhc-ultimate-v2 .description { font-size: 10pt !important; margin: 10px auto !important; max-width: 400px; }
-        #mhc-ultimate-v2 .active-year { font-size: 28pt !important; min-width: 90px !important; }
-        
-        #mhc-ultimate-v2 #map-tooltip {
-            position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important;
-            width: 100% !important; max-width: none !important; border: none !important; border-bottom: 3px solid var(--amber) !important;
-            border-radius: 0 !important; box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
-            background: rgba(255,255,255,0.98) !important; text-align: center; padding: 10px !important;
+        #mhc-samsha-map .main-header { padding: 20px 30px; }
+        #mhc-samsha-map h2 { font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin: 0 0 10px 0; }
+        #mhc-samsha-map .description { font-size: 11pt; line-height: 1.5; color: var(--text-dim); margin: 0; }
+        @media (min-width: 1024px) {
+            #mhc-samsha-map .content-wrapper { display: flex; flex-direction: row; }
+            #mhc-samsha-map .sidebar { width: 35%; padding: 0 30px 30px 30px; }
+            #mhc-samsha-map .map-area { width: 65%; position: relative; padding: 0 20px; }
         }
-    }
-
-    #mhc-ultimate-v2 h2 { font-size: 1.8rem; font-weight: 800; color: var(--text-main); line-height: 1.1; }
-    #mhc-ultimate-v2 .description { font-size: 11pt; line-height: 1.5; color: var(--text-dim); }
-    #mhc-ultimate-v2 .controls-row { display: flex; align-items: center; width: 100%; gap: 15px; justify-content: center; margin-top: 10px; }
-    #mhc-ultimate-v2 .active-year { font-weight: 900; color: var(--text-main); letter-spacing: -2px; line-height: 1; }
-
-    #mhc-ultimate-v2 #play-btn {
-        background: transparent !important; border: none !important; color: var(--text-main) !important;
-        cursor: pointer; font-size: 20pt; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-        transition: color 0.2s; padding: 0 !important; margin: 0 !important;
-    }
-    #mhc-ultimate-v2 #play-btn:hover { color: var(--amber) !important; }
-
-    #mhc-ultimate-v2 .slider-container { flex-grow: 1; display: flex; align-items: center; max-width: 350px; }
-    #mhc-ultimate-v2 #year-slider { -webkit-appearance: none; width: 100%; height: 20px; background: transparent; outline: none; cursor: pointer; margin: 0; }
-    #mhc-ultimate-v2 #year-slider::-webkit-slider-runnable-track { width: 100%; height: 1px; background: #333; }
-    #mhc-ultimate-v2 #year-slider::-webkit-slider-thumb {
-        -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--amber); border: none; margin-top: -7.5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    #mhc-ultimate-v2 #il-map-svg { width: 100%; height: 100%; max-width: 600px; display: block; }
-    #mhc-ultimate-v2 path { fill: var(--ghost-gray); stroke: none; transition: fill 0.5s ease; cursor: pointer; }
-    #mhc-ultimate-v2 path.is-active { fill: var(--amber); }
-    #mhc-ultimate-v2 path.is-closed { fill: var(--closed-ghost); }
-    #mhc-ultimate-v2 path:hover { opacity: 0.8; }
-
-    #mhc-ultimate-v2 #map-tooltip {
-        position: fixed; background: #fff; border: none; border-left: 4px solid var(--amber); 
-        padding: 12px 16px; pointer-events: none; display: none; z-index: 9999; 
-        max-width: 260px; font-size: 11pt; line-height: 1.4; 
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 2px;
-    }
-    #mhc-ultimate-v2 #map-tooltip b { display: block; font-size: 13pt; margin-bottom: 4px; color: #000; text-transform: uppercase; letter-spacing: 0.5px; }
-</style>
-
-<!-- HTML Block -->
-<div id="mhc-ultimate-v2">
+        @media (max-width: 1023px) {
+            #mhc-samsha-map .sidebar { padding: 0 20px 20px 20px; }
+            #mhc-samsha-map .map-area { height: 60vh; min-height: 400px; position: relative; }
+            #mhc-samsha-map #samsha-tooltip {
+                position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important;
+                width: 100% !important; max-width: none !important; border: none !important; 
+                border-bottom: 3px solid #084594 !important; border-radius: 0 !important;
+                background: rgba(255,255,255,0.98) !important; text-align: center; padding: 10px !important;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+            }
+        }
+        .legend { margin-top: 15px; font-size: 10pt; max-width: 250px; }
+        .gradient-bar { width: 100%; height: 8px; background: linear-gradient(to right, var(--blue-mid), var(--blue-dark)); margin: 8px 0 5px 0; border-radius: 1px; }
+        .gradient-labels { display: flex; justify-content: space-between; color: var(--text-dim); font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.5px; }
+        #il-samsha-svg { width: 100%; height: 100%; max-width: 600px; display: block; }
+        #il-samsha-svg path { stroke: #fff; stroke-width: 20px; cursor: pointer; transition: opacity 0.2s; }
+        #il-samsha-svg path:hover { opacity: 0.7; }
+        #samsha-tooltip {
+            position: fixed; background: #fff; border-left: 4px solid #084594; 
+            padding: 10px 14px; pointer-events: none; display: none; z-index: 9999; 
+            max-width: 240px; font-size: 10pt; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        #samsha-tooltip b { display: block; font-size: 12pt; margin-bottom: 2px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+<div id="mhc-samsha-map">
     <div class="main-header">
-        <h2>Mapping the Expansion</h2>
+        <h2>Almost one in six people with mental illness live in a county without a mental health court</h2>
+        <p class="description">Roughly 2 million people in Illinois live in one of the state’s 77 counties that don’t have a mental health court. That includes about 350,000 people with mental illness, based on 2019 survey data from the Substance Abuse and Mental Health Services Administration. <br><br> These counties tend to be more rural and have a median income 19% lower than counties with menthol health courts. 
+</p>
     </div>
-    
     <div class="content-wrapper">
         <div class="sidebar">
-            <p class="description">Watch how specialized mental health courts grew from a single pilot program in Chicago to a state-wide network over two decades.</p>
-            
-            <div class="controls">
-                <div class="controls-row">
-                    <div class="active-year" id="year-label">2000</div>
-                    <button id="play-btn">▶</button>
-                    <div class="slider-container">
-                        <input type="range" id="year-slider" min="2000" max="2024" value="2000" step="1">
-                    </div>
-                </div>
-                <p style="font-size: 8pt; color: #999; margin-top: 10px;">Tap Amber areas for details.</p>
+            <div class="legend">
+                <div style="font-weight: 700; color: #555; font-size: 9pt; text-transform: uppercase;">Mental Illness Population</div>
+                <div class="gradient-bar"></div>
+                <div class="gradient-labels"><span>Lower</span><span>Higher</span></div>
             </div>
         </div>
-
         <div class="map-area">
-            <div id="map-tooltip"></div>
-            <svg id="il-map-svg" viewBox="-18279,-26465 34534,61566" preserveAspectRatio="xMidYMid meet">
-                <g id="ultimate-counties-group"><path id="Adams" d="M -13145,-771 l -28,971 -28,957 -10,232 -16,95 -17,655 -12,956 -28,972 -964,-23 -1015,-28 -995,-29 -868,-23 2,-14 0,-81 4,-35 7,-40 17,-49 9,-47 0,-55 -10,-51 -18,-45 -28,-56 -40,-47 -79,-93 -60,-62 -57,-40 -48,-35 -74,-56 -70,-37 -46,-29 -35,-31 -39,-62 -30,-73 -32,-75 -28,-82 -8,-51 -9,-50 8,-71 7,-55 12,-55 33,-64 39,-46 3,-4 38,-38 27,-34 29,-29 26,-36 26,-45 5,-35 0,-40 -10,-51 -20,-50 -34,-61 -82,-102 -11,-12 -59,-83 -34,-75 -26,-66 -35,-70 -44,-61 -29,-72 -22,-96 -23,-76 -28,-76 -68,-104 -51,-85 -17,-33 -9,-23 -4,-38 1,-45 9,-37 5,-56 7,-47 1,-46 -3,-55 -11,-47 -24,-72 -29,-120 -17,-117 -11,-101 -29,-105 -14,-123 -13,-86 3,-65 1,-46 -3,-60 6,-38 13,-52 8,-49 0,-52 -8,-45 -12,-59 -5,-53 5,-43 19,-47 6,-50 17,-35 12,-34 3,-30 -1,-31 124,6 974,39 1010,38 968,34 1000,38 z" />
+            <div id="samsha-tooltip"></div>
+            <svg id="il-samsha-svg" viewBox="-18279,-26465 34534,61566" preserveAspectRatio="xMidYMid meet">
+                <g id="samsha-counties-group"><path id="Adams" d="M -13145,-771 l -28,971 -28,957 -10,232 -16,95 -17,655 -12,956 -28,972 -964,-23 -1015,-28 -995,-29 -868,-23 2,-14 0,-81 4,-35 7,-40 17,-49 9,-47 0,-55 -10,-51 -18,-45 -28,-56 -40,-47 -79,-93 -60,-62 -57,-40 -48,-35 -74,-56 -70,-37 -46,-29 -35,-31 -39,-62 -30,-73 -32,-75 -28,-82 -8,-51 -9,-50 8,-71 7,-55 12,-55 33,-64 39,-46 3,-4 38,-38 27,-34 29,-29 26,-36 26,-45 5,-35 0,-40 -10,-51 -20,-50 -34,-61 -82,-102 -11,-12 -59,-83 -34,-75 -26,-66 -35,-70 -44,-61 -29,-72 -22,-96 -23,-76 -28,-76 -68,-104 -51,-85 -17,-33 -9,-23 -4,-38 1,-45 9,-37 5,-56 7,-47 1,-46 -3,-55 -11,-47 -24,-72 -29,-120 -17,-117 -11,-101 -29,-105 -14,-123 -13,-86 3,-65 1,-46 -3,-60 6,-38 13,-52 8,-49 0,-52 -8,-45 -12,-59 -5,-53 5,-43 19,-47 6,-50 17,-35 12,-34 3,-30 -1,-31 124,6 974,39 1010,38 968,34 1000,38 z" />
 <path id="Alexander" d="M 1055,31055 l 25,25 41,5 21,10 56,-20 21,5 20,10 31,5 21,15 15,10 36,41 56,40 6,35 10,20 15,25 0,66 -5,50 10,76 -10,45 0,45 -21,61 -21,30 -46,-5 -31,15 -25,-10 -26,15 -51,80 -26,10 -26,-15 -15,5 -21,50 -36,25 -10,41 -26,35 0,30 -10,30 0,61 -31,55 -5,40 -5,25 0,56 -26,15 -16,30 -25,-5 -26,15 -20,15 -11,55 36,35 5,61 10,20 11,5 0,10 -6,55 11,21 -5,15 0,20 5,10 20,10 26,10 5,10 0,30 5,20 0,16 -10,10 -11,10 -5,15 -20,15 -31,10 -26,30 -10,20 10,15 16,5 5,30 -16,16 -5,25 26,30 -6,35 -25,20 -5,25 10,25 31,-5 25,-15 11,21 -1,55 0,40 -5,30 -15,36 -41,40 -31,80 -16,56 0,35 21,50 20,25 31,26 -5,20 0,15 -21,25 26,25 36,45 41,0 20,21 16,30 20,-5 31,0 0,10 5,30 15,5 21,0 10,10 10,15 16,20 20,11 31,0 26,-10 15,0 21,5 15,10 21,10 56,10 41,10 26,5 15,0 21,-15 15,-5 21,-5 15,15 10,35 46,46 57,65 25,30 10,31 21,5 10,-10 47,35 -57,101 -16,60 -8,31 -15,109 5,115 2,11 8,26 87,186 140,156 84,65 100,74 -73,28 -95,39 -61,32 -47,24 -63,17 -70,3 -37,-6 -41,-22 -39,-41 -21,-62 -11,-75 0,-86 -10,-81 -11,-60 0,-6 -9,-30 -17,-40 -3,-6 -17,-23 -38,-39 -22,-12 -44,-30 -33,-16 -62,-35 -56,-40 -51,-61 -40,-113 -37,-98 -31,-41 -498,-10 -25,20 -7,39 3,61 17,33 32,39 30,26 40,32 55,27 35,20 56,30 36,9 25,16 35,26 37,40 37,43 19,41 9,56 2,46 -10,44 -11,31 -22,33 -45,48 -41,45 -31,30 -37,14 -45,-4 -31,-5 -25,-10 -36,-40 -29,-32 -38,-39 -36,-45 -35,-36 -40,-36 -60,-43 -81,-42 -66,-35 -55,-35 -86,-33 -85,-53 -61,-40 -56,-45 -34,-25 -38,-41 -15,-52 10,-54 16,-65 26,-60 28,-60 8,-40 5,-41 1,-49 -1,-47 -10,-40 -12,-33 -33,-48 -39,-57 -24,-38 -36,-46 -28,-34 -30,-37 -25,-21 -35,-18 -45,-35 -37,-36 -48,-47 -39,-62 -34,-56 -38,-77 -24,-66 -37,-80 -41,-70 -48,-70 -28,-67 -36,-65 -16,-70 -25,-86 -31,-100 -20,-76 0,-40 5,-35 17,-50 17,-40 17,-44 16,-42 5,-51 -6,-48 -14,-27 -25,-16 -6,-4 -56,4 -16,1 -51,2 -42,8 -45,-1 -52,-10 -36,-15 -44,-45 -49,-67 -24,-41 -31,-53 -21,-51 -5,-50 0,-50 19,-64 18,-62 15,-70 15,-58 12,-50 50,-58 31,-41 31,-30 32,-37 45,-43 35,-30 27,-14 887,0 981,1 z" />
 <path id="Bond" d="M 984,12293 l 4,307 -36,302 4,629 9,941 5,539 4,447 -179,0 -836,4 -975,-1 -985,-17 -24,-986 -15,-483 -313,-1 -9,-689 -4,-700 344,1 112,0 6,-307 z" />
 <path id="Boone" d="M 3521,-26275 l 1355,21 15,0 542,-19 15,893 15,974 -6,969 4,948 -962,15 -972,14 -9,-954 -4,-973 6,-974 z" />
@@ -223,60 +176,28 @@
             </svg>
         </div>
     </div>
-
-    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script>
     (function() {
-        const courtData = {
-            "Christian": { year : 2013, note: "The <b>Christian County Mental Health Court (hybrid with Veterans Court)</b> started in 2013 and has been certified twice." },"Kendall": { year : 2021, note: "The <b>Kendall County Mental Health Court</b> started in 2021." },"Clay": { year : "2000", closed: 2022, note: "The <b>Clay County Mental Health Court</b> shut down in 2022." },"Jasper": { year : "2000", closed: 2022, note: "The <b>Jasper County Mental Health Court</b> shut down in 2022." },"Champaign": { year : "2011", closed: 2013, note: "The <b>Champaign County Mental Health Court</b> started in 2011 and closed in 2013." },"Lee": { year : "2008", closed: 2016, note: "The <b>Lee County Mental Health Court</b> started in 2008 and closed in 2016." },"Madison": { year : 2006, note: "The <b>Madison County Mental Health Court</b> started in 2006." },"Effingham": { year : 2013, note: "The <b>Effingham County Mental Health Court</b> started in 2013." },"Winnebago": { year : 2011, note: "The <b>Winnebago County Mental Health Court</b> started in 2011." },"Peoria": { year : 2008, note: "The <b>Peoria County Mental Health Court</b> started in 2008." },"Tazewell": { year : 2007, note: "The <b>Tazewell County Mental Health Court</b> started in 2007." },"Will": { year : 2010, note: "The <b>Will County Mental Health Court</b> started in 2010." },"Kane": { year : 2006, note: "The <b>Kane County Mental Health Court</b> started in 2006." },"Lake": { year : 2007, note: "The <b>Lake County Mental Health Court</b> started in 2007." },"Cook": { year : 2004, note: "The <b>Cook County Mental Health Court</b> started in 2004." },"DuPage": { year : 2011, note: "The <b>DuPage County Mental Health Court</b> started in 2011." },"McLean": { year : 2007, note: "The <b>McLean County Mental Health Court</b> started in 2007." },"Adams": { year : 2018, note: "The <b>Adams County Mental Health Court</b> started in 2018." },"Saint_Clair": { year : 2006, note: "The <b>St. Clair County Mental Health Court</b> started in 2006." },"Sangamon": { year : 2013, note: "The <b>Sangamon County Mental Health Court</b> started in 2013." }
+        const samshaData = {
+            "Champaign": {f:0, v:41791}, "Williamson": {f:0, v:11819}, "Woodford": {f:0, v:7155}, "Clark": {f:0, v:2782}, "Clay": {f:0, v:2339}, "Clinton": {f:0, v:6494}, "Coles": {f:0, v:8435}, "Crawford": {f:0, v:3288}, "Cumberland": {f:0, v:1881}, "De_Witt": {f:0, v:2793}, "Alexander": {f:0, v:922}, "Douglas": {f:0, v:3553}, "Edgar": {f:0, v:3036}, "Edwards": {f:0, v:1099}, "Fayette": {f:0, v:3782}, "Ford": {f:0, v:2517}, "Franklin": {f:0, v:6654}, "Fulton": {f:0, v:6251}, "Bond": {f:0, v:2944}, "Gallatin": {f:0, v:870}, "Greene": {f:0, v:2157}, "Hamilton": {f:0, v:1407}, "Hancock": {f:0, v:3172}, "Hardin": {f:0, v:642}, "Henderson": {f:0, v:1188}, "Henry": {f:0, v:9167}, "Iroquois": {f:0, v:5036}, "Jackson": {f:0, v:9323}, "Boone": {f:0, v:9567}, "Jasper": {f:0, v:1635}, "Jefferson": {f:0, v:6532}, "Jersey": {f:0, v:3872}, "Jo_Daviess": {f:0, v:3944}, "Johnson": {f:0, v:2342}, "Knox": {f:0, v:9294}, "Brown": {f:0, v:1136}, "Lawrence": {f:0, v:2766}, "Lee": {f:1, v:6112}, "Livingston": {f:0, v:6662}, "Logan": {f:0, v:5038}, "Macoupin": {f:0, v:8094}, "Marion": {f:0, v:6640}, "Marshall": {f:0, v:2184}, "Bureau": {f:0, v:6183}, "Mason": {f:0, v:2434}, "Massac": {f:0, v:2494}, "McDonough": {f:0, v:5066}, "Menard": {f:0, v:2213}, "Mercer": {f:0, v:2920}, "Monroe": {f:0, v:6153}, "Morgan": {f:0, v:5925}, "Calhoun": {f:0, v:799}, "Moultrie": {f:0, v:2615}, "Ogle": {f:0, v:9270}, "Perry": {f:0, v:3686}, "Piatt": {f:0, v:3001}, "Pike": {f:0, v:2653}, "Pope": {f:0, v:662}, "Pulaski": {f:0, v:914}, "Putnam": {f:0, v:1048}, "Randolph": {f:0, v:5309}, "Carroll": {f:0, v:2811}, "Richland": {f:0, v:2783}, "Saline": {f:0, v:4183}, "Schuyler": {f:0, v:1242}, "Scott": {f:0, v:891}, "Shelby": {f:0, v:3778}, "Stark": {f:0, v:1004}, "Stephenson": {f:0, v:7989}, "Cass": {f:0, v:2348}, "Union": {f:0, v:3035}, "Wabash": {f:0, v:2000}, "Warren": {f:0, v:3131}, "Washington": {f:0, v:2422}, "Wayne": {f:0, v:2848}, "White": {f:0, v:2442}, "Whiteside": {f:0, v:9969}, "Adams": {f:1, v:11833}, "Winnebago": {f:1, v:51934}, "Christian": {f:1, v:6126}, "Cook": {f:1, v:865189}, "DeKalb": {f:1, v:17975}, "DuPage": {f:1, v:155790}, "Effingham": {f:1, v:6240}, "Grundy": {f:1, v:9403}, "Kane": {f:1, v:83160}, "Kankakee": {f:1, v:19243}, "Kendall": {f:1, v:23605}, "Lake": {f:1, v:115009}, "La_Salle": {f:1, v:20396}, "Macon": {f:1, v:18720}, "Madison": {f:1, v:49981}, "McHenry": {f:1, v:49947}, "McLean": {f:1, v:31797}, "Montgomery": {f:1, v:5092}, "Peoria": {f:1, v:33820}, "Rock_Island": {f:1, v:26909}, "Sangamon": {f:1, v:37109}, "Saint_Clair": {f:1, v:48391}, "Tazewell": {f:1, v:24430}, "Vermilion": {f:1, v:13799}, "Will": {f:1, v:112113}
         };
-
-        const root = document.getElementById('mhc-ultimate-v2');
-        const slider = root.querySelector('#year-slider');
-        const label = root.querySelector('#year-label');
-        const playBtn = root.querySelector('#play-btn');
-        const tooltip = root.querySelector('#map-tooltip');
-        let isPlaying = false;
-        let timer;
-
-        function getStartYear(d) {
-            if (!d) return Infinity;
-            const y = String(d.year).split("-")[0];
-            return Math.abs(parseInt(y.replace(/[^-0-9]/g, ""))) || 0;
-        }
-
-        function update(year) {
-            label.textContent = year;
-            root.querySelectorAll('path').forEach(p => {
-                const data = courtData[p.id];
-                p.classList.remove('is-active', 'is-closed');
-                if (data) {
-                    const startYear = getStartYear(data);
-                    if (startYear <= year) {
-                        if (data.closed && (year >= parseInt(data.closed))) p.classList.add('is-closed');
-                        else p.classList.add('is-active');
-                    }
-                }
-            });
-        }
-
+        const container = document.getElementById('mhc-samsha-map');
+        const tooltip = container.querySelector('#samsha-tooltip');
+        const colorScale = d3.scaleSequential(t => d3.interpolateBlues(0.3 + t * 0.7)).domain([0, 10000]);
         function setup() {
-            root.querySelectorAll('path').forEach(p => {
+            container.querySelectorAll('path').forEach(p => {
+                const data = samshaData[p.id] || {f: 0, v: 0};
+                if (data.f === 1) { p.style.fill = '#dddddd'; } 
+                else { p.style.fill = colorScale(data.v); }
                 p.addEventListener('mouseover', function(e) {
-                    const data = courtData[this.id];
-                    if (!data) return;
-                    const startYear = getStartYear(data);
-                    const currentYear = parseInt(slider.value);
-                    if (startYear > currentYear) return;
-                    const isClosed = data.closed && (currentYear >= parseInt(data.closed));
                     tooltip.style.display = 'block';
-                    tooltip.innerHTML = `<b>${this.id.replace(/_/g, ' ')} County</b>Opened: ${data.year}${data.closed ? '<br>Closed: '+data.closed : ''}`;
+                    tooltip.innerHTML = `<b>${this.id.replace(/_/g, ' ')} County</b>` + `Est. pop. with mental illness: ${data.v.toLocaleString()}` + (data.f ? `<br><span style="color:#888; font-size:9pt; font-weight:700;">HAS A MENTAL HEALTH COURT</span>` : '');
                 });
                 p.addEventListener('mousemove', function(e) {
                     const rect = tooltip.getBoundingClientRect();
                     const winW = window.innerWidth;
                     const winH = window.innerHeight;
-                    if (winW >= 1024) { 
+                    if (winW >= 1024) {
                         let x = e.clientX + 20; let y = e.clientY + 20;
                         if (x + rect.width > winW) x = e.clientX - rect.width - 20;
                         if (y + rect.height > winH) y = e.clientY - rect.height - 20;
@@ -286,28 +207,9 @@
                 p.addEventListener('mouseout', () => tooltip.style.display = 'none');
             });
         }
-
-        playBtn.addEventListener('click', () => {
-            isPlaying = !isPlaying;
-            playBtn.textContent = isPlaying ? "❙ ❙" : "▶";
-            if (isPlaying) {
-                if (parseInt(slider.value) >= 2024) slider.value = 2000;
-                timer = setInterval(() => {
-                    let v = parseInt(slider.value) + 1;
-                    slider.value = v; update(v);
-                    if (v >= 2024) { isPlaying = false; playBtn.textContent = "▶"; clearInterval(timer); }
-                }, 400);
-            } else clearInterval(timer);
-        });
-
-        slider.addEventListener('input', (e) => {
-            if (isPlaying) { isPlaying = false; playBtn.textContent = "▶"; clearInterval(timer); }
-            update(parseInt(e.target.value));
-        });
-
-        const readyCheck = setInterval(() => {
-            if (root.querySelector('path')) { update(2000); setup(); clearInterval(readyCheck); }
-        }, 100);
+        const check = setInterval(() => { if (container.querySelector('path')) { setup(); clearInterval(check); } }, 100);
     })();
     </script>
 </div>
+</body>
+</html>
