@@ -1,4 +1,4 @@
-<!-- MHC SANKEY SCROLLY SECTION: IRONCLAD VERSION -->
+<!-- MHC SANKEY SCROLLY SECTION: ULTIMATE STYLE -->
 <div id="mhc-sankey-section">
     <style>
         #mhc-sankey-section {
@@ -7,9 +7,11 @@
             background: #fff;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             overflow: visible !important;
+            --amber: #FAC346;
+            --text-main: #333;
+            --text-dim: #666;
         }
         
-        /* LOWER Z-INDEX to sit beneath site banners */
         #mhc-sankey-section .s-sticky-box {
             position: relative;
             width: 100%;
@@ -41,35 +43,41 @@
             visibility: visible !important;
         }
 
-        /* TIGHTER TRACK for snappier scrolling */
-        #mhc-sankey-section .s-track { height: 700vh; position: relative; z-index: 5; }
+        #mhc-sankey-section .s-track { height: 800vh; position: relative; z-index: 5; }
+        #mhc-sankey-section .s-narrative { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 90%; max-width: 350px; pointer-events: none; }
         
-        #mhc-sankey-section .s-narrative { 
-            position: absolute; 
-            top: 0; left: 50%; 
-            transform: translateX(-50%); 
-            width: 90%; 
-            max-width: 320px; 
-            pointer-events: none; 
-        }
-        
+        /* MATCHING ULTIMATE MAP SIDEBAR STYLE */
         #mhc-sankey-section .s-card { 
             background: white !important; 
-            padding: 24px; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            margin-bottom: 70vh; /* Reduced from 90vh */
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+            padding: 30px; 
+            border: 1px solid #eee; 
+            border-radius: 4px; 
+            margin-bottom: 90vh; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); /* Lighter shadow */
             pointer-events: all; 
             position: relative;
             z-index: 20; 
         }
+        #mhc-sankey-section .s-card h3 { 
+            font-size: 1.8rem; 
+            font-weight: 800; 
+            color: var(--text-main); 
+            line-height: 1.1; 
+            margin: 0 0 15px 0;
+        }
+        #mhc-sankey-section .s-card p { 
+            font-size: 11pt; 
+            line-height: 1.5; 
+            color: var(--text-dim); 
+            margin: 0;
+        }
+        #mhc-sankey-section .s-card a { color: var(--amber); text-decoration: none; font-weight: 600; }
         #mhc-sankey-section .s-card:first-child { margin-top: 50vh; }
 
         @media (min-width: 1024px) {
             #mhc-sankey-section .s-sticky-box { height: 100vh; width: 60%; float: right; border: none !important; }
             #mhc-sankey-section .s-track { width: 40%; }
-            #mhc-sankey-section .s-narrative { left: 5%; transform: none; max-width: 400px; }
+            #mhc-sankey-section .s-narrative { left: 5%; transform: none; max-width: 450px; }
         }
 
         /* SVG Styles */
@@ -90,16 +98,33 @@
     
     <div class="s-track">
         <div class="s-narrative">
-            <div class="s-card"><h3>Tracking Success</h3><p>We analyzed case outcomes in Kane County's Treatment Alternative Court.</p></div>
-            <div class="s-card"><h3>Strict Access</h3><p>With an 81% rejection rate, very few applicants are admitted.</p></div>
-            <div class="s-card"><h3>Outcomes</h3><p>Successful completion reached 59% for the verified period.</p></div>
-            <div class="s-card"><h3>Regional Comparison</h3><p>In Tazewell County, the graduation rate stands at 38%.</p></div>
-            <div class="s-card"><h3>Performance Spikes</h3><p>Peoria County recently reported a success rate of 68%.</p></div>
-            <div class="s-card"><h3>Systemic Trends</h3><p>Despite local variations, methodology remains consistent across the state.</p></div>
+            <div class="s-card">
+                <h3>Tracking success</h3>
+                <p>Using data from <a href="http://courtservices.countyofkane.org/Documents/Annual%20Report%202024.pdf" target="_blank">Kane County</a>, we were able to track the outcomes of 224 cases that went through the 16th Circuit Treatment Alternative Court.</p>
+            </div>
+            <div class="s-card">
+                <h3>Few are accepted</h3>
+                <p>Of the applications, 81% were rejected, highlighting the relatively limited circumstances where a mental health court is used. </p>
+            </div>
+            <div class="s-card">
+                <h3>It doesn't always work</h3>
+                <p>Of those accepted, 59% successfully completed the program. Half of those who failed the program were sent to a facility run by the state prison system.</p>
+            </div>
+            <div class="s-card">
+                <h3>Other examples</h3>
+                <p>In Tazewell County, 38% of people who have gone through mental health court have graduated, but the overall structure of the program remained the same.</p>
+            </div>
+            <div class="s-card">
+                <h3>An emerging pattern</h3>
+                <p>Tazewell's neighbor Peoria County had a higher rate of success — 68%. But the total numbers are small. About 60 Tazewell and Peoria combined completed the program.</p>
+            </div>
+            <div class="s-card">
+                <h3>Statewide similarities</h3>
+                <p>These similarities persist across the state. While there is a range of graduation rates, there is no statistically significant differences between the 13 courts that provided detailed data. One county claimed a 79% graduation rate, which would be significantly high, but did not provide enough data for us to verify their methodology.</p>
+            </div>
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
