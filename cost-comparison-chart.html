@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<div id="mhc-cost-chart">
+    <style>
+        #mhc-cost-chart {
+            max-width: 800px;
+            margin: 40px auto;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fff;
+            padding: 20px;
+        }
+        #mhc-cost-chart .chart-header { margin-bottom: 30px; }
+        #mhc-cost-chart h2 { font-size: 1.8rem; font-weight: 800; margin: 0; color: #333; }
+        #mhc-cost-chart p { font-size: 11pt; color: #666; margin: 5px 0 0 0; }
+
+        .axis-label { font-size: 10pt; fill: #888; }
+        .grid-line { stroke: #f0f0f0; stroke-width: 1px; }
+        .bar-ari { fill: #444; }
+        .bar-idoc { fill: #FAC346; }
+        
+        .legend { display: flex; gap: 20px; margin-top: 20px; justify-content: center; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 10pt; font-weight: 600; text-transform: uppercase; color: #555; }
+        .swatch { width: 12px; height: 12px; border-radius: 2px; }
+    </style>
+
+    <div class="chart-header">
+        <h2>The Cost of Care</h2>
+        <p>Comparing the annual cost per person: ARI Community Programs vs. State Prison (IDOC).</p>
+    </div>
+
+    <svg id="cost-svg" viewBox="0 0 800 450"></svg>
+
+    <div class="legend">
+        <div class="legend-item"><div class="swatch" style="background: #444;"></div> ARI Program</div>
+        <div class="legend-item"><div class="swatch" style="background: #FAC346;"></div> Prison (IDOC)</div>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+    (function() {
+        const data = [
+            {year: 2013, ari: 1252, idoc: 20927},
+            {year: 2014, ari: 3699, idoc: 22191},
+            {year: 2015, ari: 3870, idoc: 23385},
+            {year: 2016, ari: 4468, idoc: 21930},
+            {year: 2017, ari: 3551, idoc: 26365},
+            {year: 2018, ari: 3901, idoc: 27930},
+            {year: 2019, ari: 3834, idoc: 30419},
+            {year: 2020, ari: 4039, idoc: 34229},
+            {year: 2021, ari: 4284, idoc: 43711},
+            {year: 2022, ari: 3902, idoc: 45800},
+            {year: 2023, ari: 4056, idoc: 46374},
+            {year: 2024, ari: 4336, idoc: 48810},
+            {year: 2025, ari: 4277, idoc: 52810}
+        ];
+
+        const width = 800, height = 450, margin = {top: 20, right: 20, bottom: 40, left: 65};
+        const svg = d3.select("#cost-svg");
+        
+        const x0 = d3.scaleBand()
+            .domain(data.map(d => d.year))
+            .rangeRound([margin.left, width - margin.right])
+            .paddingInner(0.2);
+
+        const x1 = d3.scaleBand()
+            .domain(['ari', 'idoc'])
+            .rangeRound([0, x0.bandwidth()])
+            .padding(0.05);
+
+        const y = d3.scaleLinear()
+            .domain([0, 60000])
+            .nice()
+            .range([height - margin.bottom, margin.top]);
+
+        svg.append("g")
+            .selectAll("line")
+            .data(y.ticks(6))
+            .join("line")
+            .attr("class", "grid-line")
+            .attr("x1", margin.left)
+            .attr("x2", width - margin.right)
+            .attr("y1", d => y(d))
+            .attr("y2", d => y(d));
+
+        const yearGroups = svg.append("g")
+            .selectAll("g")
+            .data(data)
+            .join("g")
+            .attr("transform", d => `translate(${x0(d.year)},0)`);
+
+        yearGroups.selectAll("rect")
+            .data(d => [{key: 'ari', value: d.ari}, {key: 'idoc', value: d.idoc}])
+            .join("rect")
+            .attr("class", d => d.key === 'ari' ? 'bar bar-ari' : 'bar bar-idoc')
+            .attr("x", d => x1(d.key))
+            .attr("y", height - margin.bottom)
+            .attr("width", x1.bandwidth())
+            .attr("height", 0)
+            .attr("data-target-y", d => y(d.value))
+            .attr("data-target-h", d => (height - margin.bottom) - y(d.value));
+
+        svg.append("g")
+            .attr("transform", `translate(0,${height - margin.bottom})`)
+            .call(d3.axisBottom(x0).tickSize(0).tickPadding(10))
+            .call(g => g.select(".domain").remove())
+            .attr("class", "axis-label");
+
+        svg.append("g")
+            .attr("transform", `translate(${margin.left},0)`)
+            .call(d3.axisLeft(y).ticks(5, "$,f").tickSize(0).tickPadding(10))
+            .call(g => g.select(".domain").remove())
+            .attr("class", "axis-label");
+
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.to(".bar", {
+            duration: 1.2,
+            attr: {
+                height: (i, el) => el.getAttribute('data-target-h'),
+                y: (i, el) => el.getAttribute('data-target-y')
+            },
+            stagger: 0.03,
+            ease: "power4.out",
+            scrollTrigger: {
+                trigger: "#mhc-cost-chart",
+                start: "top 95%", // triggers earlier if the chart is near the bottom
+                toggleActions: "play none none none"
+            }
+        });
+    })();
+    </script>
+</div>
