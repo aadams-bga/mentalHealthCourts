@@ -43,34 +43,22 @@
             visibility: visible !important;
         }
 
-        #mhc-sankey-section .s-track { height: 800vh; position: relative; z-index: 5; }
+        #mhc-sankey-section .s-track { height: 700vh; position: relative; z-index: 5; }
         #mhc-sankey-section .s-narrative { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 90%; max-width: 350px; pointer-events: none; }
         
-        /* MATCHING ULTIMATE MAP SIDEBAR STYLE */
         #mhc-sankey-section .s-card { 
             background: white !important; 
             padding: 30px; 
             border: 1px solid #eee; 
             border-radius: 4px; 
             margin-bottom: 90vh; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05); /* Lighter shadow */
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             pointer-events: all; 
             position: relative;
             z-index: 20; 
         }
-        #mhc-sankey-section .s-card h3 { 
-            font-size: 1.8rem; 
-            font-weight: 800; 
-            color: var(--text-main); 
-            line-height: 1.1; 
-            margin: 0 0 15px 0;
-        }
-        #mhc-sankey-section .s-card p { 
-            font-size: 11pt; 
-            line-height: 1.5; 
-            color: var(--text-dim); 
-            margin: 0;
-        }
+        #mhc-sankey-section .s-card h3 { font-size: 1.8rem; font-weight: 800; color: var(--text-main); line-height: 1.1; margin: 0 0 15px 0; }
+        #mhc-sankey-section .s-card p { font-size: 11pt; line-height: 1.5; color: var(--text-dim); margin: 0; }
         #mhc-sankey-section .s-card a { color: var(--amber); text-decoration: none; font-weight: 600; }
         #mhc-sankey-section .s-card:first-child { margin-top: 50vh; }
 
@@ -80,10 +68,9 @@
             #mhc-sankey-section .s-narrative { left: 5%; transform: none; max-width: 450px; }
         }
 
-        /* SVG Styles */
         .sankey-link { fill: none; stroke: #000; }
         .sankey-node rect { fill: #333; shape-rendering: crispEdges; }
-        .sankey-node text { font-size: 14px; font-weight: 800; text-transform: uppercase; fill: #333; }
+        .sankey-node text { font-size: 13px; font-weight: 800; text-transform: uppercase; fill: #333; }
         .rejected-node rect { fill: #bbb !important; }
         .successful-node rect { fill: #19a116 !important; }
         .failed-node rect { fill: #c02935 !important; }
@@ -108,7 +95,7 @@
             </div>
             <div class="s-card">
                 <h3>It doesn't always work</h3>
-                <p>Of those accepted, 59% successfully completed the program. Half of those who failed the program were sent to a facility run by the state prison system.</p>
+                <p>Of those accepted, 59% graduated the program. Half of those who didn't graduate were sent to a facility run by the state prison system.</p>
             </div>
             <div class="s-card">
                 <h3>Other examples</h3>
@@ -120,7 +107,7 @@
             </div>
             <div class="s-card">
                 <h3>Statewide similarities</h3>
-                <p>These similarities persist across the state. While there is a range of graduation rates, there is no statistically significant differences between the 13 courts that provided detailed data. One county claimed a 79% graduation rate, which would be significantly high, but did not provide enough data for us to verify their methodology.</p>
+                <p>These similarities persist across the state. While there is a range of graduation rates, there is no statistically significant differences between the 13 courts that provided detailed data.</p>
             </div>
         </div>
     </div>
@@ -132,14 +119,14 @@
 
     <script>
     (function() {
-        const dataA = { county: "Kane County", nodes: [{ name: "Applications" }, { name: "Accepted" }, { name: "Rejected" }, { name: "Successful" }, { name: "Failed" }], links: [{ source: 0, target: 1, value: 49 }, { source: 0, target: 2, value: 181 }, { source: 1, target: 3, value: 29 }, { source: 1, target: 4, value: 20 }] };
+        const dataA = { county: "Kane County", nodes: [{ name: "Applications" }, { name: "Accepted" }, { name: "Rejected" }, { name: "Graduated" }, { name: "Didn't Graduate" }], links: [{ source: 0, target: 1, value: 49 }, { source: 0, target: 2, value: 181 }, { source: 1, target: 3, value: 29 }, { source: 1, target: 4, value: 20 }] };
         const dataB = { county: "Tazewell County", nodes: dataA.nodes.map(function(n){return {...n}}), links: [{ source: 0, target: 1, value: 82 }, { source: 0, target: 2, value: 293 }, { source: 1, target: 3, value: 31 }, { source: 1, target: 4, value: 51 }] };
         const dataC = { county: "Peoria County", nodes: dataA.nodes.map(function(n){return {...n}}), links: [{ source: 0, target: 1, value: 65 }, { source: 0, target: 2, value: 190 }, { source: 1, target: 3, value: 30 }, { source: 1, target: 4, value: 18 }] };
 
         const width = 400, height = 750; 
         const root = d3.select("#mhc-sankey-section");
         const svg = root.select("#viz-svg");
-        const sankey = d3.sankey().nodeWidth(12).nodePadding(50).nodeAlign(d3.sankeyLeft).extent([[200, 40], [height - 60, 360]]);
+        const sankey = d3.sankey().nodeWidth(12).nodePadding(85).nodeAlign(d3.sankeyLeft).nodeSort(null).extent([[200, 40], [height - 60, 360]]);
         const layoutA = sankey(JSON.parse(JSON.stringify(dataA)));
         const layoutB = sankey(JSON.parse(JSON.stringify(dataB)));
         const layoutC = sankey(JSON.parse(JSON.stringify(dataC)));
@@ -157,29 +144,24 @@
 
         svg.append("g").attr("class", "node-group").selectAll("g").data(layoutA.nodes).enter().append("g")
             .attr("class", function(d, i) { 
-                let s = 0; if (i === 1) { s = 1; } if (i === 2) { s = 1; } if (i > 2) { s = 2; }
+                let s = 0; if (i === 1 || i === 2) s = 1; else if (i > 2) s = 2;
                 let c = "sankey-node ns-" + s + " n-" + i; 
-                if (d.name === 'Successful') { c += ' successful-node'; }
-                if (d.name === 'Rejected') { c += ' rejected-node'; }
-                if (d.name === 'Failed') { c += ' failed-node'; }
+                if (d.name === 'Graduated') c += ' successful-node'; 
+                if (d.name === 'Rejected') c += ' rejected-node'; 
+                if (d.name === 'Didn\'t Graduate') c += ' failed-node'; 
                 return c; 
             })
             .each(function(d) {
                 d3.select(this).append("rect").attr("x", d.y0).attr("y", d.x0).attr("height", d.x1 - d.x0).attr("width", d.y1 - d.y0).style("opacity", 0);
-                d3.select(this).append("text").attr("x", (d.y0 + d.y1) / 2).attr("y", d.x0 - 10).attr("text-anchor", "middle").text(d.name).style("opacity", 0);
+                const text = d3.select(this).append("text").attr("text-anchor", "middle").style("opacity", 0);
+                const words = d.name.split(/\s+/);
+                words.forEach((word, i) => {
+                    text.append("tspan").attr("x", (d.y0 + d.y1) / 2).attr("dy", i === 0 ? "-15" : "1.2em").text(word);
+                });
             });
 
         gsap.registerPlugin(ScrollTrigger);
-
-        ScrollTrigger.create({
-            trigger: "#mhc-sankey-section",
-            pin: "#mhc-sankey-section .s-sticky-box",
-            start: "top 80px", 
-            end: "bottom bottom",
-            pinSpacing: false,
-            invalidateOnRefresh: true
-        });
-
+        ScrollTrigger.create({ trigger: "#mhc-sankey-section", pin: "#mhc-sankey-section .s-sticky-box", start: "top 80px", end: "bottom bottom", pinSpacing: false, invalidateOnRefresh: true });
         const tl = gsap.timeline({ scrollTrigger: { trigger: "#mhc-sankey-section", start: "top 80px", end: "bottom bottom", scrub: true } });
         
         tl.to("#mhc-sankey-section .t-a", { opacity: 1, duration: 0.4 });
@@ -188,34 +170,26 @@
         tl.to("#mhc-sankey-section .ns-1 rect, #mhc-sankey-section .ns-1 text", { opacity: 1, duration: 0.4 });
         tl.to("#mhc-sankey-section .link-2, #mhc-sankey-section .link-3, #mhc-sankey-section .link-4", { strokeDashoffset: 0, opacity: 0.08, duration: 1.2 });
         tl.to("#mhc-sankey-section .ns-2 rect, #mhc-sankey-section .ns-2 text", { opacity: 1, duration: 0.4 });
-        
         tl.to({}, { duration: 0.4 });
         tl.to("#mhc-sankey-section .t-a", { opacity: 0, duration: 0.2 }, "m1");
         tl.to("#mhc-sankey-section .t-b", { opacity: 1, duration: 0.2 }, "m1");
-        
-        layoutA.links.forEach(function(l, i) {
-            tl.to("#mhc-sankey-section .link-" + i, { attr: { d: pGen(layoutB.links[i]), "stroke-width": layoutB.links[i].width }, duration: 0.8 }, "m1");
-        });
+        layoutA.links.forEach(function(l, i) { tl.to("#mhc-sankey-section .link-" + i, { attr: { d: pGen(layoutB.links[i]), "stroke-width": layoutB.links[i].width }, duration: 0.8 }, "m1"); });
         layoutA.nodes.forEach(function(n, i) {
             const tar = layoutB.nodes[i];
             tl.to("#mhc-sankey-section .n-" + i + " rect", { attr: { x: tar.y0, y: tar.x0, height: tar.x1-tar.x0, width: tar.y1-tar.y0 }, duration: 0.8 }, "m1");
-            tl.to("#mhc-sankey-section .n-" + i + " text", { attr: { x: (tar.y0+tar.y1)/2, y: tar.x0-10 }, duration: 0.8 }, "m1");
+            tl.to("#mhc-sankey-section .n-" + i + " text tspan", { attr: { x: (tar.y0+tar.y1)/2 }, duration: 0.8 }, "m1");
+            tl.to("#mhc-sankey-section .n-" + i + " text", { attr: { y: tar.x0 - 10 }, duration: 0.8 }, "m1");
         });
-
         tl.to({}, { duration: 0.4 });
         tl.to("#mhc-sankey-section .t-b", { opacity: 0, duration: 0.2 }, "m2");
         tl.to("#mhc-sankey-section .t-c", { opacity: 1, duration: 0.2 }, "m2");
-        
-        layoutA.links.forEach(function(l, i) {
-            tl.to("#mhc-sankey-section .link-" + i, { attr: { d: pGen(layoutC.links[i]), "stroke-width": layoutC.links[i].width }, duration: 0.8 }, "m2");
-        });
+        layoutA.links.forEach(function(l, i) { tl.to("#mhc-sankey-section .link-" + i, { attr: { d: pGen(layoutC.links[i]), "stroke-width": layoutC.links[i].width }, duration: 0.8 }, "m2"); });
         layoutA.nodes.forEach(function(n, i) {
             const tar = layoutC.nodes[i];
             tl.to("#mhc-sankey-section .n-" + i + " rect", { attr: { x: tar.y0, y: tar.x0, height: tar.x1-tar.x0, width: tar.y1-tar.y0 }, duration: 0.8 }, "m2");
-            tl.to("#mhc-sankey-section .n-" + i + " text", { attr: { x: (tar.y0+tar.y1)/2, y: tar.x0-10 }, duration: 0.8 }, "m2");
+            tl.to("#mhc-sankey-section .n-" + i + " text tspan", { attr: { x: (tar.y0+tar.y1)/2 }, duration: 0.8 }, "m2");
+            tl.to("#mhc-sankey-section .n-" + i + " text", { attr: { y: tar.x0 - 10 }, duration: 0.8 }, "m2");
         });
-
-        // EXIT ANIMATION
         tl.to({}, { duration: 1.5 });
         tl.to("#mhc-sankey-section .s-sticky-box", { opacity: 0, visibility: "hidden", duration: 0.8 });
     })();

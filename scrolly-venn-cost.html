@@ -9,7 +9,6 @@
             overflow: visible !important;
         }
         
-        /* LOWER Z-INDEX to sit beneath site banners */
         #mhc-vc-section .vc-sticky-box {
             position: relative;
             width: 100%;
@@ -37,7 +36,6 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             display: block;
-            /* Initial visibility managed by GSAP to prevent "double display" */
         }
 
         #mhc-vc-section .vc-track { height: 800vh; position: relative; z-index: 5; }
@@ -52,7 +50,7 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
             pointer-events: all; 
             position: relative;
-            z-index: 20; /* Lowered card priority */
+            z-index: 20; 
         }
         #mhc-vc-section .vc-card:first-child { margin-top: 50vh; }
 
@@ -65,9 +63,10 @@
         /* SVG Styles */
         .v-circ { fill: rgba(0,0,0,0.02); stroke: #eee; }
         .v-dot { stroke: #fff; stroke-width: 1px; }
-        .bar-ari { fill: #444; }
-        .bar-idoc { fill: #FAC346; }
-        .axis-label { font-size: 14px; fill: #888; font-weight: 600; }
+        .v-label { font-size: 14px; font-weight: 900; text-transform: uppercase; fill: #333; letter-spacing: 1px; }
+        .bar-ari { fill: #FAC346; } 
+        .bar-idoc { fill: #444; }    
+        .axis-label { font-size: 12px; fill: #888; font-weight: 600; }
     </style>
 
     <div class="vc-sticky-box">
@@ -80,10 +79,10 @@
     <div class="vc-track">
         <div class="vc-narrative">
             <div class="vc-card"><h3>The Funding Overlap</h3><p>Not every mental health court receives state-level Adult Redeploy Illinois (ARI) funding.</p></div>
-            <div class="vc-card"><h3>Vetted Programs</h3><p>The amber dots represent courts successfully receiving ARI funding.</p></div>
+            <div class="vc-card"><h3>Vetted Programs</h3><p>The amber dots represent all mental health courts in the state, while dark gray dots show other ARI-funded diversions.</p></div>
             <div class="vc-card"><h3>Financial Shift</h3><p>These programs represent a massive financial divergence for the state budget.</p></div>
-            <div class="vc-card" style="border-left: 4px solid #444;"><h3>Cost of Community</h3><p>ARI programs average just $4,277 per person annually.</p></div>
-            <div class="vc-card" style="border-left: 4px solid #FAC346;"><h3>Cost of Prison</h3><p>By contrast, state prison costs climbed to $52,810 per person in 2025.</p></div>
+            <div class="vc-card" style="border-left: 4px solid #FAC346;"><h3>Cost of Community</h3><p>ARI programs average just $4,277 per person annually.</p></div>
+            <div class="vc-card" style="border-left: 4px solid #444;"><h3>Cost of Prison</h3><p>By contrast, state prison costs climbed to $52,810 per person in 2025.</p></div>
             <div class="vc-card"><h3>Systemic Savings</h3><p>Prioritizing diversion could redirect millions toward local infrastructure.</p></div>
         </div>
     </div>
@@ -94,60 +93,67 @@
 
     <script>
     (function() {
-        const vData = [{a:1,m:1},{a:0,m:1},{a:0,m:1},{a:1,m:0},{a:1,m:1},{a:1,m:1},{a:1,m:1},{a:1,m:0},{a:1,m:0},{a:1,m:1}];
-        const cData = [{y:2013,a:1252,i:20927},{y:2016,a:4468,i:21930},{y:2019,a:3834,i:30419},{y:2022,a:3902,i:45800},{y:2025,a:4277,i:52810}];
+        const vData = [
+            {a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},
+            {a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},
+            {a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:0},
+            {a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:1},{a:1,m:1},{a:1,m:1},{a:1,m:1},{a:1,m:1},{a:1,m:1},{a:1,m:1},
+            {a:1,m:1},{a:1,m:1},{a:1,m:1},{a:1,m:1},{a:1,m:1},{a:1,m:1},{a:1,m:1},{a:1,m:0},{a:1,m:1},{a:1,m:0},
+            {a:1,m:0},{a:1,m:0},{a:1,m:0},{a:1,m:1},{a:1,m:1},{a:1,m:1},{a:1,m:1},{a:1,m:1},{a:1,m:1},{a:1,m:1},
+            {a:1,m:1},{a:1,m:1},{a:0,m:1},{a:0,m:1},{a:0,m:1},{a:0,m:1},{a:0,m:1},{a:0,m:1},{a:0,m:1},{a:0,m:1}
+        ];
+        const cData = [
+            {y:2013,a:1252,i:20927},{y:2014,a:3699,i:22191},{y:2015,a:3870,i:23385},{y:2016,a:4468,i:21930},
+            {y:2017,a:3551,i:26365},{y:2018,a:3901,i:27930},{y:2019,a:3834,i:30419},{y:2020,a:4039,i:34229},
+            {y:2021,a:4284,i:43711},{y:2022,a:3902,i:45800},{y:2023,a:4056,i:46374},{y:2024,a:4336,i:48810},
+            {y:2025,a:4277,i:52810}
+        ];
 
         const vSvg = d3.select("#vc-venn-svg");
         vSvg.append("circle").attr("cx", 280).attr("cy", 250).attr("r", 180).attr("class", "v-circ");
         vSvg.append("circle").attr("cx", 520).attr("cy", 250).attr("r", 180).attr("class", "v-circ");
+        
+        // REGION LABELS
+        vSvg.append("text").attr("x", 220).attr("y", 50).attr("text-anchor", "middle").attr("class", "v-label").text("ARI Programs");
+        vSvg.append("text").attr("x", 580).attr("y", 50).attr("text-anchor", "middle").attr("class", "v-label").text("Mental Health Courts");
+
         const vNodes = vData.map(function(d) { return {a: d.a, m: d.m, x: 400, y: 250}; });
         const dots = vSvg.append("g").selectAll("circle").data(vNodes).enter().append("circle")
-            .attr("r", 10).attr("class", "v-dot").attr("fill", function(d) { 
-                if (d.a) { if (d.m) { return "#FAC346"; } }
-                if (d.a) { return "#aaa"; }
-                return "#555";
+            .attr("r", 8).attr("class", "v-dot").attr("fill", function(d) { 
+                if (d.m) { return "#FAC346"; } 
+                if (d.a) { return "#444"; }    
+                return "#aaa";
             }).style("opacity", 0);
 
+        // PHYSICS CENTERED ON REGIONS
         d3.forceSimulation(vNodes).force("x", d3.forceX(function(d) { 
-            if (d.a) { if (d.m) { return 400; } }
-            if (d.a) { return 280; }
-            return 520;
-        }).strength(0.1)).force("y", d3.forceY(250).strength(0.1)).force("collide", d3.forceCollide(12)).on("tick", function() { dots.attr("cx", function(d){return d.x;}).attr("cy", function(d){return d.y;}); });
+            if (d.a) { 
+                if (d.m) { return 400; } // Center (Both)
+                return 220; // Left Crescent (ARI Only)
+            }
+            return 580; // Right Crescent (MHC Only)
+        }).strength(0.1)).force("y", d3.forceY(250).strength(0.1)).force("collide", d3.forceCollide(10)).on("tick", function() { dots.attr("cx", function(d){return d.x;}).attr("cy", function(d){return d.y;}); });
 
         const cSvg = d3.select("#vc-cost-svg");
         const x = d3.scaleBand().domain(cData.map(function(d){return d.y;})).range([80, 780]).padding(0.3);
         const y = d3.scaleLinear().domain([0, 60000]).range([440, 40]);
-        cSvg.append("g").attr("transform", "translate(0,440)").call(d3.axisBottom(x).tickSize(0)).attr("class", "axis-label");
+        cSvg.append("g").attr("transform", "translate(0,440)").call(d3.axisBottom(x).tickValues([2013, 2016, 2019, 2022, 2025]).tickSize(0)).attr("class", "axis-label");
         cSvg.append("g").attr("transform", "translate(80,0)").call(d3.axisLeft(y).ticks(5, "$,f")).attr("class", "axis-label");
         const bars = cSvg.append("g").selectAll("g").data(cData).enter().append("g").attr("transform", function(d){return "translate("+x(d.y)+",0)";});
-        bars.append("rect").attr("class", "bar-idoc").attr("x", 0).attr("width", x.bandwidth()/2-4).attr("y", 440).attr("height", 0).attr("data-h", function(d){return 440-y(d.i);}).attr("data-y", function(d){return y(d.i);});
-        bars.append("rect").attr("class", "bar-ari").attr("x", x.bandwidth()/2).attr("width", x.bandwidth()/2-4).attr("y", 440).attr("height", 0).attr("data-h", function(d){return 440-y(d.a);}).attr("data-y", function(d){return y(d.a);});
+        bars.append("rect").attr("class", "bar-idoc").attr("x", 0).attr("width", x.bandwidth()/2-2).attr("y", 440).attr("height", 0).attr("data-h", function(d){return 440-y(d.i);}).attr("data-y", function(d){return y(d.i);});
+        bars.append("rect").attr("class", "bar-ari").attr("x", x.bandwidth()/2).attr("width", x.bandwidth()/2-2).attr("y", 440).attr("height", 0).attr("data-h", function(d){return 440-y(d.a);}).attr("data-y", function(d){return y(d.a);});
 
         gsap.registerPlugin(ScrollTrigger);
-
-        // FORCE PINNING with TOP OFFSET for Banner
-        ScrollTrigger.create({
-            trigger: "#mhc-vc-section",
-            pin: "#mhc-vc-section .vc-sticky-box",
-            start: "top 80px", 
-            end: "bottom bottom",
-            pinSpacing: false,
-            invalidateOnRefresh: true
-        });
-
+        ScrollTrigger.create({ trigger: "#mhc-vc-section", pin: "#mhc-vc-section .vc-sticky-box", start: "top 80px", end: "bottom bottom", pinSpacing: false, invalidateOnRefresh: true });
         const tl = gsap.timeline({ scrollTrigger: { trigger: "#mhc-vc-section", start: "top 80px", end: "bottom bottom", scrub: true } });
-        
-        // Initial state force-reset
         tl.set("#vc-cost-svg", { opacity: 0, visibility: "hidden" });
         tl.set("#vc-venn-svg", { opacity: 1, visibility: "visible" });
-
-        tl.to("#mhc-vc-section .v-dot", { opacity: 1, duration: 1, stagger: 0.1 });
+        tl.to("#mhc-vc-section .v-dot", { opacity: 1, duration: 1, stagger: { each: 0.05, from: "end" } });
         tl.to({}, { duration: 1 });
         tl.to("#vc-venn-svg", { opacity: 0, visibility: "hidden", duration: 1 }, "trans");
         tl.to("#vc-cost-svg", { opacity: 1, visibility: "visible", duration: 1 }, "trans");
         tl.to(".bar-ari", { attr: { y: function(i, el){return el.getAttribute('data-y');}, height: function(i, el){return el.getAttribute('data-h');} }, duration: 1.5, stagger: 0.1 });
         tl.to(".bar-idoc", { attr: { y: function(i, el){return el.getAttribute('data-y');}, height: function(i, el){return el.getAttribute('data-h');} }, duration: 1.5, stagger: 0.1 }, "+=0.5");
-        
         tl.to({}, { duration: 2 });
         tl.to("#mhc-vc-section .vc-sticky-box", { opacity: 0, visibility: "hidden", duration: 1 });
     })();
