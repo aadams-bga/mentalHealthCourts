@@ -1,93 +1,90 @@
-<!DOCTYPE html>
-<!-- CSS Block -->
-<style>
-    #mhc-ultimate-v2 {
-        --amber: #FAC346;
-        --closed-ghost: #D6C499;
-        --dark-bg: #222;
-        --ghost-gray: #444;
-        --text-main: #333;
-        --text-dim: #666;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        background: #fff;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        max-width: 1400px;
-        margin: 0 auto;
-    }
-
-    #mhc-ultimate-v2 .main-header {
-        width: 100%;
-        padding: 15px 30px 0px 30px;
-        box-sizing: border-box;
-        background: #fff;
-        z-index: 20;
-    }
-
-    @media (min-width: 1024px) {
-        #mhc-ultimate-v2 { height: 100vh; overflow: hidden; }
-        #mhc-ultimate-v2 .content-wrapper { display: flex; flex-direction: row; flex-grow: 1; overflow: hidden; }
-        #mhc-ultimate-v2 .sidebar { width: 40%; padding: 10px 30px 30px 30px; display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto; }
-        #mhc-ultimate-v2 .map-area { width: 60%; position: relative; display: flex; align-items: flex-start; justify-content: center; padding: 0 20px 20px 20px; }
-        #mhc-ultimate-v2 .active-year { font-size: 56pt; margin-bottom: 5px; }
-    }
-
-    @media (max-width: 1023px) {
-        #mhc-ultimate-v2 .main-header { padding: 15px 15px 0 15px; text-align: center; }
-        #mhc-ultimate-v2 .sidebar { padding: 15px; text-align: center; border-bottom: 1px solid #eee; }
-        #mhc-ultimate-v2 .map-area { min-height: 450px; height: 60vh; position: relative; display: flex; align-items: center; justify-content: center; background: #fafafa; }
-        #mhc-ultimate-v2 h2 { font-size: 1.25rem !important; margin: 0 !important; }
-        #mhc-ultimate-v2 .description { font-size: 10pt !important; margin: 10px auto !important; max-width: 400px; }
-        #mhc-ultimate-v2 .active-year { font-size: 28pt !important; min-width: 90px !important; }
-        #mhc-ultimate-v2 #map-tooltip {
-            position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important;
-            width: 100% !important; max-width: none !important; border: none !important; border-bottom: 3px solid var(--amber) !important;
-            border-radius: 0 !important; box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
-            background: rgba(255,255,255,0.98) !important; text-align: center; padding: 10px !important;
-        }
-    }
-
-    #mhc-ultimate-v2 h2 { font-size: 1.8rem; font-weight: 800; color: var(--text-main); line-height: 1.1; }
-    #mhc-ultimate-v2 .description { font-size: 11pt; line-height: 1.5; color: var(--text-dim); }
-    
-    /* STACKED CONTROLS FIX */
-    #mhc-ultimate-v2 .controls { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 15px; }
-    #mhc-ultimate-v2 .controls-top-row { display: flex; align-items: center; gap: 20px; }
-    #mhc-ultimate-v2 .active-year { font-weight: 900; color: var(--text-main); letter-spacing: -2px; line-height: 1; }
-
-    #mhc-ultimate-v2 #play-btn {
-        background: transparent !important; border: 1px solid #333 !important; color: var(--text-main) !important;
-        border-radius: 50%; cursor: pointer; font-size: 14pt; width: 44px; height: 44px; 
-        display: flex; align-items: center; justify-content: center;
-        transition: all 0.2s; padding: 0 !important; margin: 0 !important;
-    }
-    #mhc-ultimate-v2 #play-btn:hover { color: var(--amber) !important; border-color: var(--amber) !important; }
-
-    #mhc-ultimate-v2 .slider-container { width: 100%; max-width: 400px; display: flex; align-items: center; }
-    #mhc-ultimate-v2 #year-slider { -webkit-appearance: none; width: 100%; height: 20px; background: transparent; outline: none; cursor: pointer; margin: 0; }
-    #mhc-ultimate-v2 #year-slider::-webkit-slider-runnable-track { width: 100%; height: 1px; background: #333; }
-    #mhc-ultimate-v2 #year-slider::-webkit-slider-thumb {
-        -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--amber); border: none; margin-top: -7.5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    #mhc-ultimate-v2 #il-map-svg { width: 100%; height: 100%; max-width: 600px; display: block; }
-    #mhc-ultimate-v2 path { fill: var(--ghost-gray); stroke: none; transition: fill 0.4s ease; cursor: pointer; }
-    #mhc-ultimate-v2 path.is-active { fill: var(--amber); }
-    #mhc-ultimate-v2 path.is-closed { fill: var(--closed-ghost); }
-    #mhc-ultimate-v2 path:hover { opacity: 0.8; }
-
-    #mhc-ultimate-v2 #map-tooltip {
-        position: fixed; background: #fff; border: none; border-left: 4px solid var(--amber); 
-        padding: 12px 16px; pointer-events: none; display: none; z-index: 99999; 
-        max-width: 260px; font-size: 11pt; line-height: 1.4; 
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 2px;
-    }
-    #mhc-ultimate-v2 #map-tooltip b { display: block; font-size: 13pt; margin-bottom: 4px; color: #000; text-transform: uppercase; letter-spacing: 0.5px; }
-</style>
-
-<!-- HTML Block -->
+<!-- MHC ULTIMATE TIMELINE MAP -->
 <div id="mhc-ultimate-v2">
+    <style>
+        #mhc-ultimate-v2 {
+            --amber: #FAC346;
+            --closed-ghost: #D6C499;
+            --ghost-gray: #444;
+            --text-main: #333;
+            --text-dim: #666;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        #mhc-ultimate-v2 .main-header {
+            width: 100%;
+            padding: 15px 30px 0px 30px;
+            box-sizing: border-box;
+            background: #fff;
+            z-index: 20;
+        }
+
+        @media (min-width: 1024px) {
+            #mhc-ultimate-v2 { height: 100vh; overflow: hidden; }
+            #mhc-ultimate-v2 .content-wrapper { display: flex; flex-direction: row; flex-grow: 1; overflow: hidden; }
+            #mhc-ultimate-v2 .sidebar { width: 45%; padding: 10px 30px 30px 30px; display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto; }
+            #mhc-ultimate-v2 .map-area { width: 55%; position: relative; display: flex; align-items: flex-start; justify-content: center; padding: 0 20px 20px 20px; }
+            #mhc-ultimate-v2 .active-year { font-size: 56pt; margin-bottom: 5px; }
+        }
+
+        @media (max-width: 1023px) {
+            #mhc-ultimate-v2 .main-header { padding: 15px 15px 0 15px; text-align: center; }
+            #mhc-ultimate-v2 .sidebar { padding: 15px; text-align: center; border-bottom: 1px solid #eee; }
+            #mhc-ultimate-v2 .map-area { min-height: 450px; height: 60vh; position: relative; display: flex; align-items: center; justify-content: center; background: #fafafa; }
+            #mhc-ultimate-v2 h2 { font-size: 1.25rem !important; margin: 0 !important; }
+            #mhc-ultimate-v2 .description { font-size: 10pt !important; margin: 10px auto !important; max-width: 400px; }
+            #mhc-ultimate-v2 .active-year { font-size: 28pt !important; min-width: 90px !important; }
+            #mhc-ultimate-v2 #map-tooltip {
+                position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important;
+                width: 100% !important; max-width: none !important; border: none !important; border-bottom: 3px solid var(--amber) !important;
+                border-radius: 0 !important; box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+                background: rgba(255,255,255,0.98) !important; text-align: center; padding: 10px !important;
+            }
+        }
+
+        #mhc-ultimate-v2 h2 { font-size: 1.8rem; font-weight: 800; color: var(--text-main); line-height: 1.1; }
+        #mhc-ultimate-v2 .description { font-size: 11pt; line-height: 1.5; color: var(--text-dim); margin-bottom: 20px; }
+        
+        #mhc-ultimate-v2 .controls { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+        #mhc-ultimate-v2 .controls-top-row { display: flex; align-items: center; gap: 15px; }
+        #mhc-ultimate-v2 .active-year { font-weight: 900; color: var(--text-main); letter-spacing: -2px; line-height: 1; }
+
+        /* MINIMALIST PLAY BUTTON */
+        #mhc-ultimate-v2 #play-btn {
+            background: transparent !important; border: none !important; color: var(--text-main) !important;
+            cursor: pointer; font-size: 22pt; width: 44px; height: 44px; 
+            display: flex; align-items: center; justify-content: center;
+            transition: color 0.2s; padding: 0 !important; margin: 0 !important;
+        }
+        #mhc-ultimate-v2 #play-btn:hover { color: var(--amber) !important; }
+
+        #mhc-ultimate-v2 .slider-container { width: 100%; max-width: 400px; display: flex; align-items: center; }
+        #mhc-ultimate-v2 #year-slider { -webkit-appearance: none; width: 100%; height: 20px; background: transparent; outline: none; cursor: pointer; margin: 0; }
+        #mhc-ultimate-v2 #year-slider::-webkit-slider-runnable-track { width: 100%; height: 1px; background: #333; }
+        #mhc-ultimate-v2 #year-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--amber); border: none; margin-top: -7.5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        #mhc-ultimate-v2 #il-map-svg { width: 100%; height: 100%; max-width: 600px; display: block; }
+        #mhc-ultimate-v2 path { fill: var(--ghost-gray); stroke: none; transition: fill 0.4s ease; cursor: pointer; }
+        #mhc-ultimate-v2 path.is-active { fill: var(--amber); }
+        #mhc-ultimate-v2 path.is-closed { fill: var(--closed-ghost); }
+        #mhc-ultimate-v2 path:hover { opacity: 0.8; }
+
+        #mhc-ultimate-v2 #map-tooltip {
+            position: fixed; background: #fff; border: none; border-left: 4px solid var(--amber); 
+            padding: 12px 16px; pointer-events: none; display: none; z-index: 99999; 
+            max-width: 260px; font-size: 11pt; line-height: 1.4; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 2px;
+        }
+        #mhc-ultimate-v2 #map-tooltip b { display: block; font-size: 13pt; margin-bottom: 4px; color: #000; text-transform: uppercase; letter-spacing: 0.5px; }
+    </style>
+
     <div class="main-header">
         <h2>Mapping the Expansion</h2>
     </div>
@@ -247,8 +244,18 @@
                 if (data) {
                     const startYear = getStartYear(data);
                     if (startYear <= year) {
-                        if (data.closed && (year >= parseInt(data.closed))) p.classList.add('is-closed');
-                        else p.classList.add('is-active');
+                        let isClosed = false;
+                        if (data.closed) {
+                            if (year >= parseInt(data.closed)) {
+                                isClosed = true;
+                            }
+                        }
+                        
+                        if (isClosed) {
+                            p.classList.add('is-closed');
+                        } else {
+                            p.classList.add('is-active');
+                        }
                     }
                 }
             });
@@ -292,7 +299,9 @@
                     slider.value = v; update(v);
                     if (v >= 2024) { isPlaying = false; playBtn.textContent = "▶"; clearInterval(timer); }
                 }, 400);
-            } else clearInterval(timer);
+            } else {
+                clearInterval(timer);
+            }
         });
 
         slider.addEventListener('input', (e) => {
@@ -300,7 +309,6 @@
             update(parseInt(e.target.value));
         });
 
-        // Initialize
         const checkReady = setInterval(() => {
             if (root.querySelector('path')) {
                 update(2000);
