@@ -92,7 +92,7 @@
                 <p>Of those accepted, 59% successfully completed the program. Half of those who didn’t complete  the program were sent to a facility run by the state prison system. The rest voluntarily withdrew or couldn’t continue due to factors such as illness. A small number continue to be active in the program.</p>
             </div>
             <div class="s-card">
-                <h3>other examples</h3>
+                <h3>Other examples</h3>
                 <p>Tazewell County has seen similar trends — but with a lower graduation rate. Over the past decade, 38% of people who went through mental health court there graduated. </p>
             </div>
             <div class="s-card">
@@ -112,113 +112,136 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <script>
-    (function() {
-        const dataA = { county: "Kane County", nodes: [{ name: "Applied" }, { name: "Accepted" }, { name: "Rejected" }, { name: "Graduated" }, { name: "Didn't Graduate" }, { name: "Still Active" }], links: [{ source: 0, target: 1, value: 65 }, { source: 0, target: 2, value: 181 }, { source: 1, target: 3, value: 29 }, { source: 1, target: 4, value: 20 }, { source: 1, target: 5, value: 16 }] };
-        const dataB = { county: "Tazewell County", nodes: dataA.nodes.map(n => ({...n})), links: [{ source: 0, target: 1, value: 100 }, { source: 0, target: 2, value: 293 }, { source: 1, target: 3, value: 31 }, { source: 1, target: 4, value: 51 }, { source: 1, target: 5, value: 18 }] };
-        const dataC = { county: "Peoria County", nodes: dataA.nodes.map(n => ({...n})), links: [{ source: 0, target: 1, value: 80 }, { source: 0, target: 2, value: 190 }, { source: 1, target: 3, value: 30 }, { source: 1, target: 4, value: 18 }, { source: 1, target: 5, value: 32 }] };
-
-        const width = 400, height = 750; 
-        const root = d3.select("#mhc-sankey-section");
-        const svg = root.select("#viz-svg");
-        const sankey = d3.sankey().nodeWidth(12).nodePadding(85).nodeAlign(d3.sankeyLeft).nodeSort(null).extent([[200, 40], [height - 60, 360]]);
-        
-        function getLayout(raw) {
-            const l = sankey(JSON.parse(JSON.stringify(raw)));
-            const midY = (l.nodes[1].x1 + l.nodes[3].x0) / 2;
-            const h = l.nodes[5].x1 - l.nodes[5].x0;
-            l.nodes[5].x0 = midY - h/2;
-            l.nodes[5].x1 = midY + h/2;
-            l.links.forEach(link => { if (link.target.index === 5) { link.x1 = l.nodes[5].x0; } });
-            return l;
+    function initSankey() {
+        if (!document.querySelector("#mhc-sankey-section") || !document.querySelector("#viz-svg")) {
+            requestAnimationFrame(initSankey);
+            return;
         }
-
-        const layoutA = getLayout(dataA);
-        const layoutB = getLayout(dataB);
-        const layoutC = getLayout(dataC);
-
-        function pGen(d) { const x0 = d.source.x1, x1 = d.target.x0, y0 = d.y0, y1 = d.y1; return "M"+y0+","+x0+"C"+y0+","+(x0+x1)/2+" "+y1+","+(x0+x1)/2+" "+y1+","+x1; }
-
-        svg.append("text").attr("x", 40).attr("y", 100).attr("class", "county-title t-a").text(dataA.county).style("opacity", 0);
-        svg.append("text").attr("x", 40).attr("y", 100).attr("class", "county-title t-b").text(dataB.county).style("opacity", 0);
-        svg.append("text").attr("x", 40).attr("y", 100).attr("class", "county-title t-c").text(dataC.county).style("opacity", 0);
-        
-        svg.append("g").attr("class", "link-group").selectAll("path").data(layoutA.links).enter().append("path")
-            .attr("class", (d,i) => "sankey-link link-" + i)
-            .attr("d", pGen).attr("stroke-width", d => d.width)
-            .style("stroke-dasharray", function() { return this.getTotalLength(); })
-            .style("stroke-dashoffset", function() { return this.getTotalLength(); })
-            .style("opacity", 0);
-
-        svg.append("g").attr("class", "node-group").selectAll("g").data(layoutA.nodes).enter().append("g")
-            .attr("class", (d, i) => { 
-                let s = 0; 
-                if (i === 0) s = 0; 
-                else if (i === 1 || i === 2) s = 1; 
-                else if (i === 5) s = 2; 
-                else s = 3; 
-                let c = "sankey-node ns-" + s + " n-" + i; 
-                if (d.name === 'Graduated') c += ' successful-node'; 
-                if (d.name === 'Rejected') c += ' rejected-node'; 
-                if (d.name === 'Didn\'t Graduate') c += ' failed-node'; 
-                if (d.name === 'Still Active') c += ' active-node'; 
-                return c; 
-            })
-            .each(function(d) {
-                d3.select(this).style("opacity", 0).style("visibility", "hidden");
-                d3.select(this).append("rect").attr("x", d.y0).attr("y", d.x0).attr("height", d.x1 - d.x0).attr("width", d.y1 - d.y0);
-                const text = d3.select(this).append("text")
-                    .attr("text-anchor", "middle")
-                    .attr("y", d.x0 - (d.name.split(/\s+/).length > 1 ? 28 : 12));
-                const words = d.name.split(/\s+/);
-                words.forEach((word, i) => {
-                    text.append("tspan").attr("x", (d.y0 + d.y1) / 2).attr("dy", i === 0 ? "0" : "1.2em").text(word);
-                });
-            });
+        if (window.__mhc_sankey_init) return;
+        window.__mhc_sankey_init = true;
 
         gsap.registerPlugin(ScrollTrigger);
 
-        ScrollTrigger.create({ trigger: "#mhc-sankey-section", pin: "#mhc-sankey-section .s-sticky-box", start: "top 80px", end: "bottom bottom", pinSpacing: false, invalidateOnRefresh: true });
-        const tl = gsap.timeline({ scrollTrigger: { trigger: "#mhc-sankey-section", start: "top 80px", end: "bottom bottom", scrub: true } });
-        
-        // REVEAL STAGES
-        tl.to("#mhc-sankey-section .t-a", { autoAlpha: 1, duration: 0.5 });
-        tl.to("#mhc-sankey-section .ns-0", { autoAlpha: 1, duration: 0.5 });
-        
-        tl.to("#mhc-sankey-section .link-0, #mhc-sankey-section .link-1", { opacity: 0.1, strokeDashoffset: 0, duration: 1.5 });
-        tl.to("#mhc-sankey-section .ns-1", { autoAlpha: 1, duration: 0.5 });
-        
-        tl.to("#mhc-sankey-section .link-4", { opacity: 0.1, strokeDashoffset: 0, duration: 1.5 });
-        tl.to("#mhc-sankey-section .ns-2", { autoAlpha: 1, duration: 0.5 });
-        
-        tl.to("#mhc-sankey-section .link-2, #mhc-sankey-section .link-3", { opacity: 0.1, strokeDashoffset: 0, duration: 1.5 });
-        tl.to("#mhc-sankey-section .ns-3", { autoAlpha: 1, duration: 0.5 });
-        
-        // MORPH TO TAZEWELL
-        tl.to({}, { duration: 1 });
-        tl.to("#mhc-sankey-section .t-a", { autoAlpha: 0, duration: 0.3 }, "m1");
-        tl.to("#mhc-sankey-section .t-b", { autoAlpha: 1, duration: 0.3 }, "m1");
-        layoutA.links.forEach((l, i) => { tl.to("#mhc-sankey-section .link-" + i, { attr: { d: pGen(layoutB.links[i]), "stroke-width": layoutB.links[i].width }, duration: 1 }, "m1"); });
-        layoutA.nodes.forEach((n, i) => {
-            const tar = layoutB.nodes[i];
-            tl.to("#mhc-sankey-section .n-" + i + " rect", { attr: { x: tar.y0, y: tar.x0, height: tar.x1-tar.x0, width: tar.y1-tar.y0 }, duration: 1 }, "m1");
-            tl.to("#mhc-sankey-section .n-" + i + " text tspan", { attr: { x: (tar.y0+tar.y1)/2 }, duration: 1 }, "m1");
-            tl.to("#mhc-sankey-section .n-" + i + " text", { attr: { y: tar.x0 - (n.name.split(/\s+/).length > 1 ? 28 : 12) }, duration: 1 }, "m1");
-        });
+        (function() {
+            const dataA = { county: "Kane County", nodes: [{ name: "Applied" }, { name: "Accepted" }, { name: "Rejected" }, { name: "Graduated" }, { name: "Didn't Graduate" }, { name: "Still Active" }], links: [{ source: 0, target: 1, value: 65 }, { source: 0, target: 2, value: 181 }, { source: 1, target: 3, value: 29 }, { source: 1, target: 4, value: 20 }, { source: 1, target: 5, value: 16 }] };
+            const dataB = { county: "Tazewell County", nodes: dataA.nodes.map(n => ({...n})), links: [{ source: 0, target: 1, value: 100 }, { source: 0, target: 2, value: 293 }, { source: 1, target: 3, value: 31 }, { source: 1, target: 4, value: 51 }, { source: 1, target: 5, value: 18 }] };
+            const dataC = { county: "Peoria County", nodes: dataA.nodes.map(n => ({...n})), links: [{ source: 0, target: 1, value: 80 }, { source: 0, target: 2, value: 190 }, { source: 1, target: 3, value: 30 }, { source: 1, target: 4, value: 18 }, { source: 1, target: 5, value: 32 }] };
 
-        // MORPH TO PEORIA
-        tl.to({}, { duration: 1 });
-        tl.to("#mhc-sankey-section .t-b", { autoAlpha: 0, duration: 0.3 }, "m2");
-        tl.to("#mhc-sankey-section .t-c", { autoAlpha: 1, duration: 0.3 }, "m2");
-        layoutA.links.forEach((l, i) => { tl.to("#mhc-sankey-section .link-" + i, { attr: { d: pGen(layoutC.links[i]), "stroke-width": layoutC.links[i].width }, duration: 1 }, "m2"); });
-        layoutA.nodes.forEach((n, i) => {
-            const tar = layoutC.nodes[i];
-            tl.to("#mhc-sankey-section .n-" + i + " rect", { attr: { x: tar.y0, y: tar.x0, height: tar.x1-tar.x0, width: tar.y1-tar.y0 }, duration: 1 }, "m2");
-            tl.to("#mhc-sankey-section .n-" + i + " text tspan", { attr: { x: (tar.y0+tar.y1)/2 }, duration: 1 }, "m2");
-            tl.to("#mhc-sankey-section .n-" + i + " text", { attr: { y: tar.x0 - (n.name.split(/\s+/).length > 1 ? 28 : 12) }, duration: 1 }, "m2");
-        });
+            const width = 400, height = 750; 
+            const root = d3.select("#mhc-sankey-section");
+            const svg = root.select("#viz-svg");
+            const sankey = d3.sankey().nodeWidth(12).nodePadding(85).nodeAlign(d3.sankeyLeft).nodeSort(null).extent([[200, 40], [height - 60, 360]]);
 
-        tl.to({}, { duration: 2 });
-        tl.to("#mhc-sankey-section .s-sticky-box", { autoAlpha: 0, duration: 1 });
-    })();
+            function getLayout(raw) {
+                const l = sankey(JSON.parse(JSON.stringify(raw)));
+                const midY = (l.nodes[1].x1 + l.nodes[3].x0) / 2;
+                const h = l.nodes[5].x1 - l.nodes[5].x0;
+                l.nodes[5].x0 = midY - h/2;
+                l.nodes[5].x1 = midY + h/2;
+                l.links.forEach(link => { if (link.target.index === 5) { link.x1 = l.nodes[5].x0; } });
+                return l;
+            }
+
+            const layoutA = getLayout(dataA);
+            const layoutB = getLayout(dataB);
+            const layoutC = getLayout(dataC);
+
+            function pGen(d) { const x0 = d.source.x1, x1 = d.target.x0, y0 = d.y0, y1 = d.y1; return "M"+y0+","+x0+"C"+y0+","+(x0+x1)/2+" "+y1+","+(x0+x1)/2+" "+y1+","+x1; }
+
+            svg.append("text").attr("x", 40).attr("y", 100).attr("class", "county-title t-a").text(dataA.county);
+            svg.append("text").attr("x", 40).attr("y", 100).attr("class", "county-title t-b").text(dataB.county);
+            svg.append("text").attr("x", 40).attr("y", 100).attr("class", "county-title t-c").text(dataC.county);
+
+            svg.append("g").attr("class", "link-group").selectAll("path").data(layoutA.links).enter().append("path")
+                .attr("class", (d,i) => "sankey-link link-" + i)
+                .attr("d", pGen).attr("stroke-width", d => d.width)
+                .style("stroke-dasharray", function() { return this.getTotalLength(); })
+                .style("stroke-dashoffset", function() { return this.getTotalLength(); });
+
+            svg.append("g").attr("class", "node-group").selectAll("g").data(layoutA.nodes).enter().append("g")
+                .attr("class", (d, i) => { 
+                    let s = 0; 
+                    if (i === 0) s = 0; 
+                    else if (i === 1 || i === 2) s = 1; 
+                    else if (i === 5) s = 2; 
+                    else s = 3; 
+                    let c = "sankey-node ns-" + s + " n-" + i; 
+                    if (d.name === 'Graduated') c += ' successful-node'; 
+                    if (d.name === 'Rejected') c += ' rejected-node'; 
+                    if (d.name === 'Didn\'t Graduate') c += ' failed-node'; 
+                    if (d.name === 'Still Active') c += ' active-node'; 
+                    return c; 
+                })
+                .each(function(d) {
+                    d3.select(this).append("rect").attr("x", d.y0).attr("y", d.x0).attr("height", d.x1 - d.x0).attr("width", d.y1 - d.y0);
+                    const text = d3.select(this).append("text")
+                        .attr("text-anchor", "middle")
+                        .attr("y", d.x0 - (d.name.split(/\s+/).length > 1 ? 28 : 12));
+                    const words = d.name.split(/\s+/);
+                    words.forEach((word, i) => {
+                        text.append("tspan").attr("x", (d.y0 + d.y1) / 2).attr("dy", i === 0 ? "0" : "1.2em").text(word);
+                    });
+                });
+
+            const tl = gsap.timeline({ 
+                scrollTrigger: { 
+                    trigger: "#mhc-sankey-section", 
+                    start: "top 80px", 
+                    end: "bottom bottom", 
+                    scrub: true,
+                    pin: "#mhc-sankey-section .s-sticky-box",
+                    pinSpacing: false,
+                    invalidateOnRefresh: true
+                } 
+            });
+
+            // IRONCLAD INITIAL STATE
+            tl.set("#mhc-sankey-section .county-title", { autoAlpha: 0 });
+            tl.set("#mhc-sankey-section .sankey-node", { autoAlpha: 0 });
+            tl.set("#mhc-sankey-section .sankey-link", { opacity: 0 });
+            tl.set("#mhc-sankey-section .s-sticky-box", { autoAlpha: 1 });
+
+            // REVEAL STAGES
+            tl.to("#mhc-sankey-section .t-a", { autoAlpha: 1, duration: 0.5 });
+            tl.to("#mhc-sankey-section .ns-0", { autoAlpha: 1, duration: 0.5 });
+
+            tl.to("#mhc-sankey-section .link-0, #mhc-sankey-section .link-1", { opacity: 0.1, strokeDashoffset: 0, duration: 1.5 });
+            tl.to("#mhc-sankey-section .ns-1", { autoAlpha: 1, duration: 0.5 });
+
+            tl.to("#mhc-sankey-section .link-4", { opacity: 0.1, strokeDashoffset: 0, duration: 1.5 });
+            tl.to("#mhc-sankey-section .ns-2", { autoAlpha: 1, duration: 0.5 });
+
+            tl.to("#mhc-sankey-section .link-2, #mhc-sankey-section .link-3", { opacity: 0.1, strokeDashoffset: 0, duration: 1.5 });
+            tl.to("#mhc-sankey-section .ns-3", { autoAlpha: 1, duration: 0.5 });
+
+            // MORPH TO TAZEWELL
+            tl.to({}, { duration: 1 });
+            tl.to("#mhc-sankey-section .t-a", { autoAlpha: 0, duration: 0.3 }, "m1");
+            tl.to("#mhc-sankey-section .t-b", { autoAlpha: 1, duration: 0.3 }, "m1");
+            layoutA.links.forEach((l, i) => { tl.to("#mhc-sankey-section .link-" + i, { attr: { d: pGen(layoutB.links[i]), "stroke-width": layoutB.links[i].width }, duration: 1 }, "m1"); });
+            layoutA.nodes.forEach((n, i) => {
+                const tar = layoutB.nodes[i];
+                tl.to("#mhc-sankey-section .n-" + i + " rect", { attr: { x: tar.y0, y: tar.x0, height: tar.x1-tar.x0, width: tar.y1-tar.y0 }, duration: 1 }, "m1");
+                tl.to("#mhc-sankey-section .n-" + i + " text tspan", { attr: { x: (tar.y0+tar.y1)/2 }, duration: 1 }, "m1");
+                tl.to("#mhc-sankey-section .n-" + i + " text", { attr: { y: tar.x0 - (n.name.split(/\s+/).length > 1 ? 28 : 12) }, duration: 1 }, "m1");
+            });
+
+            // MORPH TO PEORIA
+            tl.to({}, { duration: 1 });
+            tl.to("#mhc-sankey-section .t-b", { autoAlpha: 0, duration: 0.3 }, "m2");
+            tl.to("#mhc-sankey-section .t-c", { autoAlpha: 1, duration: 0.3 }, "m2");
+            layoutA.links.forEach((l, i) => { tl.to("#mhc-sankey-section .link-" + i, { attr: { d: pGen(layoutC.links[i]), "stroke-width": layoutC.links[i].width }, duration: 1 }, "m2"); });
+            layoutA.nodes.forEach((n, i) => {
+                const tar = layoutC.nodes[i];
+                tl.to("#mhc-sankey-section .n-" + i + " rect", { attr: { x: tar.y0, y: tar.x0, height: tar.x1-tar.x0, width: tar.y1-tar.y0 }, duration: 1 }, "m2");
+                tl.to("#mhc-sankey-section .n-" + i + " text tspan", { attr: { x: (tar.y0+tar.y1)/2 }, duration: 1 }, "m2");
+                tl.to("#mhc-sankey-section .n-" + i + " text", { attr: { y: tar.x0 - (n.name.split(/\s+/).length > 1 ? 28 : 12) }, duration: 1 }, "m2");
+            });
+
+            tl.to({}, { duration: 2 });
+            tl.to("#mhc-sankey-section .s-sticky-box", { autoAlpha: 0, duration: 1 });
+        })();
+    }
+    initSankey();
     </script>
 </div>

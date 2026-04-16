@@ -93,11 +93,21 @@
     
     <div class="vc-track">
         <div class="vc-narrative">
-            <div class="vc-card"><h3>The Funding Overlap</h3><p>Not every mental health court receives state-level Adult Redeploy Illinois (ARI) funding.</p></div>
-            <div class="vc-card"><h3>Vetted Programs</h3><p>The amber dots represent all mental health courts in the state, while dark gray dots show other ARI-funded diversions.</p></div>
-            <div class="vc-card" style="border-left: 4px solid #FAC346;"><h3>Cost of Community</h3><p>ARI programs average just $4,277 per person annually.</p></div>
-            <div class="vc-card" style="border-left: 4px solid #444;"><h3>Cost of Prison</h3><p>By contrast, state prison costs climbed to $52,810 per person in 2025.</p></div>
-            <div class="vc-card"><h3>Systemic Savings</h3><p>Prioritizing diversion could redirect millions toward local infrastructure.</p></div>
+            <div class="vc-card"><h3>Funding mental health courts</h3>
+                <p>More than half of mental health courts in the state receive funding from Adult Redeploy Illinois. Others are funded through federal and local grants. 
+                </p></div>
+            <div class="vc-card"><h3>Adult Redeploy’s other programs</h3>
+                <p>While mental health courts are a significant portion of Adult Redeploy’s programming, the initiative also funds other similar programs, like drug court and intensive supervision probation. 
+                </p></div>
+            <div class="vc-card" style="border-left: 4px solid #FAC346;"><h3>Adult Redeploy cost $4,277 per person last year</h3>
+                <p>That’s an average cost across all types of diversion programs.
+                </p></div>
+            <div class="vc-card" style="border-left: 4px solid #444;"><h3>Prison cost $52,810 per person last year</h3>
+                <p>That is more than 10 times the average cost of a diversion program. 
+                </p></div>
+            <div class="vc-card"><h3>Systemic savings</h3>
+                <p>Adult Redeploy estimates its diversion programs have saved taxpayers almost half a billion dollars in avoided prison costs over the last 15 years. 
+                </p></div>
         </div>
     </div>
 
@@ -106,8 +116,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <script>
-    (function() {
-        const rawData = [
+    function initVennCost() {
+        if (!document.querySelector("#mhc-vc-section") || !document.querySelector("#vc-venn-svg")) {
+            requestAnimationFrame(initVennCost);
+            return;
+        }
+        
+        gsap.registerPlugin(ScrollTrigger);
+        
+        (function() {
+            const rawData = [
             {c:"Boone County",t:"ARI probation program",a:1,m:0}, {c:"Washinton/Perry Counties",t:"Drug Court",a:1,m:0}, {c:"Christian County",t:"Drug Court",a:1,m:0},
             {c:"Clinton County",t:"Drug Court",a:1,m:0}, {c:"Effingham County",t:"Drug Court",a:1,m:0}, {c:"Adams County",t:"Drug Court",a:1,m:0},
             {c:"Boone County",t:"Drug Court",a:1,m:0}, {c:"Grundy County",t:"Drug Court",a:1,m:0}, {c:"Jersey County",t:"Drug Court",a:1,m:0},
@@ -236,19 +254,42 @@
             .on("mouseover", function(e, d) { tooltip.style("display", "block").html(`<b>${d.y}</b>ARI Community Cost:<br>$${d.a.toLocaleString()}`); })
             .on("mousemove", moveTip).on("mouseout", () => tooltip.style("none"));
 
-        gsap.registerPlugin(ScrollTrigger);
         ScrollTrigger.create({ trigger: "#mhc-vc-section", pin: "#mhc-vc-section .vc-sticky-box", start: "top 80px", end: "bottom bottom", pinSpacing: false, invalidateOnRefresh: true });
+        
         const tl = gsap.timeline({ scrollTrigger: { trigger: "#mhc-vc-section", start: "top 80px", end: "bottom bottom", scrub: true } });
+        
+        // STAGE 1: VENN CIRCLES (CARD 1)
         tl.set("#vc-cost-svg", { opacity: 0, visibility: "hidden" });
         tl.set("#vc-venn-svg", { opacity: 1, visibility: "visible" });
-        tl.to("#mhc-vc-section .v-dot", { opacity: 1, duration: 1, stagger: { each: 0.05, from: "end" } });
-        tl.to({}, { duration: 1 });
-        tl.to("#vc-venn-svg", { opacity: 0, visibility: "hidden", duration: 1 }, "trans");
-        tl.to("#vc-cost-svg", { opacity: 1, visibility: "visible", duration: 1 }, "trans");
-        tl.to(".bar-ari", { attr: { y: function(i, el){return el.getAttribute('data-y');}, height: function(i, el){return el.getAttribute('data-h');} }, duration: 0.8, stagger: 0.05 });
-        tl.to(".bar-idoc", { attr: { y: function(i, el){return el.getAttribute('data-y');}, height: function(i, el){return el.getAttribute('data-h');} }, duration: 0.8, stagger: 0.05 }, "-=0.4");
-        tl.to({}, { duration: 2 });
+        tl.to({}, { duration: 1.5 }); // HOLD FOR CARD 1
+
+        // STAGE 2: DOTS REVEAL (CARD 2)
+        tl.to("#mhc-vc-section .v-dot", { opacity: 1, duration: 1.5, stagger: { each: 0.015, from: "end" } });
+        
+        // STAGE 3: TRANSITION + YELLOW BARS (CARD 3)
+        tl.to("#vc-venn-svg", { opacity: 0, visibility: "hidden", duration: 0.8 }, "trans");
+        tl.to("#vc-cost-svg", { opacity: 1, visibility: "visible", duration: 0.8 }, "trans");
+        
+        // YELLOW BARS GROW COMPLETELY
+        tl.to(".bar-ari", { 
+            attr: { y: function(i, el){return el.getAttribute('data-y');}, height: function(i, el){return el.getAttribute('data-h');} }, 
+            duration: 1.2, stagger: 0.02 
+        }, "trans"); 
+
+        tl.to({}, { duration: 1.5 }); // HOLD FOR CARD 3 (Only yellow bars visible)
+
+        // STAGE 4: BLACK BARS GROW (CARD 4)
+        tl.to(".bar-idoc", { 
+            attr: { y: function(i, el){return el.getAttribute('data-y');}, height: function(i, el){return el.getAttribute('data-h');} }, 
+            duration: 1.2, stagger: 0.02 
+        });
+
+        tl.to({}, { duration: 3 }); // HOLD FOR CARD 5 & FADE
+        
+        // STAGE 5: FADE OUT
         tl.to("#mhc-vc-section .vc-sticky-box", { opacity: 0, visibility: "hidden", duration: 1 });
     })();
+    }
+    initVennCost();
     </script>
 </div>
