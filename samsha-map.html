@@ -45,7 +45,7 @@
         #il-samsha-svg path { stroke: #fff; stroke-width: 20px; cursor: pointer; transition: opacity 0.2s; }
         #il-samsha-svg path:hover { opacity: 0.7; }
         #samsha-tooltip {
-            position: fixed; background: #fff; border-left: 4px solid #084594; 
+            position: fixed; background: #fff; border: none; border-left: 4px solid #084594; 
             padding: 10px 14px; pointer-events: none; display: none; z-index: 9999; 
             max-width: 240px; font-size: 10pt; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
@@ -55,9 +55,8 @@
 <body>
 <div id="mhc-samsha-map">
     <div class="main-header">
-        <h2>Almost one in six people with mental illness live in a county without a mental health court</h2>
-        <p class="description">Roughly 2 million people in Illinois live in one of the state’s 77 counties that don’t have a mental health court. That includes about 350,000 people with mental illness, based on 2019 survey data from the Substance Abuse and Mental Health Services Administration. <br><br> These counties tend to be more rural and have a median income 19% lower than counties with menthol health courts. 
-</p>
+        <h2>Mental Health Needs by County</h2>
+        <p class="description">Estimated population of people living with mental illness. Grayed counties represent those with existing mental health courts.</p>
     </div>
     <div class="content-wrapper">
         <div class="sidebar">
@@ -191,16 +190,15 @@
                 else { p.style.fill = colorScale(data.v); }
                 p.addEventListener('mouseover', function(e) {
                     tooltip.style.display = 'block';
-                    tooltip.innerHTML = `<b>${this.id.replace(/_/g, ' ')} County</b>` + `Est. pop. with mental illness: ${data.v.toLocaleString()}` + (data.f ? `<br><span style="color:#888; font-size:9pt; font-weight:700;">HAS A MENTAL HEALTH COURT</span>` : '');
+                    tooltip.innerHTML = `<b>${this.id.replace(/_/g, ' ')} County</b>` + `Est. Cases: ${data.v.toLocaleString()}` + (data.f ? `<br><span style="color:#888; font-size:9pt; font-weight:700;">EXISTING COURT</span>` : '');
                 });
                 p.addEventListener('mousemove', function(e) {
                     const rect = tooltip.getBoundingClientRect();
                     const winW = window.innerWidth;
                     const winH = window.innerHeight;
                     const buffer = 20;
-                    if (winW >= 1024) {
-                        let x = e.clientX + 25; 
-                        let y = e.clientY + 25;
+                    if (winW >= 1024) { 
+                        let x = e.clientX + 25; let y = e.clientY + 25;
                         if (x + rect.width > winW - buffer) x = e.clientX - rect.width - 25;
                         if (y + rect.height > winH - buffer) y = e.clientY - rect.height - 25;
                         tooltip.style.left = Math.max(buffer, x) + 'px'; 

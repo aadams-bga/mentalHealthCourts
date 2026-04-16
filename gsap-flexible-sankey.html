@@ -1,91 +1,76 @@
 <!-- MHC SANKEY SCROLLY SECTION: ULTIMATE STYLE -->
+<style>
+    #mhc-sankey-section {
+        position: relative;
+        width: 100%;
+        background: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        overflow: visible !important;
+        --amber: #FAC346;
+        --text-main: #333;
+        --text-dim: #666;
+    }
+    
+    #mhc-sankey-section .s-sticky-box {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 5; 
+        background: #fff;
+        border: none !important;
+    }
+
+    #mhc-sankey-section .s-graphic-shell {
+        width: 90%;
+        max-width: 450px;
+        height: 80vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #mhc-sankey-section #viz-svg {
+        width: 100%;
+        height: auto;
+        max-height: 100%;
+        display: block !important;
+    }
+
+    /* THE TRACK & NARRATIVE LAYOUT */
+    #mhc-sankey-section .s-track { height: 1000vh; position: relative; z-index: 100; }
+    #mhc-sankey-section .s-narrative { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 90%; max-width: 350px; pointer-events: none; }
+    
+    #mhc-sankey-section .s-card { 
+        background: white !important; padding: 30px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 100vh; 
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05); pointer-events: all; position: relative;
+    }
+    #mhc-sankey-section .s-card h3 { font-size: 1.8rem; font-weight: 800; color: var(--text-main); line-height: 1.1; margin: 0 0 15px 0; }
+    #mhc-sankey-section .s-card p { font-size: 11pt; line-height: 1.5; color: var(--text-dim); margin: 0; }
+    #mhc-sankey-section .s-card a { color: var(--amber); text-decoration: none; font-weight: 600; }
+    #mhc-sankey-section .s-card:first-child { margin-top: 50vh; }
+
+    @media (min-width: 1024px) {
+        #mhc-sankey-section .s-sticky-box { height: 100vh; width: 60%; float: right; border: none !important; }
+        #mhc-sankey-section .s-track { width: 40%; }
+        #mhc-sankey-section .s-narrative { left: 5%; transform: none; max-width: 450px; }
+    }
+
+    /* Visual Styles */
+    .sankey-link { fill: none; stroke: #000; }
+    .sankey-node rect { fill: #333; shape-rendering: crispEdges; }
+    .sankey-node text { font-size: 12px; font-weight: 800; text-transform: uppercase; fill: #333; }
+    .rejected-node rect { fill: #bbb !important; }
+    .successful-node rect { fill: #19a116 !important; }
+    .failed-node rect { fill: #c02935 !important; }
+    .active-node rect { fill: #333 !important; } 
+    .county-title { font-size: 28px; font-weight: 900; text-transform: uppercase; fill: #333; letter-spacing: 1px; }
+</style>
+
 <div id="mhc-sankey-section">
-    <style>
-        #mhc-sankey-section {
-            position: relative;
-            width: 100%;
-            background: #fff;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            overflow: visible !important;
-            --amber: #FAC346;
-            --text-main: #333;
-            --text-dim: #666;
-        }
-        
-        /* LOWERED GRAPHIC LEVEL */
-        #mhc-sankey-section .s-sticky-box {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 5; 
-            background: #fff;
-            border: none !important;
-        }
-
-        #mhc-sankey-section .s-graphic-shell {
-            width: 90%;
-            max-width: 450px;
-            height: 80vh;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #mhc-sankey-section #viz-svg {
-            width: 100%;
-            height: auto;
-            max-height: 100%;
-            display: block !important;
-            opacity: 1 !important; 
-            visibility: visible !important;
-        }
-
-        /* RAISED NARRATIVE LEVEL */
-        #mhc-sankey-section .s-track { height: 700vh; position: relative; z-index: 100; }
-        
-        #mhc-sankey-section .s-narrative { 
-            position: absolute; 
-            top: 0; left: 50%; 
-            transform: translateX(-50%); 
-            width: 90%; 
-            max-width: 350px; 
-            pointer-events: none; 
-        }
-        
-        #mhc-sankey-section .s-card { 
-            background: white !important; 
-            padding: 30px; 
-            border: 1px solid #eee; 
-            border-radius: 4px; 
-            margin-bottom: 90vh; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            pointer-events: all; 
-            position: relative;
-        }
-        #mhc-sankey-section .s-card h3 { font-size: 1.8rem; font-weight: 800; color: var(--text-main); line-height: 1.1; margin: 0 0 15px 0; }
-        #mhc-sankey-section .s-card p { font-size: 11pt; line-height: 1.5; color: var(--text-dim); margin: 0; }
-        #mhc-sankey-section .s-card a { color: var(--amber); text-decoration: none; font-weight: 600; }
-        #mhc-sankey-section .s-card:first-child { margin-top: 50vh; }
-
-        @media (min-width: 1024px) {
-            #mhc-sankey-section .s-sticky-box { height: 100vh; width: 60%; float: right; border: none !important; }
-            #mhc-sankey-section .s-track { width: 40%; }
-            #mhc-sankey-section .s-narrative { left: 5%; transform: none; max-width: 450px; }
-        }
-
-        .sankey-link { fill: none; stroke: #000; }
-        .sankey-node rect { fill: #333; shape-rendering: crispEdges; }
-        .sankey-node text { font-size: 13px; font-weight: 800; text-transform: uppercase; fill: #333; }
-        .rejected-node rect { fill: #bbb !important; }
-        .successful-node rect { fill: #19a116 !important; }
-        .failed-node rect { fill: #c02935 !important; }
-        .county-title { font-size: 28px; font-weight: 900; text-transform: uppercase; fill: #333; letter-spacing: 1px; }
-    </style>
-
     <div class="s-sticky-box">
         <div class="s-graphic-shell">
             <svg id="viz-svg" viewBox="0 0 400 750"></svg>
@@ -96,27 +81,31 @@
         <div class="s-narrative">
             <div class="s-card">
                 <h3>Tracking success</h3>
-                <p>Using data from <a href="http://courtservices.countyofkane.org/Documents/Annual%20Report%202024.pdf" target="_blank">Kane County</a>, we were able to track the outcomes of 224 cases that went through the 16th Circuit Treatment Alternative Court.</p>
+                <p>Using data from <a href="http://courtservices.countyofkane.org/Documents/Annual%20Report%202024.pdf" target="_blank">Kane County</a>, we were able to track the outcomes of cases that went through the 16th Circuit Treatment Alternative Court.</p>
             </div>
             <div class="s-card">
                 <h3>Few are accepted</h3>
                 <p>Of the applications, 81% were rejected, highlighting the relatively limited circumstances where a mental health court is used. </p>
             </div>
             <div class="s-card">
-                <h3>It doesn't always work</h3>
-                <p>Of those accepted, 59% graduated the program. Half of those who didn't graduate were sent to a facility run by the state prison system.</p>
+                <h3>Long-Term Commitment</h3>
+                <p>Because the program takes years, many participants remain <b>Still Active</b> in the system today.</p>
             </div>
             <div class="s-card">
-                <h3>Other examples</h3>
-                <p>In Tazewell County, 38% of people who have gone through mental health court have graduated, but the overall structure of the program remained the same.</p>
+                <h3>Concluded Cases</h3>
+                <p>Of those who reached a conclusion, 59% graduated. Half of those who didn't graduate were sent to state prison.</p>
             </div>
             <div class="s-card">
-                <h3>An emerging pattern</h3>
-                <p>Tazewell's neighbor Peoria County had a higher rate of success — 68%. But the total numbers are small. About 60 Tazewell and Peoria combined completed the program.</p>
+                <h3>Regional Variation</h3>
+                <p>In Tazewell County, 38% of concluded cases graduated, but the overall structure remains similar across judicial circuits.</p>
             </div>
             <div class="s-card">
-                <h3>Statewide similarities</h3>
-                <p>These similarities persist across the state. While there is a range of graduation rates, there is no statistically significant differences between the 13 courts that provided detailed data.</p>
+                <h3>Consistent Patterns</h3>
+                <p>Neighboring Peoria County reported a higher graduation rate of 68% for participants who completed the program.</p>
+            </div>
+            <div class="s-card">
+                <h3>Statewide Similarities</h3>
+                <p>While local data varies, the systemic challenges of access and outcome consistency persist across all 102 counties.</p>
             </div>
         </div>
     </div>
@@ -128,36 +117,54 @@
 
     <script>
     (function() {
-        const dataA = { county: "Kane County", nodes: [{ name: "Applications" }, { name: "Accepted" }, { name: "Rejected" }, { name: "Graduated" }, { name: "Didn't Graduate" }], links: [{ source: 0, target: 1, value: 49 }, { source: 0, target: 2, value: 181 }, { source: 1, target: 3, value: 29 }, { source: 1, target: 4, value: 20 }] };
-        const dataB = { county: "Tazewell County", nodes: dataA.nodes.map(function(n){return {...n}}), links: [{ source: 0, target: 1, value: 82 }, { source: 0, target: 2, value: 293 }, { source: 1, target: 3, value: 31 }, { source: 1, target: 4, value: 51 }] };
-        const dataC = { county: "Peoria County", nodes: dataA.nodes.map(function(n){return {...n}}), links: [{ source: 0, target: 1, value: 65 }, { source: 0, target: 2, value: 190 }, { source: 1, target: 3, value: 30 }, { source: 1, target: 4, value: 18 }] };
+        const dataA = { county: "Kane County", nodes: [{ name: "Applied" }, { name: "Accepted" }, { name: "Rejected" }, { name: "Graduated" }, { name: "Didn't Graduate" }, { name: "Still Active" }], links: [{ source: 0, target: 1, value: 65 }, { source: 0, target: 2, value: 181 }, { source: 1, target: 3, value: 29 }, { source: 1, target: 4, value: 20 }, { source: 1, target: 5, value: 16 }] };
+        const dataB = { county: "Tazewell County", nodes: dataA.nodes.map(n => ({...n})), links: [{ source: 0, target: 1, value: 100 }, { source: 0, target: 2, value: 293 }, { source: 1, target: 3, value: 31 }, { source: 1, target: 4, value: 51 }, { source: 1, target: 5, value: 18 }] };
+        const dataC = { county: "Peoria County", nodes: dataA.nodes.map(n => ({...n})), links: [{ source: 0, target: 1, value: 80 }, { source: 0, target: 2, value: 190 }, { source: 1, target: 3, value: 30 }, { source: 1, target: 4, value: 18 }, { source: 1, target: 5, value: 32 }] };
 
         const width = 400, height = 750; 
         const root = d3.select("#mhc-sankey-section");
         const svg = root.select("#viz-svg");
         const sankey = d3.sankey().nodeWidth(12).nodePadding(85).nodeAlign(d3.sankeyLeft).nodeSort(null).extent([[200, 40], [height - 60, 360]]);
-        const layoutA = sankey(JSON.parse(JSON.stringify(dataA)));
-        const layoutB = sankey(JSON.parse(JSON.stringify(dataB)));
-        const layoutC = sankey(JSON.parse(JSON.stringify(dataC)));
+        
+        function getLayout(raw) {
+            const l = sankey(JSON.parse(JSON.stringify(raw)));
+            const midY = (l.nodes[1].x1 + l.nodes[3].x0) / 2;
+            const h = l.nodes[5].x1 - l.nodes[5].x0;
+            l.nodes[5].x0 = midY - h/2;
+            l.nodes[5].x1 = midY + h/2;
+            l.links.forEach(link => { if (link.target.index === 5) { link.x1 = l.nodes[5].x0; } });
+            return l;
+        }
+
+        const layoutA = getLayout(dataA);
+        const layoutB = getLayout(dataB);
+        const layoutC = getLayout(dataC);
+
         function pGen(d) { const x0 = d.source.x1, x1 = d.target.x0, y0 = d.y0, y1 = d.y1; return "M"+y0+","+x0+"C"+y0+","+(x0+x1)/2+" "+y1+","+(x0+x1)/2+" "+y1+","+x1; }
 
-        svg.append("text").attr("x", 40).attr("y", 100).attr("class", "county-title t-a").text(dataA.county);
+        svg.append("text").attr("x", 40).attr("y", 100).attr("class", "county-title t-a").text(dataA.county).style("opacity", 0);
         svg.append("text").attr("x", 40).attr("y", 100).attr("class", "county-title t-b").text(dataB.county).style("opacity", 0);
         svg.append("text").attr("x", 40).attr("y", 100).attr("class", "county-title t-c").text(dataC.county).style("opacity", 0);
         
         svg.append("g").attr("class", "link-group").selectAll("path").data(layoutA.links).enter().append("path")
-            .attr("class", function(d,i) { return "sankey-link link-" + i; })
-            .attr("d", pGen).attr("stroke-width", function(d){return d.width;})
+            .attr("class", (d,i) => "sankey-link link-" + i)
+            .attr("d", pGen).attr("stroke-width", d => d.width)
             .style("stroke-dasharray", function() { return this.getTotalLength(); })
-            .style("stroke-dashoffset", function() { return this.getTotalLength(); });
+            .style("stroke-dashoffset", function() { return this.getTotalLength(); })
+            .style("opacity", 0);
 
         svg.append("g").attr("class", "node-group").selectAll("g").data(layoutA.nodes).enter().append("g")
-            .attr("class", function(d, i) { 
-                let s = 0; if (i === 1 || i === 2) s = 1; else if (i > 2) s = 2;
+            .attr("class", (d, i) => { 
+                let s = 0; 
+                if (i === 0) s = 0; 
+                else if (i === 1 || i === 2) s = 1; 
+                else if (i === 5) s = 2; 
+                else s = 3; 
                 let c = "sankey-node ns-" + s + " n-" + i; 
                 if (d.name === 'Graduated') c += ' successful-node'; 
                 if (d.name === 'Rejected') c += ' rejected-node'; 
                 if (d.name === 'Didn\'t Graduate') c += ' failed-node'; 
+                if (d.name === 'Still Active') c += ' active-node'; 
                 return c; 
             })
             .each(function(d) {
@@ -170,37 +177,53 @@
             });
 
         gsap.registerPlugin(ScrollTrigger);
-        ScrollTrigger.create({ trigger: "#mhc-sankey-section", pin: "#mhc-sankey-section .s-sticky-box", start: "top 80px", end: "bottom bottom", pinSpacing: false, invalidateOnRefresh: true });
+
+        ScrollTrigger.create({ 
+            trigger: "#mhc-sankey-section", 
+            pin: "#mhc-sankey-section .s-sticky-box", 
+            start: "top 80px", 
+            end: "bottom bottom", 
+            pinSpacing: false, // FIXED: Narrative now scrolls alongside
+            invalidateOnRefresh: true 
+        });
+
         const tl = gsap.timeline({ scrollTrigger: { trigger: "#mhc-sankey-section", start: "top 80px", end: "bottom bottom", scrub: true } });
         
-        tl.to("#mhc-sankey-section .t-a", { opacity: 1, duration: 0.4 });
-        tl.to("#mhc-sankey-section .ns-0 rect, #mhc-sankey-section .ns-0 text", { opacity: 1, duration: 0.4 });
-        tl.to("#mhc-sankey-section .link-0, #mhc-sankey-section .link-1", { strokeDashoffset: 0, opacity: 0.08, duration: 1.2 });
-        tl.to("#mhc-sankey-section .ns-1 rect, #mhc-sankey-section .ns-1 text", { opacity: 1, duration: 0.4 });
-        tl.to("#mhc-sankey-section .link-2, #mhc-sankey-section .link-3, #mhc-sankey-section .link-4", { strokeDashoffset: 0, opacity: 0.08, duration: 1.2 });
-        tl.to("#mhc-sankey-section .ns-2 rect, #mhc-sankey-section .ns-2 text", { opacity: 1, duration: 0.4 });
-        tl.to({}, { duration: 0.4 });
-        tl.to("#mhc-sankey-section .t-a", { opacity: 0, duration: 0.2 }, "m1");
-        tl.to("#mhc-sankey-section .t-b", { opacity: 1, duration: 0.2 }, "m1");
-        layoutA.links.forEach(function(l, i) { tl.to("#mhc-sankey-section .link-" + i, { attr: { d: pGen(layoutB.links[i]), "stroke-width": layoutB.links[i].width }, duration: 0.8 }, "m1"); });
-        layoutA.nodes.forEach(function(n, i) {
+        // REVEAL LOGIC
+        tl.to("#mhc-sankey-section .t-a", { opacity: 1, duration: 0.5 });
+        tl.to("#mhc-sankey-section .ns-0 rect, #mhc-sankey-section .ns-0 text", { opacity: 1, duration: 0.5 });
+        tl.to("#mhc-sankey-section .link-0, #mhc-sankey-section .link-1", { opacity: 0.1, strokeDashoffset: 0, duration: 1.5 });
+        tl.to("#mhc-sankey-section .ns-1 rect, #mhc-sankey-section .ns-1 text", { opacity: 1, duration: 0.5 });
+        tl.to("#mhc-sankey-section .link-4", { opacity: 0.1, strokeDashoffset: 0, duration: 1.5 });
+        tl.to("#mhc-sankey-section .ns-2 rect, #mhc-sankey-section .ns-2 text", { opacity: 1, duration: 0.5 });
+        tl.to("#mhc-sankey-section .link-2, #mhc-sankey-section .link-3", { opacity: 0.1, strokeDashoffset: 0, duration: 1.5 });
+        tl.to("#mhc-sankey-section .ns-3 rect, #mhc-sankey-section .ns-3 text", { opacity: 1, duration: 0.5 });
+        
+        // TRANSITIONS (FIXED TSPAN SELECTORS)
+        tl.to({}, { duration: 1 });
+        tl.to("#mhc-sankey-section .t-a", { opacity: 0, duration: 0.3 }, "m1");
+        tl.to("#mhc-sankey-section .t-b", { opacity: 1, duration: 0.3 }, "m1");
+        layoutA.links.forEach((l, i) => { tl.to("#mhc-sankey-section .link-" + i, { attr: { d: pGen(layoutB.links[i]), "stroke-width": layoutB.links[i].width }, duration: 1 }, "m1"); });
+        layoutA.nodes.forEach((n, i) => {
             const tar = layoutB.nodes[i];
-            tl.to("#mhc-sankey-section .n-" + i + " rect", { attr: { x: tar.y0, y: tar.x0, height: tar.x1-tar.x0, width: tar.y1-tar.y0 }, duration: 0.8 }, "m1");
-            tl.to("#mhc-sankey-section .n-" + i + " text tspan", { attr: { x: (tar.y0+tar.y1)/2 }, duration: 0.8 }, "m1");
-            tl.to("#mhc-sankey-section .n-" + i + " text", { attr: { y: tar.x0 - 10 }, duration: 0.8 }, "m1");
+            tl.to("#mhc-sankey-section .n-" + i + " rect", { attr: { x: tar.y0, y: tar.x0, height: tar.x1-tar.x0, width: tar.y1-tar.y0 }, duration: 1 }, "m1");
+            tl.to("#mhc-sankey-section .n-" + i + " text tspan", { attr: { x: (tar.y0+tar.y1)/2 }, duration: 1 }, "m1");
+            tl.to("#mhc-sankey-section .n-" + i + " text", { attr: { y: tar.x0 - 10 }, duration: 1 }, "m1");
         });
-        tl.to({}, { duration: 0.4 });
-        tl.to("#mhc-sankey-section .t-b", { opacity: 0, duration: 0.2 }, "m2");
-        tl.to("#mhc-sankey-section .t-c", { opacity: 1, duration: 0.2 }, "m2");
-        layoutA.links.forEach(function(l, i) { tl.to("#mhc-sankey-section .link-" + i, { attr: { d: pGen(layoutC.links[i]), "stroke-width": layoutC.links[i].width }, duration: 0.8 }, "m2"); });
-        layoutA.nodes.forEach(function(n, i) {
+
+        tl.to({}, { duration: 1 });
+        tl.to("#mhc-sankey-section .t-b", { opacity: 0, duration: 0.3 }, "m2");
+        tl.to("#mhc-sankey-section .t-c", { opacity: 1, duration: 0.3 }, "m2");
+        layoutA.links.forEach((l, i) => { tl.to("#mhc-sankey-section .link-" + i, { attr: { d: pGen(layoutC.links[i]), "stroke-width": layoutC.links[i].width }, duration: 1 }, "m2"); });
+        layoutA.nodes.forEach((n, i) => {
             const tar = layoutC.nodes[i];
-            tl.to("#mhc-sankey-section .n-" + i + " rect", { attr: { x: tar.y0, y: tar.x0, height: tar.x1-tar.x0, width: tar.y1-tar.y0 }, duration: 0.8 }, "m2");
-            tl.to("#mhc-sankey-section .n-" + i + " text tspan", { attr: { x: (tar.y0+tar.y1)/2 }, duration: 0.8 }, "m2");
-            tl.to("#mhc-sankey-section .n-" + i + " text", { attr: { y: tar.x0 - 10 }, duration: 0.8 }, "m2");
+            tl.to("#mhc-sankey-section .n-" + i + " rect", { attr: { x: tar.y0, y: tar.x0, height: tar.x1-tar.x0, width: tar.y1-tar.y0 }, duration: 1 }, "m2");
+            tl.to("#mhc-sankey-section .n-" + i + " text tspan", { attr: { x: (tar.y0+tar.y1)/2 }, duration: 1 }, "m2");
+            tl.to("#mhc-sankey-section .n-" + i + " text", { attr: { y: tar.x0 - 10 }, duration: 1 }, "m2");
         });
-        tl.to({}, { duration: 1.5 });
-        tl.to("#mhc-sankey-section .s-sticky-box", { opacity: 0, visibility: "hidden", duration: 0.8 });
+
+        tl.to({}, { duration: 2 });
+        tl.to("#mhc-sankey-section .s-sticky-box", { opacity: 0, visibility: "hidden", duration: 1 });
     })();
     </script>
 </div>

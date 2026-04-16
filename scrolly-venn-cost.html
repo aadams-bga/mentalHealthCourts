@@ -1,86 +1,83 @@
 <!-- MHC VENN-COST SCROLLY SECTION: IRONCLAD VERSION -->
+<style>
+    #mhc-vc-section {
+        position: relative;
+        width: 100%;
+        background: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        overflow: visible !important;
+    }
+    
+    #mhc-vc-section .vc-sticky-box {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 5; 
+        background: #fff;
+        border: none !important;
+    }
+
+    #mhc-vc-section .vc-svg-shell {
+        width: 95%;
+        max-width: 800px;
+        height: 80vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #mhc-vc-section svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+
+    #mhc-vc-section .vc-track { height: 700vh; position: relative; z-index: 100; }
+    
+    #mhc-vc-section .vc-narrative { 
+        position: absolute; 
+        top: 0; left: 50%; 
+        transform: translateX(-50%); 
+        width: 90%; 
+        max-width: 320px; 
+        pointer-events: none;
+    }
+    
+    #mhc-vc-section .vc-card { 
+        background: white !important; 
+        padding: 24px; 
+        border: 1px solid #ddd; 
+        border-radius: 8px; 
+        margin-bottom: 90vh; 
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+        pointer-events: all;
+        position: relative;
+    }
+    #mhc-vc-section .vc-card:first-child { margin-top: 50vh; }
+
+    @media (min-width: 1024px) {
+        #mhc-vc-section .vc-sticky-box { height: 100vh; width: 60%; float: right; border: none !important; }
+        #mhc-vc-section .vc-track { width: 40%; }
+        #mhc-vc-section .vc-narrative { left: 5%; transform: none; max-width: 400px; }
+    }
+
+    .v-circ { fill: rgba(0,0,0,0.02); stroke: #eee; }
+    .v-dot { stroke: #fff; stroke-width: 1px; cursor: pointer; }
+    .v-label { font-size: 14px; font-weight: 900; text-transform: uppercase; fill: #333; letter-spacing: 1px; }
+    .bar-ari { fill: #FAC346; cursor: pointer; transition: filter 0.2s; }
+    .bar-idoc { fill: #444; cursor: pointer; transition: filter 0.2s; }
+    .bar-ari:hover, .bar-idoc:hover { filter: brightness(1.1); }
+    .axis-label { font-size: 12px; fill: #888; font-weight: 600; }
+    #vc-tooltip {
+        position: fixed; background: #fff; border: none; border-left: 4px solid #FAC346;
+        padding: 12px 16px; pointer-events: none; display: none; z-index: 99999;
+        max-width: 260px; font-size: 11pt; line-height: 1.4;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: left;
+    }
+    #vc-tooltip b { display: block; font-size: 13pt; margin-bottom: 4px; color: #000; text-transform: uppercase; }
+</style>
+
 <div id="mhc-vc-section">
-    <style>
-        #mhc-vc-section {
-            position: relative;
-            width: 100%;
-            background: #fff;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            overflow: visible !important;
-        }
-        
-        /* LOWERED GRAPHIC LEVEL */
-        #mhc-vc-section .vc-sticky-box {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 5; 
-            background: #fff;
-            border: none !important;
-        }
-
-        #mhc-vc-section .vc-svg-shell {
-            width: 95%;
-            max-width: 800px;
-            height: 80vh;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #mhc-vc-section svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
-
-        /* RAISED NARRATIVE LEVEL */
-        #mhc-vc-section .vc-track { height: 700vh; position: relative; z-index: 100; }
-        
-        #mhc-vc-section .vc-narrative { 
-            position: absolute; 
-            top: 0; left: 50%; 
-            transform: translateX(-50%); 
-            width: 90%; 
-            max-width: 320px; 
-            pointer-events: none; /* Mouse passes through to graphic */
-        }
-        
-        #mhc-vc-section .vc-card { 
-            background: white !important; 
-            padding: 24px; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            margin-bottom: 90vh; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
-            pointer-events: all; /* Text remains interactive */
-            position: relative;
-        }
-        #mhc-vc-section .vc-card:first-child { margin-top: 50vh; }
-
-        @media (min-width: 1024px) {
-            #mhc-vc-section .vc-sticky-box { height: 100vh; width: 60%; float: right; border: none !important; }
-            #mhc-vc-section .vc-track { width: 40%; }
-            #mhc-vc-section .vc-narrative { left: 5%; transform: none; max-width: 400px; }
-        }
-
-        /* SVG Styles */
-        .v-circ { fill: rgba(0,0,0,0.02); stroke: #eee; }
-        .v-dot { stroke: #fff; stroke-width: 1px; cursor: pointer; }
-        .v-label { font-size: 14px; font-weight: 900; text-transform: uppercase; fill: #333; letter-spacing: 1px; }
-        .bar-ari { fill: #FAC346; cursor: pointer; transition: filter 0.2s; }
-        .bar-idoc { fill: #444; cursor: pointer; transition: filter 0.2s; }
-        .bar-ari:hover, .bar-idoc:hover { filter: brightness(1.1); }
-        .axis-label { font-size: 12px; fill: #888; font-weight: 600; }
-        #vc-tooltip {
-            position: fixed; background: #fff; border: none; border-left: 4px solid #FAC346;
-            padding: 12px 16px; pointer-events: none; display: none; z-index: 99999;
-            max-width: 260px; font-size: 11pt; line-height: 1.4;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: left;
-        }
-        #vc-tooltip b { display: block; font-size: 13pt; margin-bottom: 4px; color: #000; text-transform: uppercase; }
-    </style>
-
     <div class="vc-sticky-box">
         <div id="vc-tooltip"></div>
         <div class="vc-svg-shell">
@@ -91,12 +88,11 @@
     
     <div class="vc-track">
         <div class="vc-narrative">
-            <div class="vc-card"><h3>Funding mental health courts</h3><p>More than half of mental health court programs in the state receive funding from Adult Redeploy Illinois, but several are funded through other grants or through local partnerships. </p></div>
-            <div class="vc-card"><h3>Adult Redeploy’s other programs</h3><p>While mental health courts are a significant portion of Adult Redeploy’s programming, they fund other similar programs, like drug court and intensive supervision probation. </p></div>
-            <div class="vc-card" style="boder-left: 4px solid #FAC346;"><h3>Adult Redeploy cost $4,277 per person in 2025</h3><p>That’s roughly a 10.5% increase from 10 years ago, according to data provided by the Illinois Criminal Justice Information Authority. This includes intensive supervision and all problem-solving courts funded by Adult Redeploy. 
-</p></div>
-            <div class="vc-card" style="border-left: 4px solid #444;"><h3>Prison cost $52,810 per person in 2025</h3><p>That is more than 10 times the cost of diversion programs and more than 125% what prison cost on a per capita basis a decade ago. </p></div>
-            <div class="vc-card"><h3>Systemic Savings</h3><p>State authorities estimate that diversion programs have saved taxpayers almost half a billion dollars due to the decrease in prison costs since Adult Redeploy launched in 2011. </p></div>
+            <div class="vc-card"><h3>The Funding Overlap</h3><p>Not every mental health court receives state-level Adult Redeploy Illinois (ARI) funding.</p></div>
+            <div class="vc-card"><h3>Vetted Programs</h3><p>The amber dots represent all mental health courts in the state, while dark gray dots show other ARI-funded diversions.</p></div>
+            <div class="vc-card" style="border-left: 4px solid #FAC346;"><h3>Cost of Community</h3><p>ARI programs average just $4,277 per person annually.</p></div>
+            <div class="vc-card" style="border-left: 4px solid #444;"><h3>Cost of Prison</h3><p>By contrast, state prison costs climbed to $52,810 per person in 2025.</p></div>
+            <div class="vc-card"><h3>Systemic Savings</h3><p>Prioritizing diversion could redirect millions toward local infrastructure.</p></div>
         </div>
     </div>
 
@@ -188,10 +184,13 @@
         const y = d3.scaleLinear().domain([0, 60000]).range([440, 40]);
         cSvg.append("g").attr("transform", "translate(0,440)").call(d3.axisBottom(x).tickValues([2013, 2016, 2019, 2022, 2025]).tickSize(0)).attr("class", "axis-label");
         cSvg.append("g").attr("transform", "translate(80,0)").call(d3.axisLeft(y).ticks(5, "$,f")).attr("class", "axis-label");
+        
         const bars = cSvg.append("g").selectAll("g").data(cData).enter().append("g").attr("transform", function(d){return "translate("+x(d.y)+",0)";});
+        
         bars.append("rect").attr("class", "bar-idoc").attr("x", 0).attr("width", x.bandwidth()/2-2).attr("y", 440).attr("height", 0).attr("data-h", function(d){return 440-y(d.i);}).attr("data-y", function(d){return y(d.i);})
             .on("mouseover", function(e, d) { tooltip.style("display", "block").html(`<b>${d.y}</b>State Prison Cost:<br>$${d.i.toLocaleString()}`); })
             .on("mousemove", moveTip).on("mouseout", () => tooltip.style("display", "none"));
+        
         bars.append("rect").attr("class", "bar-ari").attr("x", x.bandwidth()/2).attr("width", x.bandwidth()/2-2).attr("y", 440).attr("height", 0).attr("data-h", function(d){return 440-y(d.a);}).attr("data-y", function(d){return y(d.a);})
             .on("mouseover", function(e, d) { tooltip.style("display", "block").html(`<b>${d.y}</b>ARI Community Cost:<br>$${d.a.toLocaleString()}`); })
             .on("mousemove", moveTip).on("mouseout", () => tooltip.style("display", "none"));
