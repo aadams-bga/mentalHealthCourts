@@ -86,12 +86,12 @@
     </style>
 
     <div class="main-header">
-        <h2>Mapping the Expansion</h2>
+        <h2>More than thirty mental health courts have opened in the past twenty-five years </h2>
     </div>
     
     <div class="content-wrapper">
         <div class="sidebar">
-            <p class="description">Watch how specialized mental health courts grew from a single pilot program in Chicago to a state-wide network over two decades.</p>
+            <p class="description">Since Cook County opened the state’s first mental health courts in 2004, other counties have opened similar courts based on the problem-solving court model.  </p>
             
             <div class="controls">
                 <div class="controls-top-row">
@@ -219,7 +219,7 @@
     <script>
     (function() {
         const courtData = {
-            "Christian": { year : 2013, note: "The <b>Christian County Mental Health Court (hybrid with Veterans Court)</b> started in 2013 and has been certified twice." },"Kendall": { year : 2021, note: "The <b>Kendall County Mental Health Court</b> started in 2021." },"Clay": { year : "2000", closed: 2022, note: "The <b>Clay County Mental Health Court</b> shut down in 2022." },"Jasper": { year : "2000", closed: 2022, note: "The <b>Jasper County Mental Health Court</b> shut down in 2022." },"Champaign": { year : "2011", closed: 2013, note: "The <b>Champaign County Mental Health Court</b> started in 2011 and closed in 2013." },"Lee": { year : "2008", closed: 2016, note: "The <b>Lee County Mental Health Court</b> started in 2008 and closed in 2016." },"Madison": { year : 2006, note: "The <b>Madison County Mental Health Court</b> started in 2006." },"Effingham": { year : 2013, note: "The <b>Effingham County Mental Health Court</b> started in 2013." },"Winnebago": { year : 2011, note: "The <b>Winnebago County Mental Health Court</b> started in 2011." },"Peoria": { year : 2008, note: "The <b>Peoria County Mental Health Court</b> started in 2008." },"Tazewell": { year : 2007, note: "The <b>Tazewell County Mental Health Court</b> started in 2007." },"Will": { year : 2010, note: "The <b>Will County Mental Health Court</b> started in 2010." },"Kane": { year : 2006, note: "The <b>Kane County Mental Health Court</b> started in 2006." },"Lake": { year : 2007, note: "The <b>Lake County Mental Health Court</b> started in 2007." },"Cook": { year : 2004, note: "The <b>Cook County Mental Health Court</b> started in 2004." },"DuPage": { year : 2011, note: "The <b>DuPage County Mental Health Court</b> started in 2011." },"McLean": { year : 2007, note: "The <b>McLean County Mental Health Court</b> started in 2007." },"Adams": { year : 2018, note: "The <b>Adams County Mental Health Court</b> started in 2018." },"Saint_Clair": { year : 2006, note: "The <b>St. Clair County Mental Health Court</b> started in 2006." },"Sangamon": { year : 2013, note: "The <b>Sangamon County Mental Health Court</b> started in 2013." }
+        'Madison': { year : 2006},'Effingham': { year : 2013},'Montgomery': { year : 2023},'Vermilion': { year : 2011},'Macon': { year : 2011},'Sangamon': { year : 2015},'Adams': { year : 2018},'Peoria': { year : 2010},'Tazewell': { year : 2016},'McLean': { year : 2010},'Will': { year : 2010},'Grundy': { year : 2015},'LaSalle': { year : 2020},'Rock Island': { year : 2007},'Kane': { year : 2011},'Winnebago': { year : 2005},'DuPage': { year : 2004},'Lake': { year : 2007},'St. Clair': { year : 2007},'Kankakee': { year : 2024},'McHenry': { year : 2007},'DeKalb': { year : 2017},'Cook': { year : 2004},'Christian': { year : 2013},'Kendall': { year : 2021},'Clay': { year : 2022,closed: 2022},'Jasper': { year : 2022,closed: 2022},'Champaign': { year : 2011,closed: 2013},'Lee': { year : 2008,closed: 2016}    
         };
 
         const root = document.getElementById('mhc-ultimate-v2');
@@ -291,7 +291,7 @@
 
         playBtn.addEventListener('click', () => {
             isPlaying = !isPlaying;
-            playBtn.textContent = isPlaying ? "❙ ❙" : "▶";
+            playBtn.textContent = isPlaying ? "❙❙" : "▶";
             if (isPlaying) {
                 if (parseInt(slider.value) >= 2024) slider.value = 2000;
                 timer = setInterval(() => {
