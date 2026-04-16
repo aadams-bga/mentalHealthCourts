@@ -21,9 +21,9 @@
     }
 
     #mhc-vc-section .vc-svg-shell {
-        width: 95%;
+        width: 100%;
         max-width: 800px;
-        height: 80vh;
+        height: 85vh;
         position: relative;
         display: flex;
         align-items: center;
@@ -45,29 +45,34 @@
     
     #mhc-vc-section .vc-card { 
         background: white !important; 
-        padding: 24px; 
-        border: 1px solid #ddd; 
-        border-radius: 8px; 
+        padding: 25px; 
+        border: 1px solid #eee; 
+        border-radius: 4px; 
         margin-bottom: 90vh; 
-        box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
         pointer-events: all;
         position: relative;
     }
+    #mhc-vc-section .vc-card h3 { font-size: 1.5rem; font-weight: 800; color: #333; line-height: 1.1; margin: 0 0 10px 0; }
+    #mhc-vc-section .vc-card p { font-size: 10.5pt; line-height: 1.4; color: #666; margin: 0; }
     #mhc-vc-section .vc-card:first-child { margin-top: 50vh; }
 
     @media (min-width: 1024px) {
         #mhc-vc-section .vc-sticky-box { height: 100vh; width: 60%; float: right; border: none !important; }
         #mhc-vc-section .vc-track { width: 40%; }
-        #mhc-vc-section .vc-narrative { left: 5%; transform: none; max-width: 400px; }
+        #mhc-vc-section .vc-narrative { left: 5%; transform: none; max-width: 450px; }
+        #mhc-vc-section .vc-card h3 { font-size: 1.8rem; }
+        #mhc-vc-section .vc-card p { font-size: 11pt; }
     }
 
-    .v-circ { fill: rgba(0,0,0,0.02); stroke: #eee; }
-    .v-dot { stroke: #fff; stroke-width: 1px; cursor: pointer; }
-    .v-label { font-size: 14px; font-weight: 900; text-transform: uppercase; fill: #333; letter-spacing: 1px; }
+    .v-circ { fill: rgba(0,0,0,0.015); stroke: #f0f0f0; stroke-width: 2px; }
+    .v-dot { stroke: #fff; stroke-width: 1.5px; cursor: pointer; }
+    .v-label { font-size: 28px; font-weight: 900; text-transform: uppercase; fill: #222; letter-spacing: 0px; }
     .bar-ari { fill: #FAC346; cursor: pointer; transition: filter 0.2s; }
     .bar-idoc { fill: #444; cursor: pointer; transition: filter 0.2s; }
     .bar-ari:hover, .bar-idoc:hover { filter: brightness(1.1); }
-    .axis-label { font-size: 12px; fill: #888; font-weight: 600; }
+    .grid-line { stroke: #f5f5f5; stroke-width: 1.5px; }
+    .axis-label { font-size: 22px; fill: #777; font-weight: 800; }
     #vc-tooltip {
         position: fixed; background: #fff; border: none; border-left: 4px solid #FAC346;
         padding: 12px 16px; pointer-events: none; display: none; z-index: 99999;
@@ -138,10 +143,17 @@
 
         const vSvg = d3.select("#vc-venn-svg");
         const tooltip = d3.select("#vc-tooltip");
-        vSvg.append("circle").attr("cx", 280).attr("cy", 250).attr("r", 180).attr("class", "v-circ");
-        vSvg.append("circle").attr("cx", 520).attr("cy", 250).attr("r", 180).attr("class", "v-circ");
-        vSvg.append("text").attr("x", 220).attr("y", 50).attr("text-anchor", "middle").attr("class", "v-label").text("ARI Programs");
-        vSvg.append("text").attr("x", 580).attr("y", 50).attr("text-anchor", "middle").attr("class", "v-label").text("Mental Health Courts");
+        vSvg.append("circle").attr("cx", 320).attr("cy", 250).attr("r", 180).attr("class", "v-circ");
+        vSvg.append("circle").attr("cx", 480).attr("cy", 250).attr("r", 180).attr("class", "v-circ");
+        
+        // TITLES SHIFTED TO AVOID OVERLAP
+        const vLabel1 = vSvg.append("text").attr("x", 200).attr("y", 20).attr("text-anchor", "middle").attr("class", "v-label");
+        vLabel1.append("tspan").attr("x", 200).attr("dy", "0").text("Adult Redeploy");
+        vLabel1.append("tspan").attr("x", 200).attr("dy", "1.1em").text("Programs");
+
+        const vLabel2 = vSvg.append("text").attr("x", 600).attr("y", 20).attr("text-anchor", "middle").attr("class", "v-label");
+        vLabel2.append("tspan").attr("x", 600).attr("dy", "0").text("Mental Health");
+        vLabel2.append("tspan").attr("x", 600).attr("dy", "1.1em").text("Courts");
 
         const nodes = rawData.map(function(d) { 
             let group = 'mhc';
@@ -150,7 +162,7 @@
         });
 
         const dots = vSvg.append("g").selectAll("circle").data(nodes).enter().append("circle")
-            .attr("r", 8).attr("class", "v-dot").attr("fill", function(d) { 
+            .attr("r", 10).attr("class", "v-dot").attr("fill", function(d) { 
                 if (d.m) { return "#FAC346"; } 
                 if (d.a) { return "#444"; }    
                 return "#aaa";
@@ -158,9 +170,9 @@
 
         const sim = d3.forceSimulation(nodes).force("x", d3.forceX(function(d) { 
             if (d.group === 'both') return 400;
-            if (d.group === 'ari') return 220;
-            return 580;
-        }).strength(0.15)).force("y", d3.forceY(250).strength(0.15)).force("collide", d3.forceCollide(10)).on("tick", function() { dots.attr("cx", function(d){return d.x;}).attr("cy", function(d){return d.y;}); });
+            if (d.group === 'ari') return 240;
+            return 560;
+        }).strength(0.15)).force("y", d3.forceY(250).strength(0.15)).force("collide", d3.forceCollide(12)).on("tick", function() { dots.attr("cx", function(d){return d.x;}).attr("cy", function(d){return d.y;}); });
 
         function moveTip(e) {
             const rect = tooltip.node().getBoundingClientRect();
@@ -172,28 +184,57 @@
         }
 
         dots.on("mouseover", function(e, d) {
-            d3.select(this).transition().duration(200).attr("r", 12).attr("stroke", "#000").attr("stroke-width", 2);
+            d3.select(this).transition().duration(200).attr("r", 15).attr("stroke", "#000").attr("stroke-width", 2);
             tooltip.style("display", "block").html(`<b>${d.c}</b>Type: ${d.t}`);
         }).on("mousemove", moveTip).on("mouseout", function() {
-            d3.select(this).transition().duration(200).attr("r", 8).attr("stroke", "#fff").attr("stroke-width", 1);
+            d3.select(this).transition().duration(200).attr("r", 10).attr("stroke", "#fff").attr("stroke-width", 1.5);
             tooltip.style("display", "none");
         });
 
         const cSvg = d3.select("#vc-cost-svg");
-        const x = d3.scaleBand().domain(cData.map(function(d){return d.y;})).range([80, 780]).padding(0.3);
-        const y = d3.scaleLinear().domain([0, 60000]).range([440, 40]);
-        cSvg.append("g").attr("transform", "translate(0,440)").call(d3.axisBottom(x).tickValues([2013, 2016, 2019, 2022, 2025]).tickSize(0)).attr("class", "axis-label");
-        cSvg.append("g").attr("transform", "translate(80,0)").call(d3.axisLeft(y).ticks(5, "$,f")).attr("class", "axis-label");
+        const x = d3.scaleBand().domain(cData.map(function(d){return d.y;})).range([180, 780]).padding(0.3);
+        const y = d3.scaleLinear().domain([0, 60000]).nice().range([420, 40]);
+
+        // BOLDER GRID
+        cSvg.append("g")
+            .selectAll("line")
+            .data(y.ticks(4))
+            .join("line")
+            .attr("class", "grid-line")
+            .attr("x1", 180)
+            .attr("x2", 780)
+            .attr("y1", d => y(d))
+            .attr("y2", d => y(d));
+
+        cSvg.append("g")
+            .attr("transform", "translate(0,420)")
+            .call(d3.axisBottom(x).tickValues([2013, 2017, 2021, 2025]).tickSize(0).tickPadding(25))
+            .call(g => g.select(".domain").remove())
+            .attr("class", "axis-label");
+
+        cSvg.append("g")
+            .attr("transform", "translate(180,0)")
+            .call(d3.axisLeft(y)
+                .ticks(4)
+                .tickSize(0)
+                .tickPadding(25)
+                .tickFormat((d, i, nodes) => {
+                    const val = `$${d / 1000}k`;
+                    return i === nodes.length - 1 ? `${val} / year` : val;
+                })
+            )
+            .call(g => g.select(".domain").remove())
+            .attr("class", "axis-label");
         
         const bars = cSvg.append("g").selectAll("g").data(cData).enter().append("g").attr("transform", function(d){return "translate("+x(d.y)+",0)";});
         
-        bars.append("rect").attr("class", "bar-idoc").attr("x", 0).attr("width", x.bandwidth()/2-2).attr("y", 440).attr("height", 0).attr("data-h", function(d){return 440-y(d.i);}).attr("data-y", function(d){return y(d.i);})
+        bars.append("rect").attr("class", "bar-idoc").attr("x", 0).attr("width", x.bandwidth()/2-2).attr("y", 420).attr("height", 0).attr("data-h", function(d){return 420-y(d.i);}).attr("data-y", function(d){return y(d.i);})
             .on("mouseover", function(e, d) { tooltip.style("display", "block").html(`<b>${d.y}</b>State Prison Cost:<br>$${d.i.toLocaleString()}`); })
             .on("mousemove", moveTip).on("mouseout", () => tooltip.style("display", "none"));
         
-        bars.append("rect").attr("class", "bar-ari").attr("x", x.bandwidth()/2).attr("width", x.bandwidth()/2-2).attr("y", 440).attr("height", 0).attr("data-h", function(d){return 440-y(d.a);}).attr("data-y", function(d){return y(d.a);})
+        bars.append("rect").attr("class", "bar-ari").attr("x", x.bandwidth()/2).attr("width", x.bandwidth()/2-2).attr("y", 420).attr("height", 0).attr("data-h", function(d){return 420-y(d.a);}).attr("data-y", function(d){return y(d.a);})
             .on("mouseover", function(e, d) { tooltip.style("display", "block").html(`<b>${d.y}</b>ARI Community Cost:<br>$${d.a.toLocaleString()}`); })
-            .on("mousemove", moveTip).on("mouseout", () => tooltip.style("display", "none"));
+            .on("mousemove", moveTip).on("mouseout", () => tooltip.style("none"));
 
         gsap.registerPlugin(ScrollTrigger);
         ScrollTrigger.create({ trigger: "#mhc-vc-section", pin: "#mhc-vc-section .vc-sticky-box", start: "top 80px", end: "bottom bottom", pinSpacing: false, invalidateOnRefresh: true });
