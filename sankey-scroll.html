@@ -1,9 +1,9 @@
-<!-- MHC SANKEY SCROLLY SECTION: FLOW-SAFE VERSION -->
+<!-- MHC SANKEY SCROLLY SECTION: EVAPORATION VERSION -->
 <style>
     #mhc-sankey-section {
         position: relative;
         width: 100%;
-        background: #fff;
+        background: transparent; /* ALLOW SITE BACKGROUND THROUGH */
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         overflow: visible !important;
         --amber: #FAC346;
@@ -19,7 +19,7 @@
         align-items: center;
         justify-content: center;
         z-index: 5; 
-        background: #fff;
+        background: transparent; /* ALLOW SITE BACKGROUND THROUGH */
         border: none !important;
     }
 
@@ -45,7 +45,8 @@
     #mhc-sankey-section .s-narrative { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 90%; max-width: 350px; pointer-events: none; }
     
     #mhc-sankey-section .s-card { 
-        background: white !important; padding: 30px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 100vh; 
+        background: rgba(255,255,255,0.9) !important; /* TRANSLUCENT FOR READABILITY */
+        padding: 30px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 100vh; 
         box-shadow: 0 4px 20px rgba(0,0,0,0.05); pointer-events: all; position: relative;
     }
     #mhc-sankey-section .s-card h3 { font-size: 1.8rem; font-weight: 800; color: var(--text-main); line-height: 1.1; margin: 0 0 15px 0; }
@@ -89,7 +90,7 @@
             </div>
             <div class="s-card">
                 <h3>Not everyone graduates</h3>
-                <p>Of those accepted, 59% successfully completed the program. Half of those who didn’t complete  the program were sent to a facility run by the state prison system. The rest voluntarily withdrew or couldn’t continue due to factors such as illness. A small number continue to be active in the program.</p>
+                <p>Of those accepted, 59% successfully completed the program. Half of those who didn’t complete the program were sent to a facility run by the state prison system. The rest voluntarily withdrew or couldn’t continue due to factors such as illness. A small number continue to be active in the program.</p>
             </div>
             <div class="s-card">
                 <h3>Other examples</h3>
@@ -190,7 +191,7 @@
                     end: "bottom bottom", 
                     scrub: true,
                     pin: "#mhc-sankey-section .s-sticky-box",
-                    pinSpacing: false,
+                    pinSpacing: false, // NO BIG EMPTY GAPS
                     invalidateOnRefresh: true
                 } 
             });
@@ -199,7 +200,6 @@
             tl.set("#mhc-sankey-section .county-title", { autoAlpha: 0 });
             tl.set("#mhc-sankey-section .sankey-node", { autoAlpha: 0 });
             tl.set("#mhc-sankey-section .sankey-link", { opacity: 0 });
-            tl.set("#mhc-sankey-section .s-sticky-box", { autoAlpha: 1 });
 
             // REVEAL STAGES
             tl.to("#mhc-sankey-section .t-a", { autoAlpha: 1, duration: 0.5 });
@@ -236,6 +236,8 @@
             });
 
             tl.to({}, { duration: 2 });
+
+            /* EVAPORATION LOGIC: Fade the whole thing away so text flows up naturally */
             tl.to("#mhc-sankey-section .s-sticky-box", { autoAlpha: 0, duration: 1 });
         })();
     }
