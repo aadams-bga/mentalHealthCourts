@@ -61,7 +61,7 @@
     <div class="content-wrapper">
         <div class="sidebar">
             <div class="legend">
-                <div style="font-weight: 700; color: #555; font-size: 9pt; text-transform: uppercase;">Population with a mental illness</div>
+                <div style="font-weight: 700; color: #555; font-size: 9pt; text-transform: uppercase;">Pop. with a mental illness</div>
                 <div class="gradient-bar"></div>
                 <div class="gradient-labels"><span>Lower</span><span>Higher</span></div>
             </div>
@@ -190,7 +190,7 @@
                 else { p.style.fill = colorScale(data.v); }
                 p.addEventListener('mouseover', function(e) {
                     tooltip.style.display = 'block';
-                    tooltip.innerHTML = `<b>${this.id.replace(/_/g, ' ')} County</b>` + `Est. Cases: ${data.v.toLocaleString()}` + (data.f ? `<br><span style="color:#888; font-size:9pt; font-weight:700;">EXISTING COURT</span>` : '');
+                    tooltip.innerHTML = `<b>${this.id.replace(/_/g, ' ')} County</b>` + `Est. people with mental illness: ${data.v.toLocaleString()}` + (data.f ? `<br><span style="color:#888; font-size:9pt; font-weight:700;">EXISTING COURT</span>` : '');
                 });
                 p.addEventListener('mousemove', function(e) {
                     const rect = tooltip.getBoundingClientRect();

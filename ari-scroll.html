@@ -11,7 +11,7 @@
     #mhc-vc-section .vc-sticky-box {
         position: relative;
         width: 100%;
-        height: 450px; /* COMPACT FOR MOBILE */
+        height: 100vh; /* RESTORED TO 100VH FOR VERTICAL CENTERING */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -178,7 +178,8 @@
         });
 
         const dots = vSvg.append("g").selectAll("circle").data(nodes).enter().append("circle")
-            .attr("r", 10).attr("class", "v-dot").attr("fill", d => d.group === 'both' || d.group === 'mhc' ? "#FAC346" : "#444");
+            .attr("r", 10).attr("class", "v-dot").attr("fill", d => d.group === 'both' || d.group === 'mhc' ? "#FAC346" : "#444")
+            .style("opacity", 0);
 
         const sim = d3.forceSimulation(nodes).force("x", d3.forceX(d => d.group === 'both' ? 400 : (d.group === 'ari' ? 240 : 560)).strength(0.15)).force("y", d3.forceY(250).strength(0.15)).force("collide", d3.forceCollide(12)).on("tick", () => dots.attr("cx", d => d.x).attr("cy", d => d.y));
 
