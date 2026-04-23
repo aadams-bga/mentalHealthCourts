@@ -3,7 +3,7 @@
     #mhc-vc-section {
         position: relative;
         width: 100%;
-        background: #fff;
+        background: transparent; /* TRANSPARENT FOR SEAMLESS INTEGRATION */
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         overflow: visible !important;
     }
@@ -11,19 +11,19 @@
     #mhc-vc-section .vc-sticky-box {
         position: relative;
         width: 100%;
-        height: 100vh;
+        height: 450px; /* COMPACT FOR MOBILE */
         display: flex;
         align-items: center;
         justify-content: center;
         z-index: 5; 
-        background: #fff;
+        background: transparent;
         border: none !important;
     }
 
     #mhc-vc-section .vc-svg-shell {
-        width: 100%;
+        width: 95%;
         max-width: 800px;
-        height: 85vh;
+        height: 400px;
         position: relative;
         display: flex;
         align-items: center;
@@ -44,7 +44,7 @@
     }
     
     #mhc-vc-section .vc-card { 
-        background: white !important; 
+        background: rgba(255,255,255,0.95) !important; /* SLIGHT TRANSPARENCY */
         padding: 25px; 
         border: 1px solid #eee; 
         border-radius: 4px; 
@@ -53,16 +53,18 @@
         pointer-events: all;
         position: relative;
     }
-    #mhc-vc-section .vc-card h3 { font-size: 1.5rem; font-weight: 800; color: #333; line-height: 1.1; margin: 0 0 10px 0; }
-    #mhc-vc-section .vc-card p { font-size: 10.5pt; line-height: 1.4; color: #666; margin: 0; }
-    #mhc-vc-section .vc-card:first-child { margin-top: 50vh; }
+    
+    /* PREVENT CUT OFF: Ensure first card starts low enough to be seen */
+    #mhc-vc-section .vc-card:first-child { margin-top: 80vh; }
 
     @media (min-width: 1024px) {
-        #mhc-vc-section .vc-sticky-box { height: 100vh; width: 60%; float: right; border: none !important; }
+        #mhc-vc-section .vc-sticky-box { height: 100vh; width: 60%; float: right; }
+        #mhc-vc-section .vc-svg-shell { height: 85vh; }
         #mhc-vc-section .vc-track { width: 40%; }
         #mhc-vc-section .vc-narrative { left: 5%; transform: none; max-width: 450px; }
         #mhc-vc-section .vc-card h3 { font-size: 1.8rem; }
         #mhc-vc-section .vc-card p { font-size: 11pt; }
+        #mhc-vc-section .vc-card:first-child { margin-top: 50vh; }
     }
 
     .v-circ { fill: rgba(0,0,0,0.015); stroke: #f0f0f0; stroke-width: 2px; }
@@ -100,14 +102,13 @@
                 <p>While mental health courts are a significant portion of Adult Redeploy’s programming, the initiative also funds other similar programs, like drug court and intensive supervision probation. 
                 </p></div>
             <div class="vc-card" style="border-left: 4px solid #FAC346;"><h3>Adult Redeploy cost $4,277 per person last year</h3>
-                <p>That’s an average cost across all types of diversion programs.
+                <p>That is an average cost across all types of diversion programs. 
                 </p></div>
             <div class="vc-card" style="border-left: 4px solid #444;"><h3>Prison cost $52,810 per person last year</h3>
                 <p>That is more than 10 times the average cost of a diversion program. 
                 </p></div>
             <div class="vc-card"><h3>Systemic savings</h3>
-                <p>Adult Redeploy estimates its diversion programs have saved taxpayers almost half a billion dollars in avoided prison costs over the last 15 years. 
-                </p></div>
+                <p>Adult Redeploy estimates its programs have saved taxpayers almost half a billion dollars in avoided prison costs over 15 years.</p></div>
         </div>
     </div>
 
@@ -124,184 +125,120 @@
         if (window.__mhc_vc_init) return;
         window.__mhc_vc_init = true;
 
+        const rawData = [
+            {c:"Boone County",t:"ARI probation program",a:1,m:0}, {c:"Washinton/Perry Counties",t:"Drug Court",a:1,m:0}, {c:"Christian County",t:"Drug Court",a:1,m:0},
+            {c:"Clinton County",t:"Drug Court",a:1,m:0}, {c:"Effingham County",t:"Drug Court",a:1,m:0}, {c:"Adams County",t:"Drug Court",a:1,m:0},
+            {c:"Boone County",t:"Drug Court",a:1,m:0}, {c:"Grundy County",t:"Drug Court",a:1,m:0}, {c:"Jersey County",t:"Drug Court",a:1,m:0},
+            {c:"Kendall County",t:"Drug Court",a:1,m:0}, {c:"LaSalle County",t:"Drug Court",a:1,m:0}, {c:"Lake County",t:"Drug Court",a:1,m:0},
+            {c:"Madison County",t:"Drug Court",a:1,m:0}, {c:"Peoria County",t:"Drug Court",a:1,m:0}, {c:"Sangamon County",t:"Drug Court",a:1,m:0},
+            {c:"Will County",t:"Drug Court",a:1,m:0}, {c:"Fayette County",t:"Drug Court",a:1,m:0}, {c:"Knox County",t:"Drug Court",a:1,m:0},
+            {c:"Fulton County",t:"Drug Court",a:1,m:0}, {c:"McDonough County",t:"Drug Court",a:1,m:0}, {c:"Hancock County",t:"Drug Court",a:1,m:0},
+            {c:"Warren/Henderson Counties",t:"Drug Court",a:1,m:0}, {c:"Cook County",t:"Drug Court",a:1,m:0}, {c:"DeKalb County",t:"Drug/DUI Court",a:1,m:0},
+            {c:"Lake County",t:"DUI Diversion Program",a:1,m:0}, {c:"Effingham County",t:"Integrated Care",a:1,m:0}, {c:"St. Clair County",t:"Intensive Probation",a:1,m:0},
+            {c:"DuPage County",t:"Intensive Probation",a:1,m:0}, {c:"LaSalle County",t:"Intensive Probation",a:1,m:0}, {c:"Macon County",t:"Intensive Probation",a:1,m:0},
+            {c:"McLean County",t:"Intensive Probation",a:1,m:0}, {c:"Peoria County",t:"Intensive Probation",a:1,m:0}, {c:"Montgomery County",t:"LEAP program",a:1,m:0},
+            {c:"St. Clair County MHC",t:"Mental Health Court",a:1,m:1}, {c:"Christian County",t:"Mental Health Court",a:1,m:1}, {c:"Effingham County",t:"Mental Health Court",a:1,m:1},
+            {c:"Adams County",t:"Mental Health Court",a:1,m:1}, {c:"DeKalb County",t:"Mental Health Court",a:1,m:1}, {c:"Grundy County",t:"Mental Health Court",a:1,m:1},
+            {c:"Kendall County",t:"Mental Health Court",a:1,m:1}, {c:"LaSalle County",t:"Mental Health Court",a:1,m:1}, {c:"Lake County",t:"Mental Health Court",a:1,m:1},
+            {c:"Madison County",t:"Mental Health Court",a:1,m:1}, {c:"Montgomery County",t:"Mental Health Court",a:1,m:1}, {c:"Peoria County",t:"Mental Health Court",a:1,m:1},
+            {c:"Sangamon County",t:"Mental Health Court",a:1,m:1}, {c:"Will County",t:"Mental Health Court",a:1,m:1}, {c:"Monroe County",t:"Mental health treatment",a:1,m:0},
+            {c:"Cook County",t:"Mental Health Court",a:1,m:1}, {c:"Adams County",t:"Pretrial services",a:1,m:0}, {c:"Adams County",t:"RISE program",a:1,m:0},
+            {c:"Cook County",t:"RRP",a:1,m:0}, {c:"2nd Judicial Circuit",t:"Substance Abuse/MH",a:1,m:0}, {c:"Christian County",t:"Veterans Court",a:1,m:1},
+            {c:"Effingham County",t:"Veterans Court",a:1,m:1}, {c:"Kendall County",t:"Veterans Court",a:1,m:1}, {c:"Lake County",t:"Veterans Court",a:1,m:1},
+            {c:"Madison County",t:"Veterans Court",a:1,m:1}, {c:"Peoria County",t:"Veterans Court",a:1,m:1}, {c:"Sangamon County",t:"Veterans Court",a:1,m:1},
+            {c:"Will County",t:"Veterans Court",a:1,m:1}, {c:"Grundy County",t:"Veterans treatment",a:1,m:1}, {c:"Vermilion County",t:"Mental Health Court",a:0,m:1},
+            {c:"Macon County",t:"Mental Health Court",a:0,m:1}, {c:"Tazewell County",t:"Mental Health Court",a:0,m:1}, {c:"Rock Island",t:"Mental Health Court",a:0,m:1},
+            {c:"Kankakee",t:"Mental Health Court",a:0,m:1}, {c:"22nd Judicial Circuit",t:"Mental Health Court",a:0,m:1}, {c:"DuPage County",t:"MICAP",a:0,m:1},
+            {c:"Kane County",t:"Treatment Alternative Court",a:0,m:1}
+        ];
+
+        const cData = [
+            {y:2013,a:1252,i:20927},{y:2014,a:3699,i:22191},{y:2015,a:3870,i:23385},{y:2016,a:4468,i:21930},
+            {y:2017,a:3551,i:26365},{y:2018,a:3901,i:27930},{y:2019,a:3834,i:30419},{y:2020,a:4039,i:34229},
+            {y:2021,a:4284,i:43711},{y:2022,a:3902,i:45800},{y:2023,a:4056,i:46374},{y:2024,a:4336,i:48810},
+            {y:2025,a:4277,i:52810}
+        ];
+
+        const vSvg = d3.select("#vc-venn-svg");
+        const tooltip = d3.select("#vc-tooltip");
+        vSvg.append("circle").attr("cx", 320).attr("cy", 250).attr("r", 180).attr("class", "v-circ");
+        vSvg.append("circle").attr("cx", 480).attr("cy", 250).attr("r", 180).attr("class", "v-circ");
+
+        const vLabel1 = vSvg.append("text").attr("x", 200).attr("y", 40).attr("text-anchor", "middle").attr("class", "v-label");
+        vLabel1.append("tspan").attr("x", 200).attr("dy", "0").text("Adult Redeploy");
+        vLabel1.append("tspan").attr("x", 200).attr("dy", "1.1em").text("Programs");
+
+        const vLabel2 = vSvg.append("text").attr("x", 600).attr("y", 40).attr("text-anchor", "middle").attr("class", "v-label");
+        vLabel2.append("tspan").attr("x", 600).attr("dy", "0").text("Mental Health");
+        vLabel2.append("tspan").attr("x", 600).attr("dy", "1.1em").text("Courts");
+
+        const nodes = rawData.map(function(d) { 
+            let group = (d.a && d.m) ? 'both' : (d.a ? 'ari' : 'mhc');
+            return {c: d.c, t: d.t, group: group, x: 400, y: 250}; 
+        });
+
+        const dots = vSvg.append("g").selectAll("circle").data(nodes).enter().append("circle")
+            .attr("r", 10).attr("class", "v-dot").attr("fill", d => d.group === 'both' || d.group === 'mhc' ? "#FAC346" : "#444");
+
+        const sim = d3.forceSimulation(nodes).force("x", d3.forceX(d => d.group === 'both' ? 400 : (d.group === 'ari' ? 240 : 560)).strength(0.15)).force("y", d3.forceY(250).strength(0.15)).force("collide", d3.forceCollide(12)).on("tick", () => dots.attr("cx", d => d.x).attr("cy", d => d.y));
+
+        function moveTip(e) {
+            const rect = tooltip.node().getBoundingClientRect();
+            const buffer = 20;
+            let x = e.clientX + 25; let y = e.clientY + 25;
+            if (x + rect.width > window.innerWidth - buffer) x = e.clientX - rect.width - 25;
+            if (y + rect.height > window.innerHeight - buffer) y = e.clientY - rect.height - 25;
+            tooltip.style("left", Math.max(buffer, x) + "px").style("top", Math.max(buffer, y) + "px");
+        }
+
+        dots.on("mouseover", (e, d) => {
+            d3.select(e.currentTarget).transition().duration(200).attr("r", 15).attr("stroke", "#000").attr("stroke-width", 2);
+            tooltip.style("display", "block").html(`<b>${d.c}</b>Type: ${d.t}`);
+        }).on("mousemove", moveTip).on("mouseout", (e) => {
+            d3.select(e.currentTarget).transition().duration(200).attr("r", 10).attr("stroke", "#fff").attr("stroke-width", 1.5);
+            tooltip.style("display", "none");
+        });
+
+        const cSvg = d3.select("#vc-cost-svg");
+        const x = d3.scaleBand().domain(cData.map(d => d.y)).range([180, 780]).padding(0.3);
+        const y = d3.scaleLinear().domain([0, 60000]).nice().range([420, 40]);
+
+        cSvg.append("g").attr("transform", "translate(0,420)").call(d3.axisBottom(x).tickValues([2013, 2017, 2021, 2025]).tickSize(0).tickPadding(25)).attr("class", "axis-label").call(g => g.select(".domain").remove());
+        cSvg.append("g").attr("transform", "translate(180,0)").call(d3.axisLeft(y).ticks(4).tickSize(0).tickPadding(25).tickFormat(d => `$${d/1000}k`)).attr("class", "axis-label").call(g => g.select(".domain").remove());
+
+        const bars = cSvg.append("g").selectAll("g").data(cData).enter().append("g").attr("transform", d => `translate(${x(d.y)},0)`);
+        bars.append("rect").attr("class", "bar-idoc").attr("x", 0).attr("width", x.bandwidth()/2-2).attr("y", 420).attr("height", 0).attr("data-h", d => 420-y(d.i)).attr("data-y", d => y(d.i))
+            .on("mouseover", (e, d) => tooltip.style("display", "block").html(`<b>${d.y}</b>Prison Cost: $${d.i.toLocaleString()}`))
+            .on("mousemove", moveTip).on("mouseout", () => tooltip.style("display", "none"));
+        bars.append("rect").attr("class", "bar-ari").attr("x", x.bandwidth()/2).attr("width", x.bandwidth()/2-2).attr("y", 420).attr("height", 0).attr("data-h", d => 420-y(d.a)).attr("data-y", d => y(d.a))
+            .on("mouseover", (e, d) => tooltip.style("display", "block").html(`<b>${d.y}</b>ARI Cost: $${d.a.toLocaleString()}`))
+            .on("mousemove", moveTip).on("mouseout", () => tooltip.style("display", "none"));
+
         gsap.registerPlugin(ScrollTrigger);
 
-        (function() {
-            const rawData = [
-                {c:"Boone County",t:"ARI probation program",a:1,m:0}, {c:"Washinton/Perry Counties",t:"Drug Court",a:1,m:0}, {c:"Christian County",t:"Drug Court",a:1,m:0},
-                {c:"Clinton County",t:"Drug Court",a:1,m:0}, {c:"Effingham County",t:"Drug Court",a:1,m:0}, {c:"Adams County",t:"Drug Court",a:1,m:0},
-                {c:"Boone County",t:"Drug Court",a:1,m:0}, {c:"Grundy County",t:"Drug Court",a:1,m:0}, {c:"Jersey County",t:"Drug Court",a:1,m:0},
-                {c:"Kendall County",t:"Drug Court",a:1,m:0}, {c:"LaSalle County",t:"Drug Court",a:1,m:0}, {c:"Lake County",t:"Drug Court",a:1,m:0},
-                {c:"Madison County",t:"Drug Court",a:1,m:0}, {c:"Peoria County",t:"Drug Court",a:1,m:0}, {c:"Sangamon County",t:"Drug Court",a:1,m:0},
-                {c:"Will County",t:"Drug Court",a:1,m:0}, {c:"Fayette County",t:"Drug Court",a:1,m:0}, {c:"Knox County",t:"Drug Court",a:1,m:0},
-                {c:"Fulton County",t:"Drug Court",a:1,m:0}, {c:"McDonough County",t:"Drug Court",a:1,m:0}, {c:"Hancock County",t:"Drug Court",a:1,m:0},
-                {c:"Warren/Henderson Counties",t:"Drug Court",a:1,m:0}, {c:"Cook County",t:"Drug Court",a:1,m:0}, {c:"DeKalb County",t:"Drug/DUI Court",a:1,m:0},
-                {c:"Lake County",t:"DUI Diversion Program",a:1,m:0}, {c:"Effingham County",t:"Integrated Care",a:1,m:0}, {c:"St. Clair County",t:"Intensive Probation",a:1,m:0},
-                {c:"DuPage County",t:"Intensive Probation",a:1,m:0}, {c:"LaSalle County",t:"Intensive Probation",a:1,m:0}, {c:"Macon County",t:"Intensive Probation",a:1,m:0},
-                {c:"McLean County",t:"Intensive Probation",a:1,m:0}, {c:"Peoria County",t:"Intensive Probation",a:1,m:0}, {c:"Montgomery County",t:"LEAP program",a:1,m:0},
-                {c:"St. Clair County MHC",t:"Mental Health Court",a:1,m:1}, {c:"Christian County",t:"Mental Health Court",a:1,m:1}, {c:"Effingham County",t:"Mental Health Court",a:1,m:1},
-                {c:"Adams County",t:"Mental Health Court",a:1,m:1}, {c:"DeKalb County",t:"Mental Health Court",a:1,m:1}, {c:"Grundy County",t:"Mental Health Court",a:1,m:1},
-                {c:"Kendall County",t:"Mental Health Court",a:1,m:1}, {c:"LaSalle County",t:"Mental Health Court",a:1,m:1}, {c:"Lake County",t:"Mental Health Court",a:1,m:1},
-                {c:"Madison County",t:"Mental Health Court",a:1,m:1}, {c:"Montgomery County",t:"Mental Health Court",a:1,m:1}, {c:"Peoria County",t:"Mental Health Court",a:1,m:1},
-                {c:"Sangamon County",t:"Mental Health Court",a:1,m:1}, {c:"Will County",t:"Mental Health Court",a:1,m:1}, {c:"Monroe County",t:"Mental health treatment",a:1,m:0},
-                {c:"Cook County",t:"Mental Health Court",a:1,m:1}, {c:"Adams County",t:"Pretrial services",a:1,m:0}, {c:"Adams County",t:"RISE program",a:1,m:0},
-                {c:"Cook County",t:"RRP",a:1,m:0}, {c:"2nd Judicial Circuit",t:"Substance Abuse/MH",a:1,m:0}, {c:"Christian County",t:"Veterans Court",a:1,m:1},
-                {c:"Effingham County",t:"Veterans Court",a:1,m:1}, {c:"Kendall County",t:"Veterans Court",a:1,m:1}, {c:"Lake County",t:"Veterans Court",a:1,m:1},
-                {c:"Madison County",t:"Veterans Court",a:1,m:1}, {c:"Peoria County",t:"Veterans Court",a:1,m:1}, {c:"Sangamon County",t:"Veterans Court",a:1,m:1},
-                {c:"Will County",t:"Veterans Court",a:1,m:1}, {c:"Grundy County",t:"Veterans treatment",a:1,m:1}, {c:"Vermilion County",t:"Mental Health Court",a:0,m:1},
-                {c:"Macon County",t:"Mental Health Court",a:0,m:1}, {c:"Tazewell County",t:"Mental Health Court",a:0,m:1}, {c:"Rock Island",t:"Mental Health Court",a:0,m:1},
-                {c:"Kankakee",t:"Mental Health Court",a:0,m:1}, {c:"22nd Judicial Circuit",t:"Mental Health Court",a:0,m:1}, {c:"DuPage County",t:"MICAP",a:0,m:1},
-                {c:"Kane County",t:"Treatment Alternative Court",a:0,m:1}
-            ];
+        ScrollTrigger.create({
+            trigger: "#mhc-vc-section",
+            pin: "#mhc-vc-section .vc-sticky-box",
+            start: "top 80px", 
+            end: "bottom bottom",
+            pinSpacing: false,
+            invalidateOnRefresh: true
+        });
 
-            const cData = [
-                {y:2013,a:1252,i:20927},{y:2014,a:3699,i:22191},{y:2015,a:3870,i:23385},{y:2016,a:4468,i:21930},
-                {y:2017,a:3551,i:26365},{y:2018,a:3901,i:27930},{y:2019,a:3834,i:30419},{y:2020,a:4039,i:34229},
-                {y:2021,a:4284,i:43711},{y:2022,a:3902,i:45800},{y:2023,a:4056,i:46374},{y:2024,a:4336,i:48810},
-                {y:2025,a:4277,i:52810}
-            ];
+        const tl = gsap.timeline({ scrollTrigger: { trigger: "#mhc-vc-section", start: "top 80px", end: "bottom bottom", scrub: true } });
+        tl.set("#vc-cost-svg", { autoAlpha: 0 });
+        tl.set("#mhc-vc-section .v-dot", { autoAlpha: 0 });
+        
+        tl.to({}, { duration: 1.5 });
+        tl.to("#mhc-vc-section .v-dot", { autoAlpha: 1, duration: 1.5, stagger: { each: 0.015, from: "end" } });
+        tl.to("#vc-venn-svg", { autoAlpha: 0, duration: 0.8 }, "trans");
+        tl.to("#vc-cost-svg", { autoAlpha: 1, duration: 0.8 }, "trans");
+        tl.to(".bar-ari", { attr: { y: (i, el) => el.getAttribute('data-y'), height: (i, el) => el.getAttribute('data-h') }, duration: 1.2, stagger: 0.02 }, "trans"); 
+        tl.to(".bar-idoc", { attr: { y: (i, el) => el.getAttribute('data-y'), height: (i, el) => el.getAttribute('data-h') }, duration: 1.2, stagger: 0.02 });
+        tl.to({}, { duration: 3 }); // HOLD FOR CARD 5 & FADE
 
-            const vSvg = d3.select("#vc-venn-svg");
-            const tooltip = d3.select("#vc-tooltip");
-            vSvg.append("circle").attr("cx", 320).attr("cy", 250).attr("r", 180).attr("class", "v-circ");
-            vSvg.append("circle").attr("cx", 480).attr("cy", 250).attr("r", 180).attr("class", "v-circ");
-
-            // TITLES SHIFTED TO AVOID OVERLAP
-            const vLabel1 = vSvg.append("text").attr("x", 200).attr("y", 20).attr("text-anchor", "middle").attr("class", "v-label");
-            vLabel1.append("tspan").attr("x", 200).attr("dy", "0").text("Adult Redeploy");
-            vLabel1.append("tspan").attr("x", 200).attr("dy", "1.1em").text("Programs");
-
-            const vLabel2 = vSvg.append("text").attr("x", 600).attr("y", 20).attr("text-anchor", "middle").attr("class", "v-label");
-            vLabel2.append("tspan").attr("x", 600).attr("dy", "0").text("Mental Health");
-            vLabel2.append("tspan").attr("x", 600).attr("dy", "1.1em").text("Courts");
-
-            const nodes = rawData.map(function(d) { 
-                let group = 'mhc';
-                if (d.a) { if (d.m) { group = 'both'; } else { group = 'ari'; } }
-                return {c: d.c, t: d.t, m: d.m, a: d.a, group: group, x: 400, y: 250}; 
-            });
-
-            const dots = vSvg.append("g").selectAll("circle").data(nodes).enter().append("circle")
-                .attr("r", 10).attr("class", "v-dot").attr("fill", function(d) { 
-                    if (d.m) { return "#FAC346"; } 
-                    if (d.a) { return "#444"; }    
-                    return "#aaa";
-                });
-
-            const sim = d3.forceSimulation(nodes).force("x", d3.forceX(function(d) { 
-                if (d.group === 'both') return 400;
-                if (d.group === 'ari') return 240;
-                return 560;
-            }).strength(0.15)).force("y", d3.forceY(250).strength(0.15)).force("collide", d3.forceCollide(12)).on("tick", function() { dots.attr("cx", function(d){return d.x;}).attr("cy", function(d){return d.y;}); });
-
-            function moveTip(e) {
-                const rect = tooltip.node().getBoundingClientRect();
-                const buffer = 20;
-                let x = e.clientX + 25; let y = e.clientY + 25;
-                if (x + rect.width > window.innerWidth - buffer) x = e.clientX - rect.width - 25;
-                if (y + rect.height > window.innerHeight - buffer) y = e.clientY - rect.height - 25;
-                tooltip.style("left", Math.max(buffer, x) + "px").style("top", Math.max(buffer, y) + "px");
-            }
-
-            dots.on("mouseover", function(e, d) {
-                d3.select(this).transition().duration(200).attr("r", 15).attr("stroke", "#000").attr("stroke-width", 2);
-                tooltip.style("display", "block").html(`<b>${d.c}</b>Type: ${d.t}`);
-            }).on("mousemove", moveTip).on("mouseout", function() {
-                d3.select(this).transition().duration(200).attr("r", 10).attr("stroke", "#fff").attr("stroke-width", 1.5);
-                tooltip.style("display", "none");
-            });
-
-            const cSvg = d3.select("#vc-cost-svg");
-            const x = d3.scaleBand().domain(cData.map(function(d){return d.y;})).range([180, 780]).padding(0.3);
-            const y = d3.scaleLinear().domain([0, 60000]).nice().range([420, 40]);
-
-            // BOLDER GRID
-            cSvg.append("g")
-                .selectAll("line")
-                .data(y.ticks(4))
-                .join("line")
-                .attr("class", "grid-line")
-                .attr("x1", 180)
-                .attr("x2", 780)
-                .attr("y1", d => y(d))
-                .attr("y2", d => y(d));
-
-            cSvg.append("g")
-                .attr("transform", "translate(0,420)")
-                .call(d3.axisBottom(x).tickValues([2013, 2017, 2021, 2025]).tickSize(0).tickPadding(25))
-                .call(g => g.select(".domain").remove())
-                .attr("class", "axis-label");
-
-            cSvg.append("g")
-                .attr("transform", "translate(180,0)")
-                .call(d3.axisLeft(y)
-                    .ticks(4)
-                    .tickSize(0)
-                    .tickPadding(25)
-                    .tickFormat((d, i, nodes) => {
-                        const val = `$${d / 1000}k`;
-                        return i === nodes.length - 1 ? `${val} / year` : val;
-                    })
-                )
-                .call(g => g.select(".domain").remove())
-                .attr("class", "axis-label");
-
-            const bars = cSvg.append("g").selectAll("g").data(cData).enter().append("g").attr("transform", function(d){return "translate("+x(d.y)+",0)";});
-
-            bars.append("rect").attr("class", "bar-idoc").attr("x", 0).attr("width", x.bandwidth()/2-2).attr("y", 420).attr("height", 0).attr("data-h", function(d){return 420-y(d.i);}).attr("data-y", function(d){return y(d.i);})
-                .on("mouseover", function(e, d) { tooltip.style("display", "block").html(`<b>${d.y}</b>State Prison Cost:<br>$${d.i.toLocaleString()}`); })
-                .on("mousemove", moveTip).on("mouseout", () => tooltip.style("display", "none"));
-
-            bars.append("rect").attr("class", "bar-ari").attr("x", x.bandwidth()/2).attr("width", x.bandwidth()/2-2).attr("y", 420).attr("height", 0).attr("data-h", function(d){return 420-y(d.a);}).attr("data-y", function(d){return y(d.a);})
-                .on("mouseover", function(e, d) { tooltip.style("display", "block").html(`<b>${d.y}</b>ARI Community Cost:<br>$${d.a.toLocaleString()}`); })
-                .on("mousemove", moveTip).on("mouseout", () => tooltip.style("none"));
-
-            const tl = gsap.timeline({ 
-                scrollTrigger: { 
-                    trigger: "#mhc-vc-section", 
-                    start: "top 80px", 
-                    end: "bottom bottom", 
-                    scrub: true,
-                    pin: "#mhc-vc-section .vc-sticky-box",
-                    pinSpacing: false,
-                    invalidateOnRefresh: true
-                } 
-            });
-
-            // IRONCLAD INITIAL STATE
-            tl.set("#vc-cost-svg", { autoAlpha: 0 });
-            tl.set("#vc-venn-svg", { autoAlpha: 1 });
-            tl.set("#mhc-vc-section .v-dot", { autoAlpha: 0 });
-            tl.set(".bar-ari, .bar-idoc", { attr: { height: 0, y: 420 } });
-            tl.set("#mhc-vc-section .vc-sticky-box", { autoAlpha: 1 });
-
-            // STAGE 1: HOLD FOR CARD 1
-            tl.to({}, { duration: 1.5 });
-
-            // STAGE 2: DOTS REVEAL (CARD 2)
-            tl.to("#mhc-vc-section .v-dot", { autoAlpha: 1, duration: 1.5, stagger: { each: 0.015, from: "end" } });
-
-            // STAGE 3: TRANSITION + YELLOW BARS (CARD 3)
-            tl.to("#vc-venn-svg", { autoAlpha: 0, duration: 0.8 }, "trans");
-            tl.to("#vc-cost-svg", { autoAlpha: 1, duration: 0.8 }, "trans");
-            tl.to(".bar-ari", { 
-                attr: { y: function(i, el){return el.getAttribute('data-y');}, height: function(i, el){return el.getAttribute('data-h');} }, 
-                duration: 1.2, stagger: 0.02 
-            }, "trans"); 
-
-            tl.to({}, { duration: 1.5 }); // HOLD FOR CARD 3
-
-            // STAGE 4: BLACK BARS GROW (CARD 4)
-            tl.to(".bar-idoc", { 
-                attr: { y: function(i, el){return el.getAttribute('data-y');}, height: function(i, el){return el.getAttribute('data-h');} }, 
-                duration: 1.2, stagger: 0.02 
-            });
-
-            tl.to({}, { duration: 3 }); // HOLD FOR CARD 5 & FADE
-
-            // STAGE 5: FADE OUT
-            tl.to("#mhc-vc-section .vc-sticky-box", { autoAlpha: 0, duration: 1 });
-        })();
+        tl.to("#mhc-vc-section .vc-sticky-box", { autoAlpha: 0, duration: 1 });
     }
     initVennCost();
-    </script></div>
+    </script>
+</div>
