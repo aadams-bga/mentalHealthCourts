@@ -23,10 +23,17 @@
         border: none !important;
     }
 
+    @media (max-width: 1023px) {
+        #mhc-sankey-section .s-sticky-box {
+            align-items: flex-start;
+            padding-top: 60px; /* OFFSET FROM TOP */
+        }
+    }
+
     #mhc-sankey-section .s-graphic-shell {
         width: 90%;
         max-width: 450px;
-        height: 80vh;
+        height: 70vh;
         position: relative;
         display: flex;
         align-items: center;
@@ -68,13 +75,13 @@
     .successful-node rect { fill: #19a116 !important; }
     .failed-node rect { fill: #c02935 !important; }
     .active-node rect { fill: #333 !important; } 
-    .county-title { font-size: 28px; font-weight: 900; text-transform: uppercase; fill: #333; letter-spacing: 1px; }
+    .county-title { font-size: 28px; font-weight: 900; text-transform: uppercase; fill: #333; letter-spacing: 1px; text-anchor: middle; }
 </style>
 
 <div id="mhc-sankey-section">
     <div class="s-sticky-box">
         <div class="s-graphic-shell">
-            <svg id="viz-svg" viewBox="0 0 400 750"></svg>
+            <svg id="viz-svg" viewBox="0 0 400 650"></svg>
         </div>
     </div>
     
@@ -102,7 +109,7 @@
             </div>
             <div class="s-card">
                 <h3>Statewide similarities</h3>
-                <p>These similarities persist across the state. Most programs’ graduation rate is around 55%, but outliers exist — Adams County has a 25% graduation rate and DuPage County’s is 79%.</p>
+                <p>These similarities persist across the state. Most programs graduate around 55% of participants, but outliers exist. Adams County has a 25% graduation rate, and DuPage County claims to graduate 79%.</p>
             </div>
         </div>
     </div>
@@ -128,10 +135,10 @@
             const dataB = { county: "Tazewell County", nodes: dataA.nodes.map(n => ({...n})), links: [{ source: 0, target: 1, value: 100 }, { source: 0, target: 2, value: 293 }, { source: 1, target: 3, value: 31 }, { source: 1, target: 4, value: 51 }, { source: 1, target: 5, value: 18 }] };
             const dataC = { county: "Peoria County", nodes: dataA.nodes.map(n => ({...n})), links: [{ source: 0, target: 1, value: 80 }, { source: 0, target: 2, value: 190 }, { source: 1, target: 3, value: 30 }, { source: 1, target: 4, value: 18 }, { source: 1, target: 5, value: 32 }] };
 
-            const width = 400, height = 750; 
+            const width = 400, height = 650; 
             const root = d3.select("#mhc-sankey-section");
             const svg = root.select("#viz-svg");
-            const sankey = d3.sankey().nodeWidth(12).nodePadding(85).nodeAlign(d3.sankeyLeft).nodeSort(null).extent([[200, 40], [height - 60, 360]]);
+            const sankey = d3.sankey().nodeWidth(12).nodePadding(85).nodeAlign(d3.sankeyLeft).nodeSort(null).extent([[100, 40], [height - 60, 360]]);
 
             function getLayout(raw) {
                 const l = sankey(JSON.parse(JSON.stringify(raw)));
@@ -149,9 +156,9 @@
 
             function pGen(d) { const x0 = d.source.x1, x1 = d.target.x0, y0 = d.y0, y1 = d.y1; return "M"+y0+","+x0+"C"+y0+","+(x0+x1)/2+" "+y1+","+(x0+x1)/2+" "+y1+","+x1; }
 
-            svg.append("text").attr("x", 40).attr("y", 100).attr("class", "county-title t-a").text(dataA.county);
-            svg.append("text").attr("x", 40).attr("y", 100).attr("class", "county-title t-b").text(dataB.county);
-            svg.append("text").attr("x", 40).attr("y", 100).attr("class", "county-title t-c").text(dataC.county);
+            svg.append("text").attr("x", 200).attr("y", 50).attr("class", "county-title t-a").text(dataA.county);
+            svg.append("text").attr("x", 200).attr("y", 50).attr("class", "county-title t-b").text(dataB.county);
+            svg.append("text").attr("x", 200).attr("y", 50).attr("class", "county-title t-c").text(dataC.county);
 
             svg.append("g").attr("class", "link-group").selectAll("path").data(layoutA.links).enter().append("path")
                 .attr("class", (d,i) => "sankey-link link-" + i)
