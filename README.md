@@ -1,26 +1,16 @@
 # Mental Health Court Graphics
 
-## County Selector
+## [County Selector](https://github.com/aadams-bga/mentalHealthCourts/blob/main/county-selector.html)
 ![](./images/county-selector.gif)
 
-[Link to code](https://github.com/aadams-bga/mentalHealthCourts/blob/main/county-selector.html)
-
-## Chronological Map 
+## [Chronological Map](https://github.com/aadams-bga/mentalHealthCourts/blob/main/chrono-map.html)
 ![](./images/chrono-map.gif)
 
-[Link to code](https://github.com/aadams-bga/mentalHealthCourts/blob/main/chrono-map.html)
-
-## Sankey Scroller
+## [Sankey Scroller](https://github.com/aadams-bga/mentalHealthCourts/blob/main/sankey-scroll.html)
 ![](./images/sankey-scroll.gif)
 
-[Link to code](https://github.com/aadams-bga/mentalHealthCourts/blob/main/sankey-scroll.html)
-
-## SAMSHA Map 
+## [SAMSHA Map](https://github.com/aadams-bga/mentalHealthCourts/blob/main/samsha-map.html)
 ![](./images/samsha-map.gif)
 
-[Link to code](https://github.com/aadams-bga/mentalHealthCourts/blob/main/samsha-map.html)
-
-## ARI Scroller 
+## [ARI Scroller](https://github.com/aadams-bga/mentalHealthCourts/blob/main/ari-scroll.html)
 ![](./images/ari-scroll.gif)
-
-[Link to code](https://github.com/aadams-bga/mentalHealthCourts/blob/main/ari-scroll.html)
