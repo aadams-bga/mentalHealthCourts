@@ -23,7 +23,7 @@ We hope these assets will be useful to you in telling the story of mental health
 # Using static images for IAP/MindSite's mental health courts graphics
 If, for technical or aesthetic reasons, you choose to republish the IAP/MindSite investigation into mental health courts without using the interactive code provided elsewhere in this repository, we encourage you to represent the graphics statically. We have provided PNG images in the [linked folder](./images/). Please credit images to "Illinois Answers Project and MindSite News" 
 
-Please use the following copy to accompany those graphics, if used online. Approximate placements for images have been included where appropraite. 
+Please insert the following copy as either inline text in place of the interactives or as captions to accompany those graphics. Approximate placements for images have been included where appropraite. Again, if you have any questions about use of these, contact aadams@bettergov.org. 
 
 ## Chronological map 
 **More than 30 mental health courts have opened over the past two decades**
@@ -35,10 +35,13 @@ Since Cook and DuPage counties opened the state’s first mental health courts i
 **Tracking outcomes**
 Using data from Kane County, we were able to track the outcomes of more than 200 people who applied to mental health court between 2020 and 2024. Of the applications, 81% were rejected, highlighting the narrow population that is found eligible for mental health court. Of those accepted, 59% successfully completed the program. Half of those who didn’t complete  the program were sent to a facility run by the state prison system. The rest voluntarily withdrew or couldn’t continue due to factors such as illness. A small number continue to be active in the program.
 ![](images/kane-sankey.png)
+
 Tazewell County has seen similar trends — but with a lower graduation rate. Over the past decade, 38% of people who went through mental health court there graduated.
 ![](images/tazewell-sankey.png)
+
 Tazewell's neighbor Peoria County had a higher rate of success in recent years: 63% graduated between 2022 and 2025. But the total numbers are small. About 60 people in Tazewell and Peoria completed the programs.
 ![](images/peoria-sankey.png)
+
 These similarities persist across the state. Most programs graduate around 55% of participants, but outliers exist. Adams County has a 25% graduation rate, and DuPage County claims to graduate 79%.
 
 ## SAMSHA map
