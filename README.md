@@ -1,16 +1,18 @@
 # Mental Health Court Graphics
 
+Here is the code for five custom built graphics for a collaborative story reported by a team of reporters from the Illinois Answers Project and MindSite News. Static versions of these graphics -- with and without text -- can be found in the [images folder](./images/). If you have questions, email aadams@bettergov.org or call 312-291-1417. 
+
 ## [County Selector](https://github.com/aadams-bga/mentalHealthCourts/blob/main/county-selector.html)
-![](./images/county-selector.gif)
+![](./gifs/county-selector.gif)
 
 ## [Chronological Map](https://github.com/aadams-bga/mentalHealthCourts/blob/main/chrono-map.html)
-![](./images/chrono-map.gif)
+![](./gifs/chrono-map.gif)
 
 ## [Sankey Scroller](https://github.com/aadams-bga/mentalHealthCourts/blob/main/sankey-scroll.html)
-![](./images/sankey-scroll.gif)
+![](./gifs/sankey-scroll.gif)
 
 ## [SAMSHA Map](https://github.com/aadams-bga/mentalHealthCourts/blob/main/samsha-map.html)
-![](./images/samsha-map.gif)
+![](./gifs/samsha-map.gif)
 
 ## [ARI Scroller](https://github.com/aadams-bga/mentalHealthCourts/blob/main/ari-scroll.html)
-![](./images/ari-scroll.gif)
+![](./gifs/ari-scroll.gif)
