@@ -45,6 +45,7 @@
         height: auto;
         max-height: 100%;
         display: block !important;
+        opacity: 0;
     }
 
     #mhc-sankey-section .s-track { height: 800vh; position: relative; z-index: 100; }
@@ -73,7 +74,7 @@
     .successful-node rect { fill: #19a116 !important; }
     .failed-node rect { fill: #c02935 !important; }
     .active-node rect { fill: #333 !important; } 
-    .county-title { font-size: 28px; font-weight: 900; text-transform: uppercase; fill: #333; letter-spacing: 1px; text-anchor: middle; }
+    .county-title { font-size: 28px; font-weight: 900; text-transform: uppercase; fill: #333; letter-spacing: 1px; text-anchor: middle; opacity: 0; }
 </style>
 
 <div id="mhc-sankey-section">
@@ -208,6 +209,7 @@
                 } 
             });
 
+            tl.set("#viz-svg", { autoAlpha: 1 });
             tl.set("#mhc-sankey-section .county-title", { autoAlpha: 0 });
             tl.set("#mhc-sankey-section .sankey-node", { autoAlpha: 0 });
             tl.set("#mhc-sankey-section .sankey-link", { opacity: 0 });
@@ -244,8 +246,6 @@
             });
 
             tl.to({}, { duration: 2 });
-
-            tl.to("#mhc-sankey-section .s-sticky-box", { autoAlpha: 0, duration: 1 });
         })();
     }
     initSankey();

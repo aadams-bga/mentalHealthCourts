@@ -243,9 +243,7 @@
         tl.to("#vc-cost-svg", { autoAlpha: 1, duration: 0.8 }, "trans");
         tl.to(".bar-ari", { attr: { y: (i, el) => el.getAttribute('data-y'), height: (i, el) => el.getAttribute('data-h') }, duration: 1.2, stagger: 0.02 }, "trans"); 
         tl.to(".bar-idoc", { attr: { y: (i, el) => el.getAttribute('data-y'), height: (i, el) => el.getAttribute('data-h') }, duration: 1.2, stagger: 0.02 });
-        tl.to({}, { duration: 3 }); // HOLD FOR CARD 5 & FADE
-
-        tl.to("#mhc-vc-section .vc-sticky-box", { autoAlpha: 0, duration: 1 });
+        tl.to({}, { duration: 3 }); // HOLD FOR CARD 5
     }
     initVennCost();
     </script>
