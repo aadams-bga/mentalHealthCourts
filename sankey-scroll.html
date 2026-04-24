@@ -26,6 +26,7 @@
         #mhc-sankey-section .s-sticky-box {
             align-items: flex-start;
             padding-top: 60px; /* OFFSET FROM TOP */
+            box-sizing: border-box;
         }
     }
 
@@ -46,7 +47,7 @@
         display: block !important;
     }
 
-    #mhc-sankey-section .s-track { height: 900vh; position: relative; z-index: 100; }
+    #mhc-sankey-section .s-track { height: 800vh; position: relative; z-index: 100; }
     #mhc-sankey-section .s-narrative { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 90%; max-width: 350px; pointer-events: none; }
     
     #mhc-sankey-section .s-card { 
@@ -188,14 +189,21 @@
                     });
                 });
 
+            ScrollTrigger.create({
+                trigger: "#mhc-sankey-section",
+                pin: "#mhc-sankey-section .s-sticky-box",
+                start: () => window.innerWidth < 1024 ? "top 0" : "top 80px", 
+                end: "bottom bottom",
+                pinSpacing: false,
+                invalidateOnRefresh: true
+            });
+
             const tl = gsap.timeline({ 
                 scrollTrigger: { 
                     trigger: "#mhc-sankey-section", 
-                    start: "top 80px", 
+                    start: () => window.innerWidth < 1024 ? "top 0" : "top 80px", 
                     end: "bottom bottom", 
                     scrub: true,
-                    pin: "#mhc-sankey-section .s-sticky-box",
-                    pinSpacing: false, // NO BIG EMPTY GAPS
                     invalidateOnRefresh: true
                 } 
             });
